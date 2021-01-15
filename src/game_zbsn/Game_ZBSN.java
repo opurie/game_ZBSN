@@ -39,6 +39,9 @@ public class Game_ZBSN extends JFrame implements ActionListener {
     private JRadioButton create_clan;
     private JRadioButton create_monster;
     private JRadioButton create_quest;
+    private JRadioButton create_item;
+    private JRadioButton create_race;
+    private JRadioButton create_profession;
     private ButtonGroup create_group;
     //---------------------------------- 
 
@@ -112,12 +115,19 @@ public class Game_ZBSN extends JFrame implements ActionListener {
         create_clan.setBounds(20, window_height - 150, 100, 20);
         create_quest = new JRadioButton("Quests", false);           add(create_quest);
         create_quest.setBounds(20, window_height - 170, 100, 20);
+        create_item = new JRadioButton("Items", false);             add(create_item);
+        create_item.setBounds(20, window_height - 190, 100, 20);
+        create_race = new JRadioButton("Races", false);             add(create_race);
+        create_race.setBounds(20, window_height - 210, 100, 20);
+        create_profession = new JRadioButton("Professions", false); add(create_profession);
+        create_profession.setBounds(20, window_height - 230, 100, 20);
+        
         
         create_group = new ButtonGroup();
-        create_group.add(create_pc);
-        create_group.add(create_monster);
-        create_group.add(create_clan);
-        create_group.add(create_quest);
+        create_group.add(create_pc);        
+        create_group.add(create_monster);   create_group.add(create_item);
+        create_group.add(create_clan);      create_group.add(create_race);
+        create_group.add(create_quest);     create_group.add(create_profession);
     }
     
     /**
@@ -153,9 +163,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                 con = null;
             }
         }
-        if(con != null){
-            
-
+        if(/*con != null*/ true){
             //gamemode buttons actions
             if(source == bpvp){
                 window_cleaner(secondary_window);
@@ -192,10 +200,24 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                     System.out.println("Open quest window");
                     secondary_window = new window_quest(create_scale, con);
                 }
+                else if(create_item.isSelected()){
+                    System.out.println("Open item window");
+                    secondary_window = new window_item(create_scale, con);
+                }
+                else if(create_race.isSelected()){
+                    System.out.println("Open race window");
+                    secondary_window = new window_race(create_scale, con);
+                }
+                else if(create_profession.isSelected()){
+                    System.out.println("Open profession window");
+                    secondary_window = new window_profession(create_scale, con);
+                }
             }
         }
         
-        if(source == bExit) System.exit(0);        
+        if(source == bExit) {
+            System.exit(0);
+        }        
     }
     
     //closing window
