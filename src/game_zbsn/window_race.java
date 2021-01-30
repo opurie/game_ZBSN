@@ -4,11 +4,15 @@
  * and open the template in the editor.
  */
 package game_zbsn;
-
+import java.sql.*;
 import java.awt.Dimension;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import oracle.jdbc.OracleTypes;
 
 /**
  *
@@ -36,7 +41,8 @@ public class window_race extends JFrame implements ActionListener{
     private JList list_of_pc;
     //--------DELETING---------------------------
     private JButton bDelete;
-    private static String[] delete_string={"race1","race2","race3","race4", "race1"};
+    private List<String> race_data = new ArrayList<String>();
+    private String[] delete_string={"", "", "", "", "", "", "", ""};
     //-------------------------------------------
     
     //--------EDITING----------------------------
@@ -52,6 +58,7 @@ public class window_race extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
 
+        get_data();
         insert_init();
         delete_init();
     }
@@ -100,21 +107,67 @@ public class window_race extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(delete_string);
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        list_of_pc = new JList(race_data.toArray());
+            list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            list_of_pc.setLayoutOrientation(VERTICAL);
+            list_of_pc.setVisibleRowCount(1);
+            add(list_of_pc);
+
+            JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+            scroll_pc.setPreferredSize(new Dimension(250, 100));
+            scroll_pc.setBounds(60,200,150,70);
+            add(scroll_pc);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
-        scroll_pc.setPreferredSize(new Dimension(250, 100));
-        scroll_pc.setBounds(60,200,150,70);
-        add(scroll_pc);
         }
-    
+    public void get_data(){
+        try{
+            CallableStatement stmt = this.con.prepareCall("{? = call get_races}");
+            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+            stmt.execute();
+            ResultSet result = (ResultSet)stmt.getObject(1);
+            while(result.next()){
+                race_data.add(result.getString(1));
+            }
+            result.close();
+            stmt.close();
+        }catch(SQLException ex){
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                            "Get_race error",ex);
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+        Object source = e.getSource();
+        if(source == bDelete){
+            //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
+            String name = list_of_pc.getSelectedValue().toString();
+            try{
+                CallableStatement stmt = this.con.prepareCall("{call delete_race(?)}");
+                stmt.setString(1, name);
+                stmt.execute();
+                stmt.close();
+            }catch(SQLException ex){
+                Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                            "Delete race error",ex);}
+        }
+        if(source == bInsert){
+            if(insert_name.getText().equals("") || insert_strength.getText().equals("") || 
+               insert_agility.getText().equals("") || insert_intellect.getText().equals("")){
+               System.out.println("rasa brak danych");
+            }
+            else{
+                try{
+                CallableStatement stmt = this.con.prepareCall("{call create_race(?, ?, ?, ?)}");
+                stmt.setString(1, insert_name.getText());
+                stmt.setInt(2, Integer.parseInt(insert_strength.getText()));
+                stmt.setInt(3, Integer.parseInt(insert_agility.getText()));
+                stmt.setInt(4, Integer.parseInt(insert_intellect.getText()));
+                stmt.execute();
+                stmt.close();
+                }catch(SQLException | NumberFormatException ex){
+                    Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                            "SQL or int error race class",ex);}
+            }
+        }
+    } 
 }
