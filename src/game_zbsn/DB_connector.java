@@ -14,6 +14,11 @@ import java.sql.*;
 public class DB_connector {
     private Connection con = null;
     
+    //służy do wyciągania id przy graczu i potworze. "2. Edward" returns int(2)
+    public int getId(String name){
+        String[] s = name.split(".");
+        return Integer.parseInt(s[0]);
+    }
     public DB_connector(Connection con){
         this.con = con;
     }

@@ -14,6 +14,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -22,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import oracle.jdbc.OracleTypes;
 
 /**
  *
@@ -35,6 +40,8 @@ public class window_pc extends JFrame implements ActionListener{
     private JTextField insert_name;
     private JList insert_race, insert_profession;
     private JLabel lName, lRace, lProfession;
+    private List<String> ProfessionData = new ArrayList<String>();
+    private List<String> RaceData = new ArrayList<String>();
     private static String[] test_race={"dziekan","piwo","student3.0"};
     private static String[] test_prof={"inf","air","mcdonald"};
     //-------------------------------------------
@@ -43,6 +50,7 @@ public class window_pc extends JFrame implements ActionListener{
     private JList list_of_pc;
     //--------DELETING---------------------------
     private JButton bDelete;
+    private List<String> PlayerData = new ArrayList<String>();
     private static String[] delete_string={"character1","character2","character3","character4", "character1"};
     //-------------------------------------------
     
@@ -60,12 +68,77 @@ public class window_pc extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
         
+        get_data();
         insert_init();
         delete_init();
         }
+    public void get_data(){
+        try{
+            CallableStatement stmt = this.con.prepareCall("{? = call get_races}");
+            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+            stmt.execute();
+            ResultSet result = (ResultSet)stmt.getObject(1);
+            while(result.next()){
+                RaceData.add(result.getString(1));
+            }
+            result.close();
+            stmt.close();
+        }catch(SQLException ex){
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                            "Player get_races error",ex);
+        }
+        try{
+            CallableStatement stmt = this.con.prepareCall("{? = call get_professions}");
+            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+            stmt.execute();
+            ResultSet result = (ResultSet)stmt.getObject(1);
+            while(result.next()){
+                ProfessionData.add(result.getString(1));
+            }
+            result.close();
+            stmt.close();
+        }catch(SQLException ex){
+            Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
+                                                            "Player get_professions error",ex);
+        }
+        try{
+            CallableStatement stmt = this.con.prepareCall("{? = call get_players}");
+            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+            stmt.execute();
+            ResultSet result = (ResultSet)stmt.getObject(1);
+            while(result.next()){
+                PlayerData.add(result.getString(1));
+            }
+            result.close();
+            stmt.close();
+            
+        }catch(SQLException ex){
+            Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
+                                                            "get_player error",ex);
+            }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource(); 
+        Object source = e.getSource();
+        if(source == bInsert){
+            if(insert_name.getText().equals("")||insert_profession.getSelectedValue()==null ||
+                    insert_race.getSelectedValue()==null){
+                System.out.println("pc brak danych");
+            }
+            else{
+                try{
+                    CallableStatement stmt = this.con.prepareCall("{call create_player(?, ?, ?)}");
+                    stmt.setString(1, insert_name.getText());
+                    stmt.setString(2, insert_profession.getSelectedValue().toString());
+                    stmt.setString(3, insert_race.getSelectedValue().toString());
+                    stmt.execute();
+                    stmt.close();
+                }catch(SQLException ex){
+                Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
+                                                            "Player insert error",ex);}
+            }
+        
+        }
     }
     public void delete_init(){
         bDelete = new JButton("Delete");
@@ -78,7 +151,7 @@ public class window_pc extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(delete_string);
+        list_of_pc = new JList(PlayerData.toArray());
         list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list_of_pc.setLayoutOrientation(VERTICAL);
         list_of_pc.setVisibleRowCount(1);
@@ -104,7 +177,7 @@ public class window_pc extends JFrame implements ActionListener{
         add(insert_name);
         insert_name.addActionListener(this);
         
-        insert_race = new JList(test_race);
+        insert_race = new JList(RaceData.toArray());
         insert_race.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         insert_race.setLayoutOrientation(VERTICAL);
         insert_race.setVisibleRowCount(-1);
@@ -118,7 +191,7 @@ public class window_pc extends JFrame implements ActionListener{
         scroll_race.setBounds(90, 50, 100, 30);
         add(scroll_race);
         
-        insert_profession = new JList(test_prof);
+        insert_profession = new JList(ProfessionData.toArray());
         insert_profession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         insert_profession.setLayoutOrientation(VERTICAL);
         insert_profession.setVisibleRowCount(-1);
