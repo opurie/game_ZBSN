@@ -33,7 +33,7 @@ import oracle.jdbc.OracleTypes;
  */
 public class window_profession extends JFrame implements ActionListener{
     private int window_height, window_width;
-    private Connection con;
+    private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
     private JButton bInsert;
@@ -50,11 +50,11 @@ public class window_profession extends JFrame implements ActionListener{
     private JButton bUpdate;
     //-------------------------------------------
 
-    public window_profession(int w, Connection con){
+    public window_profession(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
-        setTitle("Monsters");
+        setTitle("Professions");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
@@ -106,15 +106,7 @@ public class window_profession extends JFrame implements ActionListener{
 
     public void get_data(){
         try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_professions}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                profession_data.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
+            profession_data = dbConnector.getProfessions();
         }catch(SQLException ex){
             Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Get_professions error",ex);
@@ -127,10 +119,7 @@ public class window_profession extends JFrame implements ActionListener{
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
             String name = list_of_pc.getSelectedValue().toString();
             try{
-                CallableStatement stmt = this.con.prepareCall("{call delete_profession(?)}");
-                stmt.setString(1, name);
-                stmt.execute();
-                stmt.close();
+                dbConnector.deleteProfession(name);
             }catch(SQLException ex){
                 Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Delete profession error",ex);}
@@ -141,10 +130,7 @@ public class window_profession extends JFrame implements ActionListener{
             }
             else{
                 try{
-                CallableStatement stmt = this.con.prepareCall("{call create_profession(?)}");
-                stmt.setString(1, insert_name.getText());
-                stmt.execute();
-                stmt.close();
+                    dbConnector.createProfession(insert_name.getText());
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Insert profession error",ex);}

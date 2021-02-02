@@ -28,7 +28,9 @@ import java.util.logging.Level;
  * @author User
  */
 public class Game_ZBSN extends JFrame implements ActionListener {
-    private Connection con; private JLabel con_label;
+    private Connection connection;
+    private DBConnector dbConnector;
+    private JLabel con_label;
     
     private int window_height = 350, window_width = 320;
     private int gamemode_scale = 500, create_scale = 400;
@@ -56,7 +58,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
     public Game_ZBSN(){
         setSize(window_width, window_height);
         setTitle("PUT GAMES");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         
         creating_method();
@@ -142,14 +144,11 @@ public class Game_ZBSN extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         //bpvp, bpve, bClan, bQuest;
-        if(source == bConnect && con == null){
-            String connectionString = "jdbc:oracle:thin:@//admlab2.cs.put.poznan.pl:1521/"+
-                               "dblab02_students.cs.put.poznan.pl";
-            Properties connectionProps = new Properties();
-            connectionProps.put("user","inf141299");
-            connectionProps.put("password", "inf141299");
+        if(source == bConnect && connection == null){
+     
             try{
-                con = DriverManager.getConnection(connectionString, connectionProps);
+                dbConnector = new DBConnector("inf141299", "inf141299");
+                connection = dbConnector.connect();
                 System.out.println("Połączono z bazą danych");
                 con_label.setText("Connected!");
                 con_label.setForeground(Color.green);
@@ -160,57 +159,57 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                 con_label.setText("Connection failed...");
                 con_label.setForeground(Color.red);
                 con_label.setBounds(window_width-310, window_height - 300, 150, 30);
-                con = null;
+                connection = null;
             }
         }
         if(/*con != null*/ true){
             //gamemode buttons actions
             if(source == bpvp){
                 window_cleaner(secondary_window);
-                secondary_window = new gamemode_pvp(gamemode_scale, con);
+                secondary_window = new gamemode_pvp(gamemode_scale, connection);
             }
             if(source == bpve){
                 window_cleaner(secondary_window);
-                secondary_window = new gamemode_pve(gamemode_scale, con);
+                secondary_window = new gamemode_pve(gamemode_scale, connection);
             }
             if(source == bClan){
                 window_cleaner(secondary_window);
-                secondary_window = new gamemode_clan(gamemode_scale, con);
+                secondary_window = new gamemode_clan(gamemode_scale, connection);
             }
             if(source == bQuest){
                 window_cleaner(secondary_window);
-                secondary_window = new gamemode_quest(gamemode_scale, con);
+                secondary_window = new gamemode_quest(gamemode_scale, connection);
             }
             //Create/delete button actions
             if(source == bCreate){
                 window_cleaner(secondary_window);
                 if (create_pc.isSelected()){
                     System.out.println("Open PC window");
-                    secondary_window = new window_pc(create_scale, con);
+                    secondary_window = new window_pc(create_scale, connection);
                 }
                 else if(create_monster.isSelected()){
                     System.out.println("Open monster window");
-                    secondary_window = new window_monster(create_scale, con);
+                    secondary_window = new window_monster(create_scale, connection);
                 }
                 else if(create_clan.isSelected()){
                     System.out.println("Open clan window");
-                    secondary_window = new window_clan(create_scale, con);
+                    secondary_window = new window_clan(create_scale, connection);
                 }
                 else if(create_quest.isSelected()){
                     System.out.println("Open quest window");
-                    secondary_window = new window_quest(create_scale, con);
+                    secondary_window = new window_quest(create_scale, connection);
                 }
                 else if(create_item.isSelected()){
                     System.out.println("Open item window");
-                    secondary_window = new window_item(create_scale, con);
+                    secondary_window = new window_item(create_scale, connection);
                 }
                 else if(create_race.isSelected()){
                     System.out.println("Open race window");
-                    secondary_window = new window_race(create_scale, con);
+                    secondary_window = new window_race(create_scale, dbConnector);
                 }
                 else if(create_profession.isSelected()){
                     System.out.println("Open profession window");
-                    secondary_window = new window_profession(create_scale, con);
+                    secondary_window = new window_profession(create_scale, dbConnector);
                 }
             }
         }

@@ -30,7 +30,7 @@ import oracle.jdbc.OracleTypes;
  */
 public class window_race extends JFrame implements ActionListener{
     private int window_height, window_width;
-    private Connection con;
+    private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
     private JButton bInsert;
@@ -49,9 +49,9 @@ public class window_race extends JFrame implements ActionListener{
     private JButton bUpdate;
     //-------------------------------------------
 
-    public window_race(int w, Connection con){
+    public window_race(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("Monsters");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -121,15 +121,7 @@ public class window_race extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_races}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                race_data.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
+            dbConnector.getRaces();
         }catch(SQLException ex){
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Get_race error",ex);
@@ -142,10 +134,7 @@ public class window_race extends JFrame implements ActionListener{
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
             String name = list_of_pc.getSelectedValue().toString();
             try{
-                CallableStatement stmt = this.con.prepareCall("{call delete_race(?)}");
-                stmt.setString(1, name);
-                stmt.execute();
-                stmt.close();
+                dbConnector.deleteRace(name);
             }catch(SQLException ex){
                 Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Delete race error",ex);}
@@ -157,13 +146,11 @@ public class window_race extends JFrame implements ActionListener{
             }
             else{
                 try{
-                CallableStatement stmt = this.con.prepareCall("{call create_race(?, ?, ?, ?)}");
-                stmt.setString(1, insert_name.getText());
-                stmt.setInt(2, Integer.parseInt(insert_strength.getText()));
-                stmt.setInt(3, Integer.parseInt(insert_agility.getText()));
-                stmt.setInt(4, Integer.parseInt(insert_intellect.getText()));
-                stmt.execute();
-                stmt.close();
+                    String name = insert_name.getText();
+                    int strength = Integer.parseInt(insert_strength.getText());
+                    int agility = Integer.parseInt(insert_agility.getText());
+                    int intellect = Integer.parseInt(insert_intellect.getText());
+                    dbConnector.createRace(name, strength, agility, intellect);
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error race class",ex);}
