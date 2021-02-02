@@ -186,13 +186,16 @@ public class window_item extends JFrame implements ActionListener{
                 stmt.setString(1, name);
                 stmt.execute();
                 stmt.close();
+                item_data.remove(list_of_pc.getSelectedValue().toString());
             }catch(SQLException ex){
                 Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Delete item error",ex);}
+            
         }
         if(source == bInsert){
             if(insert_name.getText().equals("") || insert_strength.getText().equals("") || 
-               insert_agility.getText().equals("") || insert_intellect.getText().equals("")){
+               insert_agility.getText().equals("") || insert_intellect.getText().equals("")||
+                    insert_profession.getSelectedValue() == null){
                System.out.println("rasa brak danych");
             }
             else{

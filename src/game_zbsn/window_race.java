@@ -42,7 +42,6 @@ public class window_race extends JFrame implements ActionListener{
     //--------DELETING---------------------------
     private JButton bDelete;
     private List<String> race_data = new ArrayList<String>();
-    private String[] delete_string={"", "", "", "", "", "", "", ""};
     //-------------------------------------------
     
     //--------EDITING----------------------------
