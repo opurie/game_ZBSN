@@ -141,7 +141,7 @@ public class window_quest extends JFrame implements ActionListener{
             if(!anyFieldEmpty()) {
                 try {
                     String name = insert_name.getText();
-                    int exp = Integer.parseInt(insert_exp.getText());
+                    float exp = Float.parseFloat(insert_exp.getText());
                     int creator = dbConnector.getId(InsertCreator.getSelectedValue().toString());
                     dbConnector.createQuest(name, exp, creator);
                 } catch(SQLException ex) {
