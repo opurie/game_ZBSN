@@ -134,33 +134,41 @@ public class window_quest extends JFrame implements ActionListener{
         add(scroll_pc);
         }
     @Override
-<<<<<<< HEAD
-      public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
-        if(source == bInsert){
-            if(insert_name.getText().equals("")||InsertCreator.getSelectedValue()==null ||
-                    insert_exp.getText().equals("")){
-                System.out.println("pc brak danych");
+
+    public void actionPerformed(ActionEvent e) {
+        JButton button = (JButton) e.getSource();
+        if(button == bInsert) {
+            if(!anyFieldEmpty()) {
+                try {
+                    String name = insert_name.getText();
+                    int exp = Integer.parseInt(insert_exp.getText());
+                    int creator = dbConnector.getId(InsertCreator.getSelectedValue().toString());
+                    dbConnector.createQuest(name, exp, creator);
+                } catch(SQLException ex) {
+                    Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Create quest error",ex);
+                }
+            } else {
+                System.out.println("field empty");
             }
-            else{
-                try{
-                    int id = dbConnector.getId(InsertCreator.getSelectedValue().toString());
-                    float exp = Float.parseFloat(insert_exp.getText());
-                    dbConnector.createQuest(insert_name.getText(), exp, id);
-                }catch(SQLException ex){
-                Logger.getLogger(window_quest.class.getName()).log(Level.SEVERE,
-                                                            "Quest insert error",ex);}
-            }
-        }
-        if(source == bDelete){
-            if(ListOfNames.getSelectedValue() != null){
-                try{
+        } else if(button == bDelete) {
+            String name = insert_name.getText();
+            if(ListOfNames.getSelectedValue()!=null) {
+                try {
                     dbConnector.deleteQuest(ListOfNames.getSelectedValue().toString());
-                }catch(SQLException ex){
-                    Logger.getLogger(window_quest.class.getName()).log(Level.SEVERE,
-                                                                "Delete quest error",ex);}
+                } catch(SQLException ex) {
+                    Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Delete quest error",ex);
+                }
+            } else {
+                System.out.println("field empty");
             }
         }
+    }
+    
+    private boolean anyFieldEmpty() {
+        return insert_name.getText().equals("") || insert_exp.getText().equals("") ||
+                InsertCreator.getSelectedValue() == null;
     }
     
 }
