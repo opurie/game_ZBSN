@@ -134,8 +134,32 @@ public class window_quest extends JFrame implements ActionListener{
         add(scroll_pc);
         }
     @Override
-    public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource(); 
+      public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if(source == bInsert){
+            if(insert_name.getText().equals("")||InsertCreator.getSelectedValue()==null ||
+                    insert_exp.getText().equals("")){
+                System.out.println("pc brak danych");
+            }
+            else{
+                try{
+                    int id = dbConnector.getId(InsertCreator.getSelectedValue().toString());
+                    float exp = Float.parseFloat(insert_exp.getText());
+                    dbConnector.createQuest(insert_name.getText(), exp, id);
+                }catch(SQLException ex){
+                Logger.getLogger(window_quest.class.getName()).log(Level.SEVERE,
+                                                            "Quest insert error",ex);}
+            }
+        }
+        if(source == bDelete){
+            if(ListOfNames.getSelectedValue() != null){
+                try{
+                    dbConnector.deleteQuest(ListOfNames.getSelectedValue().toString());
+                }catch(SQLException ex){
+                    Logger.getLogger(window_quest.class.getName()).log(Level.SEVERE,
+                                                                "Delete quest error",ex);}
+            }
+        }
     }
     
 }

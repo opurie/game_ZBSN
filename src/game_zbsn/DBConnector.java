@@ -207,10 +207,10 @@ public class DBConnector {
         return result;
     }
     
-    public void createQuest(String name, int exp, int id)throws SQLException{
+    public void createQuest(String name, float exp, int id)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{call create_quest(?, ?, ?)}");
         stmt.setString(1, name);
-        stmt.setInt(2, exp);
+        stmt.setFloat(2, Math.round(exp*100)/100);
         stmt.setInt(3, id);
         stmt.execute();
         stmt.close();
@@ -237,7 +237,7 @@ public class DBConnector {
         return data;
     }
     public String createClan(String name, int id, String headquater)throws SQLException{
-        CallableStatement stmt = connection.prepareCall("{? = call create_clan(? ,? , ?)}");
+        CallableStatement stmt = connection.prepareCall("{? = call create_clan(?, ?, ?)}");
         stmt.registerOutParameter(1, Types.VARCHAR);
         stmt.setString(2, name);
         stmt.setInt(3, id);

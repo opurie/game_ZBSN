@@ -14,6 +14,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import static javax.swing.JList.VERTICAL;
@@ -34,13 +38,13 @@ public class window_clan extends JFrame implements ActionListener{
     private JTextField insert_name, insert_hq;
     private JList insert_creator;
     private JLabel lName, lCreator, lHq;
-    private static String[] test_creator={"dziekan","piwo","student3.0"};
+    private List<String> CreatorData = new ArrayList<>();
     //-------------------------------------------
     
     private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
-    private static String[] delete_string={"clan1","clan2","clan3","clan4", "clan1"};
+    private List<String> ClanData = new ArrayList<>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
@@ -54,8 +58,19 @@ public class window_clan extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
+        
+        get_data();
         insert_init();
         delete_init();
+    }
+    public void get_data(){
+        try {
+            CreatorData = dbConnector.getPlayers();
+            ClanData = dbConnector.getClans();
+        } catch(SQLException ex) {
+            Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
+                                                            "Clan get data error",ex);
+        }
     }
     public void insert_init(){
         bInsert = new JButton("Create");
@@ -82,7 +97,7 @@ public class window_clan extends JFrame implements ActionListener{
         insert_hq.addActionListener(this);
         add(insert_hq);
         
-        insert_creator = new JList(test_creator);
+        insert_creator = new JList(CreatorData.toArray());
         insert_creator.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         insert_creator.setLayoutOrientation(VERTICAL);
         insert_creator.setVisibleRowCount(-1);
@@ -107,7 +122,7 @@ public class window_clan extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        ListOfNames = new JList(delete_string);
+        ListOfNames = new JList(ClanData.toArray());
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
@@ -119,8 +134,33 @@ public class window_clan extends JFrame implements ActionListener{
         add(scroll_pc);
         }
     @Override
-    public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource(); 
+     public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        if(source == bInsert){
+            String result;
+            if(insert_name.getText().equals("")||insert_hq.getText().equals("") ||insert_creator.getSelectedValue()==null){
+                System.out.println("Clan brak danych");
+            }
+            else{
+                try{
+                    int id = dbConnector.getId(insert_creator.getSelectedValue().toString());
+                   result = dbConnector.createClan(insert_name.getText(), id, insert_hq.getText());
+                   System.out.println(result);
+                }catch(SQLException ex){
+                Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
+                                                            "Clan insert error",ex);}
+            }
+        }
+        if(source == bDelete){
+            if(ListOfNames.getSelectedValue() != null){
+                String name = ListOfNames.getSelectedValue().toString();
+                try{
+                    dbConnector.deleteClan(name);
+                }catch(SQLException ex){
+                    Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
+                                                                "Delete clan error",ex);}
+            }
+        }
     }
     
 }
