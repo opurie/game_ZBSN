@@ -34,14 +34,14 @@ public class window_race extends JFrame implements ActionListener{
     
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name, insert_strength, insert_agility,
-                       insert_intellect;
+    private JTextField InsertName, InsertStrength, InsertAgility,
+                       InsertIntellect;
     private JLabel lName, lStatistics, lWeight;
     //-------------------------------------------
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
-    private List<String> race_data = new ArrayList<String>();
+    private List<String> RaceData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
@@ -71,29 +71,29 @@ public class window_race extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
         
         lStatistics = new JLabel("Statistics:");
         lStatistics.setBounds(20, 50, 100, 20);
         add(lStatistics);
         
-        insert_strength = new JTextField();
-        insert_strength.setBounds(90, 50, 30, 20);
-        add(insert_strength);
-        insert_strength.addActionListener(this);
+        InsertStrength = new JTextField();
+        InsertStrength.setBounds(90, 50, 30, 20);
+        add(InsertStrength);
+        InsertStrength.addActionListener(this);
         
-        insert_agility = new JTextField();
-        insert_agility.setBounds(123, 50, 30, 20);
-        add(insert_agility);
-        insert_agility.addActionListener(this);
+        InsertAgility = new JTextField();
+        InsertAgility.setBounds(123, 50, 30, 20);
+        add(InsertAgility);
+        InsertAgility.addActionListener(this);
         
-        insert_intellect = new JTextField();
-        insert_intellect.setBounds(156, 50, 30, 20);
-        add(insert_intellect);
-        insert_intellect.addActionListener(this);
+        InsertIntellect = new JTextField();
+        InsertIntellect.setBounds(156, 50, 30, 20);
+        add(InsertIntellect);
+        InsertIntellect.addActionListener(this);
     }
     public void delete_init(){
         bDelete = new JButton("Delete");
@@ -106,13 +106,13 @@ public class window_race extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(race_data.toArray());
-            list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list_of_pc.setLayoutOrientation(VERTICAL);
-            list_of_pc.setVisibleRowCount(1);
-            add(list_of_pc);
+        ListOfNames = new JList(RaceData.toArray());
+            ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            ListOfNames.setLayoutOrientation(VERTICAL);
+            ListOfNames.setVisibleRowCount(1);
+            add(ListOfNames);
 
-            JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+            JScrollPane scroll_pc= new JScrollPane(ListOfNames);
             scroll_pc.setPreferredSize(new Dimension(250, 100));
             scroll_pc.setBounds(60,200,150,70);
             add(scroll_pc);
@@ -120,7 +120,7 @@ public class window_race extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
-            dbConnector.getRaces();
+            RaceData = dbConnector.getRaces();
         }catch(SQLException ex){
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Get_race error",ex);
@@ -131,24 +131,26 @@ public class window_race extends JFrame implements ActionListener{
         Object source = e.getSource();
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            String name = list_of_pc.getSelectedValue().toString();
-            try{
-                dbConnector.deleteRace(name);
-            }catch(SQLException ex){
-                Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
-                                                            "Delete race error",ex);}
+            if(ListOfNames.getSelectedValue() != null){
+                String name = ListOfNames.getSelectedValue().toString();
+                try{
+                    dbConnector.deleteRace(name);
+                }catch(SQLException ex){
+                    Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Delete race error",ex);}
+            }
         }
         if(source == bInsert){
-            if(insert_name.getText().equals("") || insert_strength.getText().equals("") || 
-               insert_agility.getText().equals("") || insert_intellect.getText().equals("")){
+            if(InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
+               InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")){
                System.out.println("rasa brak danych");
             }
             else{
                 try{
-                    String name = insert_name.getText();
-                    int strength = Integer.parseInt(insert_strength.getText());
-                    int agility = Integer.parseInt(insert_agility.getText());
-                    int intellect = Integer.parseInt(insert_intellect.getText());
+                    String name = InsertName.getText();
+                    int strength = Integer.parseInt(InsertStrength.getText());
+                    int agility = Integer.parseInt(InsertAgility.getText());
+                    int intellect = Integer.parseInt(InsertIntellect.getText());
                     dbConnector.createRace(name, strength, agility, intellect);
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,

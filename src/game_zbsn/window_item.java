@@ -35,17 +35,17 @@ public class window_item extends JFrame implements ActionListener{
     private DBConnector dbConnector;
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name, insert_strength, insert_agility,
-                       insert_intellect, insert_weight;
-    private JList insert_profession;
+    private JTextField InsertName, InsertStrength, InsertAgility,
+                       InsertIntellect, InsertWeight;
+    private JList InsertProfession;
     private JLabel lName, lStatistics, lWeight, lProfession;
-    private List<String> profession_data = new ArrayList<String>();
+    private List<String> ProfessionData = new ArrayList<String>();
     //-------------------------------------------
     
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
-    private List<String> item_data = new ArrayList<String>();
+    private List<String> ItemData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
@@ -74,49 +74,49 @@ public class window_item extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
         
         lStatistics = new JLabel("Statistics:");
         lStatistics.setBounds(20, 50, 100, 20);
         add(lStatistics);
         
-        insert_strength = new JTextField();
-        insert_strength.setBounds(90, 50, 30, 20);
-        add(insert_strength);
-        insert_strength.addActionListener(this);
+        InsertStrength = new JTextField();
+        InsertStrength.setBounds(90, 50, 30, 20);
+        add(InsertStrength);
+        InsertStrength.addActionListener(this);
         
-        insert_agility = new JTextField();
-        insert_agility.setBounds(123, 50, 30, 20);
-        add(insert_agility);
-        insert_agility.addActionListener(this);
+        InsertAgility = new JTextField();
+        InsertAgility.setBounds(123, 50, 30, 20);
+        add(InsertAgility);
+        InsertAgility.addActionListener(this);
         
-        insert_intellect = new JTextField();
-        insert_intellect.setBounds(156, 50, 30, 20);
-        add(insert_intellect);
-        insert_intellect.addActionListener(this);
+        InsertIntellect = new JTextField();
+        InsertIntellect.setBounds(156, 50, 30, 20);
+        add(InsertIntellect);
+        InsertIntellect.addActionListener(this);
         
         lWeight = new JLabel("Weight:");
         lWeight.setBounds(20, 75, 50, 20);
         add(lWeight);
         
-        insert_weight = new JTextField();
-        insert_weight.setBounds(90, 75, 100, 20);
-        add(insert_weight);
-        insert_weight.addActionListener(this);
+        InsertWeight = new JTextField();
+        InsertWeight.setBounds(90, 75, 100, 20);
+        add(InsertWeight);
+        InsertWeight.addActionListener(this);
         
-        insert_profession = new JList(profession_data.toArray());
-        insert_profession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_profession.setLayoutOrientation(VERTICAL);
-        insert_profession.setVisibleRowCount(-1);
-        add(insert_profession);
+        InsertProfession = new JList(ProfessionData.toArray());
+        InsertProfession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        InsertProfession.setLayoutOrientation(VERTICAL);
+        InsertProfession.setVisibleRowCount(-1);
+        add(InsertProfession);
         
         lProfession = new JLabel("Profession:");
         lProfession.setBounds(20, 100, 100, 20);
         add(lProfession);
-        JScrollPane scroll_profession= new JScrollPane(insert_profession);
+        JScrollPane scroll_profession= new JScrollPane(InsertProfession);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
         scroll_profession.setBounds(90,100,100,30);
         add(scroll_profession);
@@ -133,48 +133,44 @@ public class window_item extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(item_data.toArray());
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(ItemData.toArray());
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
         }
     public void get_data(){
         try {
-            profession_data = dbConnector.getProfessions();
+            ProfessionData = dbConnector.getProfessions();
+            ItemData = dbConnector.getItems();
         } catch(SQLException ex) {
             Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
-                                                            "Item get_professions error",ex);
-        } try {
-            item_data = dbConnector.getItems();
-        } catch(SQLException ex) {
-            Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
-                                                            "Item get_items error",ex);
-            }
+                                                            "Item get data error",ex);
+        }
     }
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            String name = list_of_pc.getSelectedValue().toString();
+            if(ListOfNames.getSelectedValue()!=null){
             try {
-                dbConnector.deleteItem(name);
-                item_data.remove(list_of_pc.getSelectedValue().toString());
+                    dbConnector.deleteItem(ListOfNames.getSelectedValue().toString());
             } catch(SQLException ex){
-                Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
-                                                            "Delete item error",ex);}
+                    Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
+                                                                "Delete item error",ex);}
+            }
             
         }
         if(source == bInsert){
-            if(insert_name.getText().equals("") || insert_strength.getText().equals("") || 
-               insert_agility.getText().equals("") || insert_intellect.getText().equals("")||
-                    insert_profession.getSelectedValue() == null){
+            if(InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
+               InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")||
+                    InsertProfession.getSelectedValue() == null){
                System.out.println("rasa brak danych");
             } else {
                 try {

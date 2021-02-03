@@ -27,7 +27,7 @@ import javax.swing.ListSelectionModel;
  */
 public class window_clan extends JFrame implements ActionListener{
     private int window_height, window_width;
-    private Connection con;
+    private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
     private JButton bInsert;
@@ -37,7 +37,7 @@ public class window_clan extends JFrame implements ActionListener{
     private static String[] test_creator={"dziekan","piwo","student3.0"};
     //-------------------------------------------
     
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
     private static String[] delete_string={"clan1","clan2","clan3","clan4", "clan1"};
@@ -46,9 +46,9 @@ public class window_clan extends JFrame implements ActionListener{
     //--------EDITING----------------------------
     private JButton bUpdate;
     //-------------------------------------------
-    public window_clan(int w, Connection con){
+    public window_clan(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("Clans");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -107,13 +107,13 @@ public class window_clan extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(delete_string);
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(delete_string);
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
