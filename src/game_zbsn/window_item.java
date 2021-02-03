@@ -174,12 +174,12 @@ public class window_item extends JFrame implements ActionListener{
                System.out.println("rasa brak danych");
             } else {
                 try {
-                    String name = insert_name.getText();
-                    int strength = Integer.parseInt(insert_strength.getText());
-                    int agility = Integer.parseInt(insert_agility.getText());
-                    int intellect = Integer.parseInt(insert_intellect.getText());
-                    int weight = Integer.parseInt(insert_weight.getText());
-                    String profession = insert_profession.getSelectedValue().toString();
+                    String name = InsertName.getText();
+                    int strength = Integer.parseInt(InsertStrength.getText());
+                    int agility = Integer.parseInt(InsertAgility.getText());
+                    int intellect = Integer.parseInt(InsertIntellect.getText());
+                    int weight = Integer.parseInt(InsertWeight.getText());
+                    String profession = InsertProfession.getSelectedValue().toString();
                     dbConnector.createItem(name, strength, agility, intellect, weight, profession);
                 } catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
