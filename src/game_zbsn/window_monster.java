@@ -145,19 +145,12 @@ public class window_monster extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if(source == bInsert){
-            if(insert_name.getText().equals("")||insert_race.getSelectedValue()==null){
+            if(insert_name.getText().equals("")||insert_race.getSelectedValue()==null||insert_item.getSelectedValue()==null){
                 System.out.println("pc brak danych");
             }
             else{
                 try{
-                    String item="";
-                    if(insert_item.getSelectedValue()!=null){
-                        item = insert_item.getSelectedValue().toString();
-                    }
-                    else if(insert_item.getSelectedValue().toString().equals("(nothing)")){
-                        item = "";
-                    }
-                   dbConnector.createMonster(insert_name.getText(), item, insert_race.getSelectedValue().toString());
+                   dbConnector.createMonster(insert_name.getText(), insert_item.getSelectedValue().toString(), insert_race.getSelectedValue().toString());
                 }catch(SQLException ex){
                 Logger.getLogger(window_monster.class.getName()).log(Level.SEVERE,
                                                             "Monster insert error",ex);}

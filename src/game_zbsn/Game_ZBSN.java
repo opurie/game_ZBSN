@@ -193,15 +193,15 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                 }
                 else if(CreateClan.isSelected()){
                     System.out.println("Open clan window");
-                    SecondaryWindow = new window_clan(create_scale, connection);
+                    SecondaryWindow = new window_clan(create_scale, dbConnector);
                 }
                 else if(CreateQuest.isSelected()){
                     System.out.println("Open quest window");
-                    SecondaryWindow = new window_quest(create_scale, connection);
+                    SecondaryWindow = new window_quest(create_scale, dbConnector);
                 }
                 else if(CreateItem.isSelected()){
                     System.out.println("Open item window");
-                    SecondaryWindow = new window_item(create_scale, connection);
+                    SecondaryWindow = new window_item(create_scale, dbConnector);
                 }
                 else if(CreateRace.isSelected()){
                     System.out.println("Open race window");

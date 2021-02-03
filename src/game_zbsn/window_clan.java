@@ -27,7 +27,7 @@ import javax.swing.ListSelectionModel;
  */
 public class window_clan extends JFrame implements ActionListener{
     private int window_height, window_width;
-    private Connection con;
+    private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
     private JButton bInsert;
@@ -46,9 +46,9 @@ public class window_clan extends JFrame implements ActionListener{
     //--------EDITING----------------------------
     private JButton bUpdate;
     //-------------------------------------------
-    public window_clan(int w, Connection con){
+    public window_clan(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("Clans");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

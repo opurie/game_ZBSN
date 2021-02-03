@@ -207,6 +207,35 @@ public class DBConnector {
         return result;
     }
     
+    public void createQuest(String name, int exp, int id)throws SQLException{
+        CallableStatement stmt = connection.prepareCall("{call create_quest(?, ?, ?)}");
+        stmt.setString(1, name);
+        stmt.setInt(2, exp);
+        stmt.setInt(3, id);
+        stmt.execute();
+        stmt.close();
+    }
+    
+    public void deleteQuest(String name)throws SQLException{
+        CallableStatement stmt = connection.prepareCall("{call delete_quest(?)}");
+        stmt.setString(1, name);
+        stmt.execute();
+        stmt.close();
+    }
+    
+    public List<String> getQuests() throws SQLException {
+        List<String> data = new ArrayList<>();
+        CallableStatement stmt = connection.prepareCall("{? = call get_quests}");
+        stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+        stmt.execute();
+        ResultSet result = (ResultSet)stmt.getObject(1);
+        while(result.next()){
+            data.add(result.getString(1));
+        }
+        result.close();
+        stmt.close();
+        return data;
+    }
     public String createClan(String name, int id, String headquater)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{? = call create_clan(? ,? , ?)}");
         stmt.registerOutParameter(1, Types.VARCHAR);
@@ -224,6 +253,20 @@ public class DBConnector {
         stmt.setString(1, name);
         stmt.execute();
         stmt.close();
+    }
+    
+    public List<String> getClans() throws SQLException {
+        List<String> data = new ArrayList<>();
+        CallableStatement stmt = connection.prepareCall("{? = call get_clans}");
+        stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+        stmt.execute();
+        ResultSet result = (ResultSet)stmt.getObject(1);
+        while(result.next()){
+            data.add(result.getString(1));
+        }
+        result.close();
+        stmt.close();
+        return data;
     }
     
     public String joinClan(String name, int id)throws SQLException{
