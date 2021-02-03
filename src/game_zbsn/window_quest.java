@@ -134,6 +134,7 @@ public class window_quest extends JFrame implements ActionListener{
         add(scroll_pc);
         }
     @Override
+<<<<<<< HEAD
       public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if(source == bInsert){
