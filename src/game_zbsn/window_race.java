@@ -110,6 +110,26 @@ public class window_race extends JFrame implements ActionListener{
             ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             ListOfNames.setLayoutOrientation(VERTICAL);
             ListOfNames.setVisibleRowCount(1);
+            ListOfNames.addListSelectionListener((e) -> {
+                JList list = (JList) e.getSource();
+                String selected = list.getSelectedValue().toString();
+            try {
+                PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                        "select * from races where r_name = ?");
+                statement.setString(1, selected);
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                int s = rs.getInt("strength");
+                int a = rs.getInt("agility");
+                int i = rs.getInt("intellect");
+                InsertName.setText(selected);
+                InsertAgility.setText(a + "");
+                InsertStrength.setText(s + "");
+                InsertIntellect.setText(i + "");
+            } catch (SQLException ex) {
+                Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+            }
+            });
             add(ListOfNames);
 
             JScrollPane scroll_pc= new JScrollPane(ListOfNames);
