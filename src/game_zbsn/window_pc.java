@@ -34,7 +34,7 @@ import oracle.jdbc.OracleTypes;
  */
 public class window_pc extends JFrame implements ActionListener{
     private int window_height, window_width;
-    
+    private DBConnector dbConnector;
     //--------INSERTING--------------------------
     private JButton bInsert;
     private JTextField insert_name;
@@ -42,26 +42,21 @@ public class window_pc extends JFrame implements ActionListener{
     private JLabel lName, lRace, lProfession;
     private List<String> ProfessionData = new ArrayList<String>();
     private List<String> RaceData = new ArrayList<String>();
-    private static String[] test_race={"dziekan","piwo","student3.0"};
-    private static String[] test_prof={"inf","air","mcdonald"};
     //-------------------------------------------
     
     
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
     private List<String> PlayerData = new ArrayList<String>();
-    private static String[] delete_string={"character1","character2","character3","character4", "character1"};
     //-------------------------------------------
     
     //--------EDITING----------------------------
     private JButton bUpdate;
     //-------------------------------------------
-    
-    private Connection con;
-    public window_pc(int w, Connection con){
+    public window_pc(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("Playable characters");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -74,48 +69,13 @@ public class window_pc extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_races}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                RaceData.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
-        }catch(SQLException ex){
-            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
-                                                            "Player get_races error",ex);
-        }
-        try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_professions}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                ProfessionData.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
-        }catch(SQLException ex){
-            Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
-                                                            "Player get_professions error",ex);
-        }
-        try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_players}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                PlayerData.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
-            
+            ProfessionData = dbConnector.getProfessions();
+            RaceData = dbConnector.getRaces();
+            PlayerData = dbConnector.getPlayers();
         }catch(SQLException ex){
             Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
-                                                            "get_player error",ex);
-            }
+                                                            "get_data() error",ex);
+        }
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -127,17 +87,24 @@ public class window_pc extends JFrame implements ActionListener{
             }
             else{
                 try{
-                    CallableStatement stmt = this.con.prepareCall("{call create_player(?, ?, ?)}");
-                    stmt.setString(1, insert_name.getText());
-                    stmt.setString(2, insert_profession.getSelectedValue().toString());
-                    stmt.setString(3, insert_race.getSelectedValue().toString());
-                    stmt.execute();
-                    stmt.close();
+                   dbConnector.createPlayer(insert_name.getText(), insert_profession.getSelectedValue().toString(), 
+                           insert_race.getSelectedValue().toString());
                 }catch(SQLException ex){
                 Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
                                                             "Player insert error",ex);}
             }
-        
+        }
+        if(source == bDelete){
+            if(ListOfNames.getSelectedValue() != null){
+                String name = ListOfNames.getSelectedValue().toString();
+                int id = dbConnector.getId(name);
+                System.out.println("Usunieto pc "+id);
+                try{
+                    dbConnector.deletePlayer(id);
+                }catch(SQLException ex){
+                    Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
+                                                                "Delete profession error",ex);}
+            }
         }
     }
     public void delete_init(){
@@ -151,13 +118,13 @@ public class window_pc extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(PlayerData.toArray());
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(PlayerData.toArray());
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);

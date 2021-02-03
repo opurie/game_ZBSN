@@ -40,10 +40,10 @@ public class window_profession extends JFrame implements ActionListener{
     private JTextField insert_name;
     private JLabel lName;
     //-------------------------------------------
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
-    private List<String> profession_data = new ArrayList<String>();
+    private List<String> ProfessionData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
@@ -92,13 +92,13 @@ public class window_profession extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(profession_data.toArray());
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(ProfessionData.toArray());
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
@@ -106,7 +106,7 @@ public class window_profession extends JFrame implements ActionListener{
 
     public void get_data(){
         try{
-            profession_data = dbConnector.getProfessions();
+            ProfessionData = dbConnector.getProfessions();
         }catch(SQLException ex){
             Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Get_professions error",ex);
@@ -117,12 +117,14 @@ public class window_profession extends JFrame implements ActionListener{
         Object source = e.getSource();
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            String name = list_of_pc.getSelectedValue().toString();
+            if(ListOfNames.getSelectedValue() != null){
+            String name = ListOfNames.getSelectedValue().toString();
             try{
                 dbConnector.deleteProfession(name);
             }catch(SQLException ex){
                 Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Delete profession error",ex);}
+            }
         }
         if(source == bInsert){
             if(insert_name.getText().equals("")){

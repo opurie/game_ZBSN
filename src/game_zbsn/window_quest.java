@@ -37,7 +37,7 @@ public class window_quest extends JFrame implements ActionListener{
     private static String[] test_creator={"dziekan","piwo","student3.0"};
     //-------------------------------------------
     
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
     private static String[] delete_string={"quest1","quest2","quest3","quest4", "quest1"};
@@ -107,13 +107,13 @@ public class window_quest extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(delete_string);
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(delete_string);
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);

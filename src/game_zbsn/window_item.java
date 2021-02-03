@@ -42,7 +42,7 @@ public class window_item extends JFrame implements ActionListener{
     private List<String> profession_data = new ArrayList<String>();
     //-------------------------------------------
     
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
     private List<String> item_data = new ArrayList<String>();
@@ -133,13 +133,13 @@ public class window_item extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(item_data.toArray());
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(item_data.toArray());
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
@@ -180,13 +180,13 @@ public class window_item extends JFrame implements ActionListener{
         Object source = e.getSource();
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            String name = list_of_pc.getSelectedValue().toString();
+            String name = ListOfNames.getSelectedValue().toString();
             try{
                 CallableStatement stmt = this.con.prepareCall("{call delete_item(?)}");
                 stmt.setString(1, name);
                 stmt.execute();
                 stmt.close();
-                item_data.remove(list_of_pc.getSelectedValue().toString());
+                item_data.remove(ListOfNames.getSelectedValue().toString());
             }catch(SQLException ex){
                 Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Delete item error",ex);}

@@ -14,6 +14,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import static javax.swing.JList.VERTICAL;
@@ -27,38 +31,49 @@ import javax.swing.ListSelectionModel;
  */
 public class window_monster extends JFrame implements ActionListener{
     private int window_height, window_width;
-    private Connection con;
+    private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
     private JButton bInsert;
     private JTextField insert_name;
-    private JList insert_race, insert_profession, insert_item;
-    private JLabel lName, lRace, lProfession, lItem;
-    private static String[] test_race={"dziekan","piwo","student3.0"};
-    private static String[] test_prof={"inf","air","mcdonald"};
-    private static String[] test_item={"Nothing", "Axe", "Spoon", "Sword", "Banana"};
+    private JList insert_race, insert_item;
+    private JLabel lName, lRace, lItem;
+    private List<String> RaceData = new ArrayList<>();
+    private List<String> ItemData = new ArrayList<>();
     //-------------------------------------------
     
-    private JList list_of_pc;
+    private JList ListOfNames;
     //--------DELETING---------------------------
     private JButton bDelete;
-    private static String[] delete_string={"monster1","monster2","monster3","monster4", "monster1"};
+    private List<String> MonsterData = new ArrayList<>();
+    
     //-------------------------------------------
     
     //--------EDITING----------------------------
     private JButton bUpdate;
     //-------------------------------------------
-    public window_monster(int w, Connection con){
+    public window_monster(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("Monsters");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
 
+        get_data();
         insert_init();
         delete_init();
+    }
+    public void get_data(){
+        try{
+            RaceData = dbConnector.getRaces();
+            ItemData = dbConnector.getItems();
+            MonsterData = dbConnector.getMonsters();
+        }catch(SQLException ex){
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                            "Get_race error",ex);
+        }
     }
     public void delete_init(){
         bDelete = new JButton("Delete");
@@ -71,13 +86,13 @@ public class window_monster extends JFrame implements ActionListener{
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        list_of_pc = new JList(delete_string);
-        list_of_pc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list_of_pc.setLayoutOrientation(VERTICAL);
-        list_of_pc.setVisibleRowCount(1);
-        add(list_of_pc);
+        ListOfNames = new JList(MonsterData.toArray());
+        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListOfNames.setLayoutOrientation(VERTICAL);
+        ListOfNames.setVisibleRowCount(1);
+        add(ListOfNames);
         
-        JScrollPane scroll_pc= new JScrollPane(list_of_pc);
+        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
@@ -97,7 +112,7 @@ public class window_monster extends JFrame implements ActionListener{
         add(insert_name);
         insert_name.addActionListener(this);
          
-        insert_race = new JList(test_race);
+        insert_race = new JList(RaceData.toArray());
         insert_race.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         insert_race.setLayoutOrientation(VERTICAL);
         insert_race.setVisibleRowCount(-1);
@@ -111,38 +126,55 @@ public class window_monster extends JFrame implements ActionListener{
         scroll_race.setBounds(90, 50, 100, 30);
         add(scroll_race);
         
-        insert_profession = new JList(test_prof);
-        insert_profession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_profession.setLayoutOrientation(VERTICAL);
-        insert_profession.setVisibleRowCount(-1);
-        add(insert_profession);
-        
-        lProfession = new JLabel("Profession:"); // add select name from professions;
-        lProfession.setBounds(20, 85, 100, 20);
-        add(lProfession);
-        JScrollPane scroll_profession= new JScrollPane(insert_profession);
-        scroll_profession.setPreferredSize(new Dimension(250, 100));
-        scroll_profession.setBounds(90,85,100,30);
-        add(scroll_profession);
-        
-        insert_item = new JList(test_item);
+        insert_item = new JList(ItemData.toArray());
         insert_item.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         insert_item.setLayoutOrientation(VERTICAL);
         insert_item.setVisibleRowCount(-1);
         add(insert_item);
         
         lItem = new JLabel("Items:");
-        lItem.setBounds(20, 120, 100, 20);
+        lItem.setBounds(20, 85, 100, 20);
         add(lItem);
         JScrollPane scroll_item = new JScrollPane(insert_item);
         scroll_item.setPreferredSize(new Dimension(250,100));
-        scroll_item.setBounds(90, 120, 100, 60);
+        scroll_item.setBounds(90, 85, 100, 60);
         add(scroll_item);
         
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource(); 
+        Object source = e.getSource();
+        if(source == bInsert){
+            if(insert_name.getText().equals("")||insert_race.getSelectedValue()==null){
+                System.out.println("pc brak danych");
+            }
+            else{
+                try{
+                    String item="";
+                    if(insert_item.getSelectedValue()!=null){
+                        item = insert_item.getSelectedValue().toString();
+                    }
+                    else if(insert_item.getSelectedValue().toString().equals("(nothing)")){
+                        item = "";
+                    }
+                   dbConnector.createMonster(insert_name.getText(), item, insert_race.getSelectedValue().toString());
+                }catch(SQLException ex){
+                Logger.getLogger(window_monster.class.getName()).log(Level.SEVERE,
+                                                            "Monster insert error",ex);}
+            }
+        }
+        if(source == bDelete){
+            if(ListOfNames.getSelectedValue() != null){
+                String name = ListOfNames.getSelectedValue().toString();
+                int id = dbConnector.getId(name);
+                System.out.println("Monster deleted "+id);
+                try{
+                    dbConnector.deleteMonster(id);
+                }catch(SQLException ex){
+                    Logger.getLogger(window_monster.class.getName()).log(Level.SEVERE,
+                                                                "Delete monster error",ex);}
+            }
+        }
     }
     
 }

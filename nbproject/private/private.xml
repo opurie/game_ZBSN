@@ -8,12 +8,12 @@
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/window_clan.java</file>
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/gamemode_clan.java</file>
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/window_monster.java</file>
-            <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/window_item.java</file>
+            <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/window_race.java</file>
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/window_profession.java</file>
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/Game_ZBSN.java</file>
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/gamemode_quest.java</file>
             <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/window_pc.java</file>
-            <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/DB_connector.java</file>
+            <file>file:/D:/semestr_5/Zarządzanie%20Bazami%20SQL%20i%20NoSQL/java_lab/game_ZBSN/src/game_zbsn/DBConnector.java</file>
         </group>
     </open-files>
 </project-private>
