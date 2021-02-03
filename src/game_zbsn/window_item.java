@@ -32,7 +32,7 @@ import oracle.jdbc.OracleTypes;
  */
 public class window_item extends JFrame implements ActionListener{
     private int window_height, window_width;
-    private Connection con;
+    private DBConnector dbConnector;
     //--------INSERTING--------------------------
     private JButton bInsert;
     private JTextField insert_name, insert_strength, insert_agility,
@@ -51,9 +51,9 @@ public class window_item extends JFrame implements ActionListener{
     //--------EDITING----------------------------
     private JButton bUpdate;
     //-------------------------------------------
-    public window_item(int w, Connection con){
+    public window_item(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("Items");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -145,32 +145,14 @@ public class window_item extends JFrame implements ActionListener{
         add(scroll_pc);
         }
     public void get_data(){
-        try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_professions}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                profession_data.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
-        }catch(SQLException ex){
+        try {
+            profession_data = dbConnector.getProfessions();
+        } catch(SQLException ex) {
             Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Item get_professions error",ex);
-        }
-        try{
-            CallableStatement stmt = this.con.prepareCall("{? = call get_items}");
-            stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-            stmt.execute();
-            ResultSet result = (ResultSet)stmt.getObject(1);
-            while(result.next()){
-                item_data.add(result.getString(1));
-            }
-            result.close();
-            stmt.close();
-            
-        }catch(SQLException ex){
+        } try {
+            item_data = dbConnector.getItems();
+        } catch(SQLException ex) {
             Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Item get_items error",ex);
             }
@@ -181,13 +163,10 @@ public class window_item extends JFrame implements ActionListener{
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
             String name = list_of_pc.getSelectedValue().toString();
-            try{
-                CallableStatement stmt = this.con.prepareCall("{call delete_item(?)}");
-                stmt.setString(1, name);
-                stmt.execute();
-                stmt.close();
+            try {
+                dbConnector.deleteItem(name);
                 item_data.remove(list_of_pc.getSelectedValue().toString());
-            }catch(SQLException ex){
+            } catch(SQLException ex){
                 Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Delete item error",ex);}
             
@@ -197,21 +176,19 @@ public class window_item extends JFrame implements ActionListener{
                insert_agility.getText().equals("") || insert_intellect.getText().equals("")||
                     insert_profession.getSelectedValue() == null){
                System.out.println("rasa brak danych");
-            }
-            else{
-                try{
-                CallableStatement stmt = this.con.prepareCall("{call create_item(?, ?, ?, ?, ?, ?)}");
-                stmt.setString(1, insert_name.getText());
-                stmt.setInt(2, Integer.parseInt(insert_strength.getText()));
-                stmt.setInt(3, Integer.parseInt(insert_agility.getText()));
-                stmt.setInt(4, Integer.parseInt(insert_intellect.getText()));
-                stmt.setInt(5, Integer.parseInt(insert_weight.getText()));
-                stmt.setString(6, insert_profession.getSelectedValue().toString());
-                stmt.execute();
-                stmt.close();
-                }catch(SQLException | NumberFormatException ex){
+            } else {
+                try {
+                    String name = insert_name.getText();
+                    int strength = Integer.parseInt(insert_strength.getText());
+                    int agility = Integer.parseInt(insert_agility.getText());
+                    int intellect = Integer.parseInt(insert_intellect.getText());
+                    int weight = Integer.parseInt(insert_weight.getText());
+                    String profession = insert_profession.getSelectedValue().toString();
+                    dbConnector.createItem(name, strength, agility, intellect, weight, profession);
+                } catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error item class",ex);}
+                //TODO separate exceptions
             }
         }
     }

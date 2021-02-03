@@ -103,4 +103,38 @@ public class DBConnector {
         stmt.execute();
         stmt.close();
     }
+    
+    public List<String> getItems() throws SQLException {
+        List<String> data = new ArrayList<>();
+        CallableStatement stmt = connection.prepareCall("{? = call get_items}");
+        stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+        stmt.execute();
+        ResultSet result = (ResultSet)stmt.getObject(1);
+        while(result.next()){
+            data.add(result.getString(1));
+        }
+        result.close();
+        stmt.close();
+        return data;
+    }
+    
+    public void deleteItem(String name) throws SQLException {
+        CallableStatement stmt = connection.prepareCall("{call delete_item(?)}");
+        stmt.setString(1, name);
+        stmt.execute();
+        stmt.close();
+    }
+    
+    public void createItem(String name, int strength, int agility, int intellect, 
+            int weight, String profession) throws SQLException {
+        CallableStatement stmt = connection.prepareCall("{call create_item(?, ?, ?, ?, ?, ?)}");
+        stmt.setString(1, name);
+        stmt.setInt(2, strength);
+        stmt.setInt(3, agility);
+        stmt.setInt(4, intellect);
+        stmt.setInt(5, weight);
+        stmt.setString(6, profession);
+        stmt.execute();
+        stmt.close();
+    }
 }

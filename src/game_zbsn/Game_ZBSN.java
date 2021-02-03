@@ -201,7 +201,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                 }
                 else if(create_item.isSelected()){
                     System.out.println("Open item window");
-                    secondary_window = new window_item(create_scale, connection);
+                    secondary_window = new window_item(create_scale, dbConnector);
                 }
                 else if(create_race.isSelected()){
                     System.out.println("Open race window");
