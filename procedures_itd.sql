@@ -25,10 +25,10 @@ begin
     return player_cursor;
 end get_players;
 
-create or replace procedure create_monster(pname in nvarchar2, ptype in nvarchar2, pitem in nvarchar2, prace in nvarchar2) is
+create or replace procedure create_monster(pname in nvarchar2,  pitem in nvarchar2, prace in nvarchar2) is
 begin
-	insert into monsters(monster_id, monster_name, monster_type, owned_item, monster_race) values
-		(monster_seq.nextval, pname, ptype, pitem, prace);
+	insert into monsters(monster_id, monster_name,  owned_item, monster_race) values
+		(monster_seq.nextval, pname, pitem, prace);
 end create_monster;
 
 create or replace procedure delete_monster(pid in number) is
@@ -133,17 +133,44 @@ begin
 	from performances
 	where player_id = pid and quest_name = pname;
 	
-	if buf is null then
-		insert into performances(done, player_id, quest_name) values
-								('N', pid, pname);
-        return 'Quest taken';
-        
-	elsif buf = 'N' then
+    if buf = 'N' then
 		return 'Quest is already taken';
 	elsif buf = 'Y' then
-		return 'Quest is done';
+		return 'Quest is already done';
 	end if;
+    exception
+        when no_data_found then
+        insert into performances(done, player_id, quest_name) values
+                                    ('N', pid, pname);
+        return 'Quest taken';
+        
 end take_the_task;
+
+create or replace function submit_task(pid in number, pname in nvarchar2)
+    return nvarchar2 is
+    buf performances.done%type;
+begin
+    select done
+    into buf
+    from performances
+    where player_id = pid and quest_name like pname;
+    if buf like 'N' then
+        update performances
+        set done = 'Y'
+        where player_id = pid and quest_name like pname;
+        update players p 
+        set p.player_level = p.player_level + (select experience_points
+                                                from quests
+                                                where q_name like pname)
+        where p.player_id = pid;
+        return 'Quest accomplished';
+    else
+        return 'You cannot submit this quest';
+    end if;
+    exception
+        when no_data_found then
+        return 'You cannot submit this quest';
+end submit_task;
 ------------ITEMS, PICK_UP, DROP----------------------------------------------------------------------------------------
 create or replace procedure create_item(pname in nvarchar2, ps in number, pa in number, pin in number, pweight in number,
 										pprof in nvarchar2) is
@@ -168,22 +195,52 @@ begin
     return item_cursor;
 end get_items;
 
-create or replace procedure pick_up(pid in number, pname in nvarchar2)is
+create or replace function pick_up(pid in number, pname in nvarchar2)
+    return nvarchar2 is
 	i items_ownership.number_of%type;
+    eweight number;
+    iweight number;
+    fweight number;
 begin
 	select number_of
 	into i
 	from items_ownership
 	where equipment_id = pid and item_name = pname;
-	
-	if i is null then
-		insert into items_ownership(number_of, equipment_id, item_name) values
-									(1, pid, pname);
-	elsif i>=0 then
-		update items_ownership
-		set number_of = number_of + 1
-		where equipment_id = pid and item_name = pname;
-	end if;
+    
+	select weight
+    into iweight
+    from items
+    where i_name like pname;
+    
+    select capacity_eq
+    into eweight
+    from equipments
+    where owner_id = pid;
+    
+    select sum(o.number_of * (select weight
+                                from items
+                                where o.item_name = i_name))
+    into fweight
+    from items_ownership o
+    where o.equipment_id = pid
+    group by o.equipment_id;
+    if iweight + fweight > eweight then
+        return 'Your equipment will be too heavy, you can not pick that item';
+    else
+        if i is null then
+            insert into items_ownership(number_of, equipment_id, item_name) values
+                                        (1, pid, pname);
+            return 'Item picked';
+        elsif i>=0 then
+            update items_ownership
+            set number_of = number_of + 1
+            where equipment_id = pid and item_name = pname;
+            return 'Item picked';
+        end if;
+    end if;
+    exception
+    when no_data_found then
+    return 'Some problems, check if you marked player and item';
 end pick_up;
 
 create or replace function drop_item(pid in number, pname in nvarchar2) 
@@ -201,33 +258,44 @@ begin
 		where equipment_id = pid and item_name = pname;
         return 'Item dropped';
     else
-		return 'You can not drop item that does not exists';
+		return 'You cannot drop that item';
 	end if;
 end drop_item;
 -----CLANS, JOIN, LEAVE-------------------------------------------------------------------------------------------------
-create or replace procedure create_clan(pname in nvarchar2, founder_id in number, pheadquater in nvarchar2) is
+create or replace function create_clan(pname in nvarchar2, founder_id in number, pheadquater in nvarchar2) 
+    return nvarchar2 is
+    buf membership.founder%type;
 begin
-	insert into clans(clan_name, clan_level, headquater) values
-		(pname, 1, pheadquater);
-	insert into membership(founder, member_id, clan_name) values
-		('Y', founder_id, pname);
+    select m.founder
+    into buf
+    from membership m
+    where m.member_id = founder_id;
+    return  'You cannot create clan if you are already in one';
+    exception
+    when no_data_found then
+        insert into clans(clan_name, clan_level, headquater) values
+            (pname, 1, pheadquater);
+        insert into membership(founder, member_id, clan_name) values
+            ('Y', founder_id, pname);
+        return 'Clan created'; 
+--    when others then
+    
 end create_clan;
 
 create or replace function join_clan(pname in nvarchar2, player_id in number)
-    return boolean is
+    return nvarchar2 is
     cfounder membership.founder%type;
 begin
     select founder
     into cfounder
     from membership
     where member_id = player_id;
-    if cfounder is null then
-        insert into membership(founder, member_id, clan_name)values
+    return  'You cannot join clan if you are already in one';
+    exception
+    when no_data_found then
+    insert into membership(founder, member_id, clan_name)values
             ('N', player_id, pname);
-        return true;
-    else
-        return false;
-    end if;
+        return 'You have joined the clan';
 end join_clan;
 
 create or replace function leave_clan(player_id in number)
@@ -239,9 +307,19 @@ begin
     into cfounder, cname
     from membership
     where member_id = player_id;
-    if cfounder is null then
-        return 'Player was not a clan member';
-    elsif cfounder = 'Y' then
+    if cfounder = 'Y' then
+        delete from clans
+        where clan_name like cname;
+        return 'Clan successfully deleted';
+    else
+        delete from membership
+        where member_id = player_id;
+        return 'Clan member ejected';
+    end if;
+    exception
+    when no_data_found then
+    return 'Player was not a clan member';
+    if cfounder = 'Y' then
         delete from clans
         where clan_name like cname;
         return 'Clan successfully deleted';
@@ -267,3 +345,16 @@ begin
         select clan_name from clans;
     return clan_cursor;
 end get_clans;
+
+create or replace function get_clan_members(pname in nvarchar2)
+    return sys_refcursor
+    is
+    clan_cursor sys_refcursor;
+begin
+    open clan_cursor for
+        select p.player_id || '. '||p.player_name 
+        from players p inner join membership m 
+        on m.member_id = p.player_id;
+    return clan_cursor;
+end get_clan_members;
+
