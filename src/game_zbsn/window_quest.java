@@ -135,7 +135,39 @@ public class window_quest extends JFrame implements ActionListener{
         }
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource(); 
+        JButton button = (JButton) e.getSource();
+        if(button == bInsert) {
+            if(!anyFieldEmpty()) {
+                try {
+                    String name = insert_name.getText();
+                    int exp = Integer.parseInt(insert_exp.getText());
+                    int creator = dbConnector.getId(InsertCreator.getSelectedValue().toString());
+                    dbConnector.createQuest(name, exp, creator);
+                } catch(SQLException ex) {
+                    Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Create quest error",ex);
+                }
+            } else {
+                System.out.println("field empty");
+            }
+        } else if(button == bDelete) {
+            String name = insert_name.getText();
+            if(!name.equals("")) {
+                try {
+                    dbConnector.deleteQuest(name);
+                } catch(SQLException ex) {
+                    Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Delete quest error",ex);
+                }
+            } else {
+                System.out.println("field empty");
+            }
+        }
+    }
+    
+    private boolean anyFieldEmpty() {
+        return insert_name.getText().equals("") || insert_exp.getText().equals("") ||
+                InsertCreator.getSelectedValue() == null;
     }
     
 }
