@@ -254,7 +254,20 @@ public class DBConnector {
         stmt.execute();
         stmt.close();
     }
-    
+    public List<String> getClanMembers(String name)throws SQLException{
+        List<String> data = new ArrayList<>();
+        CallableStatement stmt = connection.prepareCall("{? = call get_clan_members(?)}");
+        stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+        stmt.setString(2, name);
+        stmt.execute();
+        ResultSet result = (ResultSet)stmt.getObject(1);
+        while(result.next()){
+            data.add(result.getString(1));
+        }
+        result.close();
+        stmt.close();
+        return data;
+    }
     public List<String> getClans() throws SQLException {
         List<String> data = new ArrayList<>();
         CallableStatement stmt = connection.prepareCall("{? = call get_clans}");
