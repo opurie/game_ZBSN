@@ -17,10 +17,10 @@ import java.sql.*;
  */
 public class gamemode_pvp extends JFrame implements ActionListener{
     private int window_height,window_width;
-    private Connection con;
-    public gamemode_pvp(int w, Connection con){
+    private DBConnector dbConnector;
+    public gamemode_pvp(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("gamemode pvp");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

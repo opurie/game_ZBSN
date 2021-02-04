@@ -126,6 +126,7 @@ public class window_race extends JFrame implements ActionListener{
                                                             "Get_race error",ex);
         }
     }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -155,6 +156,43 @@ public class window_race extends JFrame implements ActionListener{
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error race class",ex);}
+            }
+        }
+        if(source ==  bUpdate){
+            if(ListOfNames.getSelectedValue() != null){
+                String query = "UPDATE races SET";
+                int i = 0;
+                if(!InsertName.getText().equals("")){
+                    query += " r_name = '" + InsertName.getText()+"'";
+                    i++;}
+                if(!InsertAgility.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " agility = " + InsertAgility.getText();
+                    i++;}
+                if(!InsertStrength.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " strength = " + InsertStrength.getText();
+                    i++;}
+                if(!InsertIntellect.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " intellect = " + InsertIntellect.getText();
+                    i++;}
+                if(i>0){
+                    query += " WHERE r_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    try{
+                        Statement stmt = dbConnector.getConnection().createStatement();
+                        int changes;
+                        changes = stmt.executeUpdate(query);
+                        stmt.close();
+                        System.out.println("Zmodyfikowano "+changes+" krotek.");
+                    }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Update error",ex);
+                    System.out.println(query);}
+                }
+                
             }
         }
     } 

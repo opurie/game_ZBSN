@@ -17,10 +17,10 @@ import java.sql.*;
  */
 public class gamemode_quest extends JFrame implements ActionListener{
     private int window_height,window_width;
-    private Connection con;
-    public gamemode_quest(int w, Connection con){
+    private DBConnector dbConnector;
+    public gamemode_quest(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
-        this.con = con;
+        this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
         setTitle("gamemode quests");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

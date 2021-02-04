@@ -166,19 +166,19 @@ public class Game_ZBSN extends JFrame implements ActionListener {
             //gamemode buttons actions
             if(source == bpvp){
                 window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_pvp(gamemode_scale, connection);
+                SecondaryWindow = new gamemode_pvp(gamemode_scale, dbConnector);
             }
             if(source == bpve){
                 window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_pve(gamemode_scale, connection);
+                SecondaryWindow = new gamemode_pve(gamemode_scale, dbConnector);
             }
             if(source == bClan){
                 window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_clan(gamemode_scale, connection);
+                SecondaryWindow = new gamemode_clan(gamemode_scale, dbConnector);
             }
             if(source == bQuest){
                 window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_quest(gamemode_scale, connection);
+                SecondaryWindow = new gamemode_quest(gamemode_scale, dbConnector);
             }
             //Create/delete button actions
             if(source == bCreate){
