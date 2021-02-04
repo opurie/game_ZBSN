@@ -236,6 +236,20 @@ public class DBConnector {
         stmt.close();
         return data;
     }
+    public List<String> getPlayerQuests(int id)throws SQLException{
+        List<String> data = new ArrayList<>();
+        CallableStatement stmt = connection.prepareCall("{? = call get_player_quests(?)}");
+        stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+        stmt.setInt(2, id);
+        stmt.execute();
+        ResultSet result = (ResultSet)stmt.getObject(1);
+        while(result.next()){
+            data.add(result.getString(1));
+        }
+        result.close();
+        stmt.close();
+        return data;
+    }
     
     public String TakeTheTask(int id, String name)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{? = call take_the_task(?, ?)}");

@@ -65,15 +65,11 @@ public class gamemode_quest extends JFrame implements ActionListener{
     }
     public void initButtons(){
         lEXP = new JLabel("Experience:");
-        lEXP.setBounds(280, 50, 200, 20);
+        lEXP.setBounds(300, 50, 200, 20);
         add(lEXP);
         lCreator = new JLabel("Client:");
-        lCreator.setBounds(280, 70, 200, 20);
+        lCreator.setBounds(300, 70, 200, 20);
         add(lCreator);
-        lDone = new JLabel("Submited:");
-        lDone.setBounds(280, 90, 200, 20);
-        add(lDone);
-        
         
         bTakeTheTask = new JButton("Take task");
         bTakeTheTask.setBounds(310, 120, 100, 30);
@@ -86,7 +82,7 @@ public class gamemode_quest extends JFrame implements ActionListener{
         add(bSubmitTask);
     }
     public void init(){
-        lPlayerQuest = new JLabel("Quests made by picked player");
+        lPlayerQuest = new JLabel("Taken quests");
         lPlayerQuest.setBounds(30, 205, 200, 20);
         add(lPlayerQuest);
         
@@ -106,6 +102,15 @@ public class gamemode_quest extends JFrame implements ActionListener{
         listPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listPlayers.setLayoutOrientation(VERTICAL);
         listPlayers.setVisibleRowCount(1);
+        listPlayers.addListSelectionListener((e)->{
+            JList list =(JList) e.getSource();
+            String selected = list.getSelectedValue().toString();
+            int id = dbConnector.getId(selected);
+            try{
+                PlayerQuestData = dbConnector.getPlayerQuests(id);
+            }catch(SQLException ex){}
+            listPlayerQuest.setListData(PlayerQuestData.toArray());
+        });
         add(listPlayers);
         scrollPlayer = new JScrollPane(listPlayers);
         scrollPlayer.setPreferredSize(new Dimension(250,100));
@@ -136,7 +141,6 @@ public class gamemode_quest extends JFrame implements ActionListener{
                 stmt.close();
                 lEXP.setText("Experience: "+ Float.toString(experience));
                 lCreator.setText("Client: "+ Integer.toString(client));
-                lDone.setText("Submited: "+ done);
             }catch(SQLException ex){}
         });
         add(listQuests);
