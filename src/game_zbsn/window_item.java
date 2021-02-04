@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -137,6 +138,34 @@ public class window_item extends JFrame implements ActionListener{
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
+        ListOfNames.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            String selected = list.getSelectedValue().toString();
+            try {
+                PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                        "select * from items where i_name = ?");
+                statement.setString(1, selected);
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                int s = rs.getInt("strength");
+                int a = rs.getInt("agility");
+                int in = rs.getInt("intellect");
+                int w = rs.getInt("weight");
+                String p = rs.getString("profession");
+                InsertName.setText(selected);
+                InsertAgility.setText(a + "");
+                InsertStrength.setText(s + "");
+                InsertIntellect.setText(in + "");
+                InsertWeight.setText(w + "");
+                for(int i = 0; i < InsertProfession.getModel().getSize(); ++i) {
+                    if(InsertProfession.getModel().getElementAt(i).equals(p)) {
+                        InsertProfession.setSelectedIndex(i);
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+            }
+            });
         add(ListOfNames);
         
         JScrollPane scroll_pc= new JScrollPane(ListOfNames);
@@ -158,7 +187,7 @@ public class window_item extends JFrame implements ActionListener{
         Object source = e.getSource();
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            if(ListOfNames.getSelectedValue()!=null){
+            if(ListOfNames.getSelectedValue() != null){
             try {
                     dbConnector.deleteItem(ListOfNames.getSelectedValue().toString());
             } catch(SQLException ex){
@@ -168,9 +197,7 @@ public class window_item extends JFrame implements ActionListener{
             
         }
         if(source == bInsert){
-            if(InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
-               InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")||
-                    InsertProfession.getSelectedValue() == null){
+            if(anyFieldEmpty()){
                System.out.println("rasa brak danych");
             } else {
                 try {
@@ -188,5 +215,11 @@ public class window_item extends JFrame implements ActionListener{
             }
         }
     }
-    
+        
+    private boolean anyFieldEmpty() {
+        return (InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
+            InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")||
+            InsertProfession.getSelectedValue() == null);
+        
+    }
 }
