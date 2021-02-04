@@ -59,14 +59,17 @@ public class window_clan extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
         
-        get_data();
         insert_init();
         delete_init();
+        get_data();
     }
     public void get_data(){
         try {
             CreatorData = dbConnector.getPlayers();
             ClanData = dbConnector.getClans();
+            
+            ListOfNames.setListData(ClanData.toArray());
+            insert_creator.setListData(CreatorData.toArray());
         } catch(SQLException ex) {
             Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
                                                             "Clan get data error",ex);
@@ -161,6 +164,7 @@ public class window_clan extends JFrame implements ActionListener{
                                                                 "Delete clan error",ex);}
             }
         }
+        get_data();
     }
     
 }

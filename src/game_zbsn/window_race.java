@@ -57,9 +57,9 @@ public class window_race extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
 
-        get_data();
         insert_init();
         delete_init();
+        get_data();
     }
     public void insert_init(){
         bInsert = new JButton("Create");
@@ -141,6 +141,7 @@ public class window_race extends JFrame implements ActionListener{
     public void get_data(){
         try{
             RaceData = dbConnector.getRaces();
+            ListOfNames.setListData(RaceData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Get_race error",ex);
@@ -156,6 +157,7 @@ public class window_race extends JFrame implements ActionListener{
                 String name = ListOfNames.getSelectedValue().toString();
                 try{
                     dbConnector.deleteRace(name);
+                    
                 }catch(SQLException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Delete race error",ex);}
@@ -167,15 +169,18 @@ public class window_race extends JFrame implements ActionListener{
                System.out.println("rasa brak danych");
             }
             else{
+                
                 try{
                     String name = InsertName.getText();
                     int strength = Integer.parseInt(InsertStrength.getText());
                     int agility = Integer.parseInt(InsertAgility.getText());
                     int intellect = Integer.parseInt(InsertIntellect.getText());
                     dbConnector.createRace(name, strength, agility, intellect);
+                    
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error race class",ex);}
+
             }
         }
         if(source ==  bUpdate){
@@ -207,6 +212,7 @@ public class window_race extends JFrame implements ActionListener{
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
+                        
                         System.out.println("Zmodyfikowano "+changes+" krotek.");
                     }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Update error",ex);
@@ -215,5 +221,6 @@ public class window_race extends JFrame implements ActionListener{
                 
             }
         }
+        get_data();
     } 
 }

@@ -60,10 +60,10 @@ public class window_item extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
-        
-        get_data();
+
         insert_init();
         delete_init();
+        get_data();
     }
     public void insert_init(){
         bInsert = new JButton("Create");
@@ -177,6 +177,9 @@ public class window_item extends JFrame implements ActionListener{
         try {
             ProfessionData = dbConnector.getProfessions();
             ItemData = dbConnector.getItems();
+            
+            ListOfNames.setListData(ItemData.toArray());
+            InsertProfession.setListData(ProfessionData.toArray());
         } catch(SQLException ex) {
             Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Item get data error",ex);
@@ -214,6 +217,7 @@ public class window_item extends JFrame implements ActionListener{
                 //TODO separate exceptions
             }
         }
+        get_data();
     }
         
     private boolean anyFieldEmpty() {

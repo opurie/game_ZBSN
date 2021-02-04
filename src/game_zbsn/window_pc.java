@@ -63,15 +63,20 @@ public class window_pc extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
         
-        get_data();
+        
         insert_init();
         delete_init();
+        get_data();
         }
     public void get_data(){
         try{
             ProfessionData = dbConnector.getProfessions();
             RaceData = dbConnector.getRaces();
             PlayerData = dbConnector.getPlayers();
+            
+            ListOfNames.setListData(PlayerData.toArray());
+            insert_race.setListData(RaceData.toArray());
+            insert_profession.setListData(ProfessionData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
                                                             "get_data() error",ex);
@@ -100,12 +105,15 @@ public class window_pc extends JFrame implements ActionListener{
                 int id = dbConnector.getId(name);
                 System.out.println("Usunieto pc "+id);
                 try{
+                    dbConnector.leaveClan(id);
                     dbConnector.deletePlayer(id);
+
                 }catch(SQLException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                                 "Delete profession error",ex);}
             }
         }
+        get_data();
     }
     public void delete_init(){
         bDelete = new JButton("Delete");

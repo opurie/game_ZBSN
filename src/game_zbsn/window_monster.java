@@ -61,15 +61,19 @@ public class window_monster extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
 
-        get_data();
         insert_init();
         delete_init();
+        get_data();
     }
     public void get_data(){
         try{
             RaceData = dbConnector.getRaces();
             ItemData = dbConnector.getItems();
             MonsterData = dbConnector.getMonsters();
+            
+            ListOfNames.setListData(MonsterData.toArray());
+            insert_race.setListData(RaceData.toArray());
+            insert_item.setListData(ItemData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Get_race error",ex);
@@ -168,6 +172,7 @@ public class window_monster extends JFrame implements ActionListener{
                                                                 "Delete monster error",ex);}
             }
         }
+        get_data();
     }
     
 }

@@ -59,9 +59,10 @@ public class window_profession extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
 
-        get_data();
+        
         insert_init();
         delete_init();
+        get_data();
     }
     
     
@@ -107,6 +108,7 @@ public class window_profession extends JFrame implements ActionListener{
     public void get_data(){
         try{
             ProfessionData = dbConnector.getProfessions();
+            ListOfNames.setListData(ProfessionData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Get_professions error",ex);
@@ -138,5 +140,6 @@ public class window_profession extends JFrame implements ActionListener{
                                                             "Insert profession error",ex);}
             }
         }
+        get_data();
     }
 }

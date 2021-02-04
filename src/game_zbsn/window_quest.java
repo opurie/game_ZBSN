@@ -60,14 +60,18 @@ public class window_quest extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
 
-        get_data();
+
         insert_init();
         delete_init();
+        get_data();
     }
     public void get_data(){
         try{
             QuestData = dbConnector.getQuests();
             CreatorData = dbConnector.getPlayers();
+            
+            InsertCreator.setListData(CreatorData.toArray());
+            ListOfNames.setListData(QuestData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_quest.class.getName()).log(Level.SEVERE,
                                                             "get_data() error",ex);
@@ -164,6 +168,7 @@ public class window_quest extends JFrame implements ActionListener{
                 System.out.println("field empty");
             }
         }
+        get_data();
     }
     
     private boolean anyFieldEmpty() {
