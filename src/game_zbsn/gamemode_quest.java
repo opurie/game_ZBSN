@@ -5,11 +5,22 @@
  */
 package game_zbsn;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import static javax.swing.JList.VERTICAL;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -18,6 +29,17 @@ import java.sql.*;
 public class gamemode_quest extends JFrame implements ActionListener{
     private int window_height,window_width;
     private DBConnector dbConnector;
+    
+    private List<String> PlayerData = new ArrayList<>();
+    private List<String> QuestData = new ArrayList<>();
+    private List<String> PlayerQuestData = new ArrayList<>();
+    
+    private JLabel lPlayers, lQuests, lPlayerQuest, lEXP, lCreator, lDone;
+    private JButton bTakeTheTask, bSubmitTask;
+    private JList listQuests = new JList(QuestData.toArray()), listPlayers= new JList(PlayerData.toArray()), 
+                                        listPlayerQuest = new JList(PlayerQuestData.toArray());
+    private JScrollPane scrollQuest, scrollPlayer, scrollPlayerQuest;
+    
     public gamemode_quest(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
         this.dbConnector = dbConnector;
@@ -26,10 +48,140 @@ public class gamemode_quest extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
+        
+        initButtons();
+        init();
+        getData();
     }
+    public void getData(){
+        try{
+            PlayerData = dbConnector.getPlayers();
+            QuestData = dbConnector.getQuests();
+            
+            listQuests.setListData(QuestData.toArray());
+            listPlayers.setListData(PlayerData.toArray());
+        }catch(SQLException ex){
+        System.out.println("getData error");}
+    }
+    public void initButtons(){
+        lEXP = new JLabel("Experience:");
+        lEXP.setBounds(280, 50, 200, 20);
+        add(lEXP);
+        lCreator = new JLabel("Client:");
+        lCreator.setBounds(280, 70, 200, 20);
+        add(lCreator);
+        lDone = new JLabel("Submited:");
+        lDone.setBounds(280, 90, 200, 20);
+        add(lDone);
+        
+        
+        bTakeTheTask = new JButton("Take task");
+        bTakeTheTask.setBounds(310, 120, 100, 30);
+        bTakeTheTask.addActionListener(this);
+        add(bTakeTheTask);
+    
+        bSubmitTask = new JButton("Submit task");
+        bSubmitTask.setBounds(310, 170, 100, 30);
+        bSubmitTask.addActionListener(this);
+        add(bSubmitTask);
+    }
+    public void init(){
+        lPlayerQuest = new JLabel("Quests made by picked player");
+        lPlayerQuest.setBounds(30, 205, 200, 20);
+        add(lPlayerQuest);
+        
+        listPlayerQuest.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listPlayerQuest.setLayoutOrientation(VERTICAL);
+        listPlayerQuest.setVisibleRowCount(1);
+        add(listPlayerQuest);
+        scrollPlayerQuest = new JScrollPane(listPlayerQuest);
+        scrollPlayerQuest.setPreferredSize(new Dimension(250,100));
+        scrollPlayerQuest.setBounds(30, 225, 250, 200);
+        add(scrollPlayerQuest);
+        
+        lPlayers = new JLabel("All players");
+        lPlayers.setBounds(30, 30, 100, 20);
+        add(lPlayers);
+        
+        listPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listPlayers.setLayoutOrientation(VERTICAL);
+        listPlayers.setVisibleRowCount(1);
+        add(listPlayers);
+        scrollPlayer = new JScrollPane(listPlayers);
+        scrollPlayer.setPreferredSize(new Dimension(250,100));
+        scrollPlayer.setBounds(30, 55, 100, 150);
+        add(scrollPlayer);
+        
+        lQuests = new JLabel("All quests");
+        lQuests.setBounds(140, 30, 100, 20);
+        add(lQuests);
+        
+        listQuests.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listQuests.setLayoutOrientation(VERTICAL);
+        listQuests.setVisibleRowCount(1);
+        listQuests.addListSelectionListener((e)-> {
+            JList list = (JList) e.getSource();
+            String selected = list.getSelectedValue().toString();
+            try{
+                float experience=0;
+                int client=0;
+                String done="";
+                Statement stmt = dbConnector.getConnection().createStatement();
+                ResultSet rs = stmt.executeQuery("Select creator_id, experience_points from quests where q_name like '"+selected+"'");
+                while(rs.next()){
+                    client = rs.getInt("creator_id");
+                    experience = rs.getFloat("experience_points");
+                }
+                rs.close();
+                stmt.close();
+                lEXP.setText("Experience: "+ Float.toString(experience));
+                lCreator.setText("Client: "+ Integer.toString(client));
+                lDone.setText("Submited: "+ done);
+            }catch(SQLException ex){}
+        });
+        add(listQuests);
+        scrollQuest = new JScrollPane(listQuests);
+        scrollQuest.setPreferredSize(new Dimension(250,100));
+        scrollQuest.setBounds(140, 55, 140, 150);
+        add(scrollQuest);
+        
+       
+        
+    
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object source = e.getSource();
+        if(source == bTakeTheTask){
+            String result="";
+            if(listPlayers.getSelectedValue()==null || listQuests.getSelectedValue()==null){
+                result = "missing data";
+            }
+            else{
+                try{
+                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
+                    String name = listQuests.getSelectedValue().toString();
+                    result = dbConnector.TakeTheTask(id, name);
+                }catch(SQLException ex){}
+            }
+            System.out.println(result);
+        }
+        if(source == bSubmitTask){
+            String result="";
+            if(listPlayers.getSelectedValue()==null || listQuests.getSelectedValue()==null){
+                result = "missing data";
+            }
+            else{
+                try{
+                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
+                    String name = listQuests.getSelectedValue().toString();
+                    result = dbConnector.SubmitTask(id, name);
+                }catch(SQLException ex){}
+            }
+            
+            System.out.println(result);
+        }
     }
     
 }

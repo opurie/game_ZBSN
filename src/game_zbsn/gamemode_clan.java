@@ -32,15 +32,17 @@ public class gamemode_clan extends JFrame implements ActionListener{
     private int window_height,window_width;
     private DBConnector dbConnector;
         
-    private JLabel lClanMembers, lClans, lPlayers, lClanName;
-    private JButton bLeaveClan, bJoinClan;
-    private JList listClanMembers = new JList(), listClans, listPlayers;
-    private JScrollPane scrollClans, scrollPlayers, scrollClanMembers;
-    
     private List<String> ClanMembersData = new ArrayList<>();
     private List<String> ClanData = new ArrayList<>();
     private List<String> PlayerData = new ArrayList<>();
 
+    private JLabel lClanMembers, lClans, lPlayers, lClanName;
+    private JButton bLeaveClan, bJoinClan;
+    private JList listClanMembers = new JList(), listClans = new JList(ClanData.toArray()), 
+                            listPlayers = new JList(PlayerData.toArray());
+    private JScrollPane scrollClans, scrollPlayers, scrollClanMembers;
+    
+    
     public gamemode_clan(int w, DBConnector dbConnector){
         this.window_height = w; this.window_width = w;
         this.dbConnector = dbConnector;
@@ -50,14 +52,19 @@ public class gamemode_clan extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
         
-        getData();
+        
         testInit();
+        initButtons();
         Updateable();
+        getData();
     }
     public void getData(){
         try{
             ClanData = dbConnector.getClans();
             PlayerData = dbConnector.getPlayers();
+            
+            listClans.setListData(ClanData.toArray());
+            listPlayers.setListData(PlayerData.toArray());
         }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                 "get data error",ex);}
     }
@@ -69,8 +76,20 @@ public class gamemode_clan extends JFrame implements ActionListener{
         add(listClanMembers);
         scrollClanMembers = new JScrollPane(listClanMembers);
         scrollClanMembers.setPreferredSize(new Dimension(250, 100));
-        scrollClanMembers.setBounds(30, 240, 100, 150);
+        scrollClanMembers.setBounds(30, 240, 150, 150);
         add(scrollClanMembers);
+        
+    }
+    public void initButtons(){
+        bJoinClan = new JButton("Join clan");
+        bJoinClan.setBounds(310, 100, 100, 30);
+        bJoinClan.addActionListener(this);
+        add(bJoinClan);
+        
+        bLeaveClan = new JButton("Leave clan");
+        bLeaveClan.setBounds(310, 150, 100, 30);
+        bLeaveClan.addActionListener(this);
+        add(bLeaveClan);
     }
     public void testInit(){
         lClanMembers = new JLabel("Members of");
@@ -79,7 +98,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
         lCM.setBounds(30, 220, 100, 20);
         add(lClanMembers); add(lCM);
         
-        listClans = new JList(ClanData.toArray());
+        
             listClans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             listClans.setLayoutOrientation(VERTICAL);
             listClans.setVisibleRowCount(1);
@@ -105,12 +124,12 @@ public class gamemode_clan extends JFrame implements ActionListener{
         scrollClans.setBounds(30, 55, 100, 150);
         add(scrollClans);
         
-        lClanName = new JLabel("Player is not a member of any Clan");
+        lClanName = new JLabel("");
         lClanName.setForeground(Color.BLACK);
         lClanName.setBounds(250, 55, 200, 20);
         add(lClanName);
         
-        listPlayers = new JList(PlayerData.toArray());
+        
         listPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listPlayers.setLayoutOrientation(VERTICAL);
         listPlayers.setVisibleRowCount(1);
@@ -137,7 +156,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 rs.close();
                 stmt.close();
             }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE, "playerlist", ex);
-            lClanName.setText("Player is not a member of any Clan");}
+            lClanName.setText(list.getSelectedValue().toString()+" - without a clan");}
         
         
         });
@@ -167,21 +186,39 @@ public class gamemode_clan extends JFrame implements ActionListener{
         }
         return result;
     }
-    private void ClanListListener(ListSelectionEvent e){
-        if(!listClans.getValueIsAdjusting()){
-            try{
-            ClanMembersData = dbConnector.getClanMembers(listClans.getSelectedValue().toString());}
-            catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
-                                                                "listener listClans error",ex);}
-            Updateable();
-            System.out.println("updatee");
-        }
-    }
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(source == bJoinClan){
+            String result;
+            if(listPlayers.getSelectedValue()==null ||listClans.getSelectedValue()==null){
+                System.out.println("Join clan missing data");
+            }
+            else{
+                try{
+                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
+                    String name = listClans.getSelectedValue().toString();
+                    result = dbConnector.joinClan(name, id);
+                    System.out.println(result);
+                }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
+                                                                "Join clan error",ex);}
+            }
+        
+        }
+        if(source == bLeaveClan){
+            String result;
+            if(listClanMembers.getSelectedValue()==null)
+                System.out.println("Leave clan missing data");
+            else{
+                try{
+                    result = dbConnector.leaveClan(dbConnector.getId( listClanMembers.getSelectedValue().toString()));
+                    System.out.println(result);
+                }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
+                                                                "Leave clan error",ex);}
+            }
+        
+        }
+        getData();
     }
     
 }

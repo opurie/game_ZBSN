@@ -119,7 +119,7 @@ public class window_item extends JFrame implements ActionListener{
         add(lProfession);
         JScrollPane scroll_profession= new JScrollPane(InsertProfession);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
-        scroll_profession.setBounds(90,100,100,30);
+        scroll_profession.setBounds(90,100,100,60);
         add(scroll_profession);
         
     }

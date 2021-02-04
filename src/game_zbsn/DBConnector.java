@@ -236,6 +236,28 @@ public class DBConnector {
         stmt.close();
         return data;
     }
+    
+    public String TakeTheTask(int id, String name)throws SQLException{
+        CallableStatement stmt = connection.prepareCall("{? = call take_the_task(?, ?)}");
+        stmt.registerOutParameter(1, Types.VARCHAR);
+        stmt.setInt(2, id);
+        stmt.setString(3, name);
+        stmt.execute();
+        String result = stmt.getString(1);
+        stmt.close();
+        return result;
+    }
+    
+    public String SubmitTask(int id, String name)throws SQLException{
+        CallableStatement stmt = connection.prepareCall("{? = call submit_task(?, ?)}");
+        stmt.registerOutParameter(1, Types.VARCHAR);
+        stmt.setInt(2, id);
+        stmt.setString(3, name);
+        stmt.execute();
+        String result = stmt.getString(1);
+        stmt.close();
+        return result;
+    }
     public String createClan(String name, int id, String headquater)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{? = call create_clan(?, ?, ?)}");
         stmt.registerOutParameter(1, Types.VARCHAR);

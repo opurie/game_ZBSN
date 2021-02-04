@@ -111,7 +111,7 @@ public class window_clan extends JFrame implements ActionListener{
         add(lCreator);
         JScrollPane scroll_creator = new JScrollPane(insert_creator);
         scroll_creator.setPreferredSize(new Dimension(250, 100));
-        scroll_creator.setBounds(90, 75, 100, 50);
+        scroll_creator.setBounds(90, 75, 100, 60);
         add(scroll_creator);
     }
     public void delete_init(){

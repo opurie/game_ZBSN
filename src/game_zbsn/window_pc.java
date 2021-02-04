@@ -163,7 +163,7 @@ public class window_pc extends JFrame implements ActionListener{
         add(lRace);
         JScrollPane scroll_race= new JScrollPane(insert_race);
         scroll_race.setPreferredSize(new Dimension(250, 100));
-        scroll_race.setBounds(90, 50, 100, 30);
+        scroll_race.setBounds(90, 50, 100, 60);
         add(scroll_race);
         
         insert_profession = new JList(ProfessionData.toArray());
@@ -173,11 +173,11 @@ public class window_pc extends JFrame implements ActionListener{
         add(insert_profession);
         
         lProfession = new JLabel("Profession:"); // add select name from professions;
-        lProfession.setBounds(20, 85, 100, 20);
+        lProfession.setBounds(20, 115, 100, 20);
         add(lProfession);
         JScrollPane scroll_profession= new JScrollPane(insert_profession);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
-        scroll_profession.setBounds(90,85,100,30);
+        scroll_profession.setBounds(90,115,100,60);
         add(scroll_profession);
     }
 }

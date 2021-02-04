@@ -127,7 +127,7 @@ public class window_monster extends JFrame implements ActionListener{
         add(lRace);
         JScrollPane scroll_race= new JScrollPane(insert_race);
         scroll_race.setPreferredSize(new Dimension(250, 100));
-        scroll_race.setBounds(90, 50, 100, 30);
+        scroll_race.setBounds(90, 50, 100, 60);
         add(scroll_race);
         
         insert_item = new JList(ItemData.toArray());
@@ -137,11 +137,11 @@ public class window_monster extends JFrame implements ActionListener{
         add(insert_item);
         
         lItem = new JLabel("Items:");
-        lItem.setBounds(20, 85, 100, 20);
+        lItem.setBounds(20, 115, 100, 20);
         add(lItem);
         JScrollPane scroll_item = new JScrollPane(insert_item);
         scroll_item.setPreferredSize(new Dimension(250,100));
-        scroll_item.setBounds(90, 85, 100, 60);
+        scroll_item.setBounds(90, 115, 100, 60);
         add(scroll_item);
         
     }
