@@ -35,8 +35,8 @@ public class window_monster extends JFrame implements ActionListener{
     
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name;
-    private JList insert_race, insert_item;
+    private JTextField InsertName;
+    private JList InsertRace, InsertItem;
     private JLabel lName, lRace, lItem;
     private List<String> RaceData = new ArrayList<>();
     private List<String> ItemData = new ArrayList<>();
@@ -72,8 +72,8 @@ public class window_monster extends JFrame implements ActionListener{
             MonsterData = dbConnector.getMonsters();
             
             ListOfNames.setListData(MonsterData.toArray());
-            insert_race.setListData(RaceData.toArray());
-            insert_item.setListData(ItemData.toArray());
+            InsertRace.setListData(RaceData.toArray());
+            InsertItem.setListData(ItemData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Get_race error",ex);
@@ -94,6 +94,13 @@ public class window_monster extends JFrame implements ActionListener{
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
+        ListOfNames.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            if(list.getSelectedValue() != null) {
+                String selected = list.getSelectedValue().toString();
+                displayMonster(dbConnector.getId(selected));
+            }
+            });
         add(ListOfNames);
         
         JScrollPane scroll_pc= new JScrollPane(ListOfNames);
@@ -111,35 +118,35 @@ public class window_monster extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
          
-        insert_race = new JList(RaceData.toArray());
-        insert_race.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_race.setLayoutOrientation(VERTICAL);
-        insert_race.setVisibleRowCount(-1);
-        add(insert_race);
+        InsertRace = new JList(RaceData.toArray());
+        InsertRace.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        InsertRace.setLayoutOrientation(VERTICAL);
+        InsertRace.setVisibleRowCount(-1);
+        add(InsertRace);
         
         lRace = new JLabel("Race:");      // add select name from races;
         lRace.setBounds(20, 50, 50, 20);
         add(lRace);
-        JScrollPane scroll_race= new JScrollPane(insert_race);
+        JScrollPane scroll_race= new JScrollPane(InsertRace);
         scroll_race.setPreferredSize(new Dimension(250, 100));
         scroll_race.setBounds(90, 50, 100, 60);
         add(scroll_race);
         
-        insert_item = new JList(ItemData.toArray());
-        insert_item.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_item.setLayoutOrientation(VERTICAL);
-        insert_item.setVisibleRowCount(-1);
-        add(insert_item);
+        InsertItem = new JList(ItemData.toArray());
+        InsertItem.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        InsertItem.setLayoutOrientation(VERTICAL);
+        InsertItem.setVisibleRowCount(-1);
+        add(InsertItem);
         
         lItem = new JLabel("Items:");
         lItem.setBounds(20, 115, 100, 20);
         add(lItem);
-        JScrollPane scroll_item = new JScrollPane(insert_item);
+        JScrollPane scroll_item = new JScrollPane(InsertItem);
         scroll_item.setPreferredSize(new Dimension(250,100));
         scroll_item.setBounds(90, 115, 100, 60);
         add(scroll_item);
@@ -149,12 +156,12 @@ public class window_monster extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if(source == bInsert){
-            if(insert_name.getText().equals("")||insert_race.getSelectedValue()==null||insert_item.getSelectedValue()==null){
+            if(InsertName.getText().equals("")||InsertRace.getSelectedValue()==null||InsertItem.getSelectedValue()==null){
                 System.out.println("pc brak danych");
             }
             else{
                 try{
-                   dbConnector.createMonster(insert_name.getText(), insert_item.getSelectedValue().toString(), insert_race.getSelectedValue().toString());
+                   dbConnector.createMonster(InsertName.getText(), InsertItem.getSelectedValue().toString(), InsertRace.getSelectedValue().toString());
                 }catch(SQLException ex){
                 Logger.getLogger(window_monster.class.getName()).log(Level.SEVERE,
                                                             "Monster insert error",ex);}
@@ -173,6 +180,39 @@ public class window_monster extends JFrame implements ActionListener{
             }
         }
         get_data();
+    }
+    
+    private void displayMonster(int id) {
+        try {
+            PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                    "select * from monsters where monster_id = ?");
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            
+            String monsterName = rs.getString("monster_name");
+            String race = rs.getString("monster_race");
+            String item = rs.getString("owned_item");
+            
+            InsertName.setText(monsterName);
+            
+            for(int i = 0; i < InsertRace.getModel().getSize(); ++i) {
+                String s = InsertRace.getModel().getElementAt(i).toString();
+                if(s.equals(race)) {
+                    InsertRace.setSelectedIndex(i);
+                }
+            }
+            
+            for(int i = 0; i < InsertItem.getModel().getSize(); ++i) {
+                String s = InsertItem.getModel().getElementAt(i).toString();
+                if(s.equals(item)) {
+                    InsertItem.setSelectedIndex(i);
+                }
+            }
+            
+        } catch(SQLException ex) {
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+        }
     }
     
 }

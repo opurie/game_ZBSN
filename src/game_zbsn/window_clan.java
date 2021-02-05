@@ -35,8 +35,8 @@ public class window_clan extends JFrame implements ActionListener{
     
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name, insert_hq;
-    private JList insert_creator;
+    private JTextField InsertName, InsertHQ;
+    private JList InsertCreator;
     private JLabel lName, lCreator, lHq;
     private List<String> CreatorData = new ArrayList<>();
     //-------------------------------------------
@@ -65,11 +65,15 @@ public class window_clan extends JFrame implements ActionListener{
     }
     public void get_data(){
         try {
+            InsertName.setText("");
+            InsertHQ.setText("");
+            InsertCreator.clearSelection();
+            
             CreatorData = dbConnector.getPlayers();
             ClanData = dbConnector.getClans();
             
             ListOfNames.setListData(ClanData.toArray());
-            insert_creator.setListData(CreatorData.toArray());
+            InsertCreator.setListData(CreatorData.toArray());
         } catch(SQLException ex) {
             Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
                                                             "Clan get data error",ex);
@@ -85,31 +89,31 @@ public class window_clan extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
         
         
         lHq = new JLabel("Headquater:");
         lHq.setBounds(20, 50, 100, 20);
         add(lHq);
         
-        insert_hq = new JTextField();
-        insert_hq.setBounds(90, 50, 100, 20);
-        insert_hq.addActionListener(this);
-        add(insert_hq);
+        InsertHQ = new JTextField();
+        InsertHQ.setBounds(90, 50, 100, 20);
+        InsertHQ.addActionListener(this);
+        add(InsertHQ);
         
-        insert_creator = new JList(CreatorData.toArray());
-        insert_creator.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_creator.setLayoutOrientation(VERTICAL);
-        insert_creator.setVisibleRowCount(-1);
-        add(insert_creator);
+        InsertCreator = new JList(CreatorData.toArray());
+        InsertCreator.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        InsertCreator.setLayoutOrientation(VERTICAL);
+        InsertCreator.setVisibleRowCount(-1);
+        add(InsertCreator);
         
         lCreator = new JLabel("Creator:");
         lCreator.setBounds(20, 75, 100, 20);
         add(lCreator);
-        JScrollPane scroll_creator = new JScrollPane(insert_creator);
+        JScrollPane scroll_creator = new JScrollPane(InsertCreator);
         scroll_creator.setPreferredSize(new Dimension(250, 100));
         scroll_creator.setBounds(90, 75, 100, 60);
         add(scroll_creator);
@@ -129,6 +133,13 @@ public class window_clan extends JFrame implements ActionListener{
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
+        ListOfNames.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            if(list.getSelectedValue() != null) {
+                String selected = list.getSelectedValue().toString();
+                displayClan(selected);
+            }
+        });
         add(ListOfNames);
         
         JScrollPane scroll_pc= new JScrollPane(ListOfNames);
@@ -141,13 +152,13 @@ public class window_clan extends JFrame implements ActionListener{
         Object source = e.getSource();
         if(source == bInsert){
             String result;
-            if(insert_name.getText().equals("")||insert_hq.getText().equals("") ||insert_creator.getSelectedValue()==null){
+            if(InsertName.getText().equals("")||InsertHQ.getText().equals("") ||InsertCreator.getSelectedValue()==null){
                 System.out.println("Clan brak danych");
             }
             else{
                 try{
-                    int id = dbConnector.getId(insert_creator.getSelectedValue().toString());
-                   result = dbConnector.createClan(insert_name.getText(), id, insert_hq.getText());
+                    int id = dbConnector.getId(InsertCreator.getSelectedValue().toString());
+                   result = dbConnector.createClan(InsertName.getText(), id, InsertHQ.getText());
                    System.out.println(result);
                 }catch(SQLException ex){
                 Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
@@ -167,4 +178,32 @@ public class window_clan extends JFrame implements ActionListener{
         get_data();
     }
     
+    private void displayClan(String name) {
+        try {
+            PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                        "select c.clan_name as name, c.headquater as hq, m.member_id as id "
+                                + "from clans c join membership m on c.clan_name = m.clan_name "
+                                + "where c.clan_name = ? and m.founder = \'Y\'");
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            
+            String clanName = rs.getString("name");
+            String hq = rs.getString("hq");
+            int id = rs.getInt("id");
+            
+            InsertName.setText(clanName);
+            InsertHQ.setText(hq);
+            
+            for(int i = 0; i < InsertCreator.getModel().getSize(); ++i) {
+                String s = InsertCreator.getModel().getElementAt(i).toString();
+                if(dbConnector.getId(s) == id) {
+                    InsertCreator.setSelectedIndex(i);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+        }
+     }
+     
 }

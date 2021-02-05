@@ -35,7 +35,7 @@ public class window_quest extends JFrame implements ActionListener{
     
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name, insert_exp;
+    private JTextField InsertName, InsertExp;
     private JList InsertCreator;
     private JLabel lName, lExp, lCreator;
     private List<String> CreatorData = new ArrayList<>();
@@ -67,6 +67,9 @@ public class window_quest extends JFrame implements ActionListener{
     }
     public void get_data(){
         try{
+            InsertName.setText("");
+            InsertExp.setText("");
+            
             QuestData = dbConnector.getQuests();
             CreatorData = dbConnector.getPlayers();
             
@@ -87,19 +90,19 @@ public class window_quest extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
         
         lExp = new JLabel("Exp:");
         lExp.setBounds(20, 50, 50, 20);
         add(lExp);
         
-        insert_exp = new JTextField();
-        insert_exp.setBounds(90, 50, 100, 20);
-        add(insert_exp);
-        insert_exp.addActionListener(this);
+        InsertExp = new JTextField();
+        InsertExp.setBounds(90, 50, 100, 20);
+        add(InsertExp);
+        InsertExp.addActionListener(this);
         
         InsertCreator = new JList(CreatorData.toArray());
         InsertCreator.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -130,6 +133,13 @@ public class window_quest extends JFrame implements ActionListener{
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
+        ListOfNames.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            if(list.getSelectedValue() != null) {
+                String selected = list.getSelectedValue().toString();
+                displayQuest(selected);
+            }
+        });
         add(ListOfNames);
         
         JScrollPane scroll_pc= new JScrollPane(ListOfNames);
@@ -144,8 +154,8 @@ public class window_quest extends JFrame implements ActionListener{
         if(button == bInsert) {
             if(!anyFieldEmpty()) {
                 try {
-                    String name = insert_name.getText();
-                    float exp = Float.parseFloat(insert_exp.getText());
+                    String name = InsertName.getText();
+                    float exp = Float.parseFloat(InsertExp.getText());
                     int creator = dbConnector.getId(InsertCreator.getSelectedValue().toString());
                     dbConnector.createQuest(name, exp, creator);
                 } catch(SQLException ex) {
@@ -156,7 +166,7 @@ public class window_quest extends JFrame implements ActionListener{
                 System.out.println("field empty");
             }
         } else if(button == bDelete) {
-            String name = insert_name.getText();
+            String name = InsertName.getText();
             if(ListOfNames.getSelectedValue()!=null) {
                 try {
                     dbConnector.deleteQuest(ListOfNames.getSelectedValue().toString());
@@ -172,8 +182,38 @@ public class window_quest extends JFrame implements ActionListener{
     }
     
     private boolean anyFieldEmpty() {
-        return insert_name.getText().equals("") || insert_exp.getText().equals("") ||
+        return InsertName.getText().equals("") || InsertExp.getText().equals("") ||
                 InsertCreator.getSelectedValue() == null;
     }
     
+    private void displayQuest(String name) {
+        try {
+            PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                    "select q.creator_id as id, q.experience_points as exp, "
+                            + "q.q_name as q_name "
+                            + "from quests q join players p on q.creator_id = p.player_id "
+                            + "where q.q_name = ?");
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            
+            float exp = rs.getFloat("exp");
+            int id = rs.getInt("id");
+            System.out.println(id);
+            String questName = rs.getString("q_name");
+            
+            InsertName.setText(questName);
+            InsertExp.setText(exp + "");
+            
+            for(int i = 0; i < InsertCreator.getModel().getSize(); ++i) {
+                String s = InsertCreator.getModel().getElementAt(i).toString();
+                if(dbConnector.getId(s) == id) {
+                    InsertCreator.setSelectedIndex(i);
+                }
+            }
+            
+        } catch(SQLException ex) {
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+        }
+    }
 }

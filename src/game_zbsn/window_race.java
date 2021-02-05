@@ -52,7 +52,7 @@ public class window_race extends JFrame implements ActionListener{
         this.window_height = w; this.window_width = w;
         this.dbConnector = dbConnector;
         setSize(this.window_width, this.window_height);
-        setTitle("Monsters");
+        setTitle("Races");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
@@ -112,23 +112,10 @@ public class window_race extends JFrame implements ActionListener{
             ListOfNames.setVisibleRowCount(1);
             ListOfNames.addListSelectionListener((e) -> {
                 JList list = (JList) e.getSource();
-                String selected = list.getSelectedValue().toString();
-            try {
-                PreparedStatement statement = dbConnector.getConnection().prepareStatement(
-                        "select * from races where r_name = ?");
-                statement.setString(1, selected);
-                ResultSet rs = statement.executeQuery();
-                rs.next();
-                int s = rs.getInt("strength");
-                int a = rs.getInt("agility");
-                int i = rs.getInt("intellect");
-                InsertName.setText(selected);
-                InsertAgility.setText(a + "");
-                InsertStrength.setText(s + "");
-                InsertIntellect.setText(i + "");
-            } catch (SQLException ex) {
-                Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
-            }
+                if(list.getSelectedValue() != null) {
+                    String selected = list.getSelectedValue().toString();
+                    displayRace(selected);
+                }
             });
             add(ListOfNames);
 
@@ -140,6 +127,10 @@ public class window_race extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
+            InsertName.setText("");
+            InsertStrength.setText("");
+            InsertAgility.setText("");
+            InsertIntellect.setText("");
             RaceData = dbConnector.getRaces();
             ListOfNames.setListData(RaceData.toArray());
         }catch(SQLException ex){
@@ -222,5 +213,25 @@ public class window_race extends JFrame implements ActionListener{
             }
         }
         get_data();
-    } 
+    }
+    
+    private void displayRace(String name) {
+        try {
+            PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                    "select * from races where r_name = ?");
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            int s = rs.getInt("strength");
+            int a = rs.getInt("agility");
+            int i = rs.getInt("intellect");
+            InsertName.setText(name);
+            InsertAgility.setText(a + "");
+            InsertStrength.setText(s + "");
+            InsertIntellect.setText(i + "");
+        } catch (SQLException ex) {
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+        }
+    }
+    
 }

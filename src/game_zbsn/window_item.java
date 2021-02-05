@@ -140,30 +140,9 @@ public class window_item extends JFrame implements ActionListener{
         ListOfNames.setVisibleRowCount(1);
         ListOfNames.addListSelectionListener((e) -> {
             JList list = (JList) e.getSource();
-            String selected = list.getSelectedValue().toString();
-            try {
-                PreparedStatement statement = dbConnector.getConnection().prepareStatement(
-                        "select * from items where i_name = ?");
-                statement.setString(1, selected);
-                ResultSet rs = statement.executeQuery();
-                rs.next();
-                int s = rs.getInt("strength");
-                int a = rs.getInt("agility");
-                int in = rs.getInt("intellect");
-                int w = rs.getInt("weight");
-                String p = rs.getString("profession");
-                InsertName.setText(selected);
-                InsertAgility.setText(a + "");
-                InsertStrength.setText(s + "");
-                InsertIntellect.setText(in + "");
-                InsertWeight.setText(w + "");
-                for(int i = 0; i < InsertProfession.getModel().getSize(); ++i) {
-                    if(InsertProfession.getModel().getElementAt(i).equals(p)) {
-                        InsertProfession.setSelectedIndex(i);
-                    }
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+            if(list.getSelectedValue() != null) {
+                String selected = list.getSelectedValue().toString();
+                displayItem(selected);
             }
             });
         add(ListOfNames);
@@ -175,6 +154,12 @@ public class window_item extends JFrame implements ActionListener{
         }
     public void get_data(){
         try {
+            InsertName.setText("");
+            InsertAgility.setText("");
+            InsertIntellect.setText("");
+            InsertStrength.setText("");
+            InsertWeight.setText("");
+            
             ProfessionData = dbConnector.getProfessions();
             ItemData = dbConnector.getItems();
             
@@ -225,5 +210,32 @@ public class window_item extends JFrame implements ActionListener{
             InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")||
             InsertProfession.getSelectedValue() == null);
         
+    }
+    
+    private void displayItem(String name) {
+        try {
+            PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                    "select * from items where i_name = ?");
+            statement.setString(1, name);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            int s = rs.getInt("strength");
+            int a = rs.getInt("agility");
+            int in = rs.getInt("intellect");
+            int w = rs.getInt("weight");
+            String p = rs.getString("profession");
+            InsertName.setText(name);
+            InsertAgility.setText(a + "");
+            InsertStrength.setText(s + "");
+            InsertIntellect.setText(in + "");
+            InsertWeight.setText(w + "");
+            for(int i = 0; i < InsertProfession.getModel().getSize(); ++i) {
+                if(InsertProfession.getModel().getElementAt(i).equals(p)) {
+                    InsertProfession.setSelectedIndex(i);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+        }
     }
 }

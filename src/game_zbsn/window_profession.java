@@ -37,7 +37,7 @@ public class window_profession extends JFrame implements ActionListener{
     
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name;
+    private JTextField InsertName;
     private JLabel lName;
     //-------------------------------------------
     private JList ListOfNames;
@@ -76,10 +76,10 @@ public class window_profession extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
         
     }
     public void delete_init(){
@@ -97,6 +97,12 @@ public class window_profession extends JFrame implements ActionListener{
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
+        ListOfNames.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            if(list.getSelectedValue() != null) {
+                InsertName.setText(list.getSelectedValue().toString());
+            } 
+       });
         add(ListOfNames);
         
         JScrollPane scroll_pc= new JScrollPane(ListOfNames);
@@ -107,6 +113,7 @@ public class window_profession extends JFrame implements ActionListener{
 
     public void get_data(){
         try{
+            InsertName.setText("");
             ProfessionData = dbConnector.getProfessions();
             ListOfNames.setListData(ProfessionData.toArray());
         }catch(SQLException ex){
@@ -120,21 +127,21 @@ public class window_profession extends JFrame implements ActionListener{
         if(source == bDelete){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
             if(ListOfNames.getSelectedValue() != null){
-            String name = ListOfNames.getSelectedValue().toString();
-            try{
-                dbConnector.deleteProfession(name);
-            }catch(SQLException ex){
-                Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
-                                                            "Delete profession error",ex);}
+                String name = ListOfNames.getSelectedValue().toString();
+                try{
+                    dbConnector.deleteProfession(name);
+                }catch(SQLException ex){
+                    Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
+                                                                "Delete profession error",ex);}
             }
         }
         if(source == bInsert){
-            if(insert_name.getText().equals("")){
+            if(InsertName.getText().equals("")){
                System.out.println("Profession missing data");
             }
             else{
                 try{
-                    dbConnector.createProfession(insert_name.getText());
+                    dbConnector.createProfession(InsertName.getText());
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Insert profession error",ex);}

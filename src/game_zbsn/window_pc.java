@@ -37,8 +37,8 @@ public class window_pc extends JFrame implements ActionListener{
     private DBConnector dbConnector;
     //--------INSERTING--------------------------
     private JButton bInsert;
-    private JTextField insert_name;
-    private JList insert_race, insert_profession;
+    private JTextField InsertName;
+    private JList InsertRace, InsertProfession;
     private JLabel lName, lRace, lProfession;
     private List<String> ProfessionData = new ArrayList<String>();
     private List<String> RaceData = new ArrayList<String>();
@@ -70,13 +70,17 @@ public class window_pc extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
+            InsertName.setText("");
+            InsertRace.clearSelection();
+            InsertProfession.clearSelection();
+            
             ProfessionData = dbConnector.getProfessions();
             RaceData = dbConnector.getRaces();
             PlayerData = dbConnector.getPlayers();
             
             ListOfNames.setListData(PlayerData.toArray());
-            insert_race.setListData(RaceData.toArray());
-            insert_profession.setListData(ProfessionData.toArray());
+            InsertRace.setListData(RaceData.toArray());
+            InsertProfession.setListData(ProfessionData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
                                                             "get_data() error",ex);
@@ -86,14 +90,14 @@ public class window_pc extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if(source == bInsert){
-            if(insert_name.getText().equals("")||insert_profession.getSelectedValue()==null ||
-                    insert_race.getSelectedValue()==null){
+            if(InsertName.getText().equals("")||InsertProfession.getSelectedValue()==null ||
+                    InsertRace.getSelectedValue()==null){
                 System.out.println("pc brak danych");
             }
             else{
                 try{
-                   dbConnector.createPlayer(insert_name.getText(), insert_profession.getSelectedValue().toString(), 
-                           insert_race.getSelectedValue().toString());
+                   dbConnector.createPlayer(InsertName.getText(), InsertProfession.getSelectedValue().toString(), 
+                           InsertRace.getSelectedValue().toString());
                 }catch(SQLException ex){
                 Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
                                                             "Player insert error",ex);}
@@ -130,6 +134,14 @@ public class window_pc extends JFrame implements ActionListener{
         ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListOfNames.setLayoutOrientation(VERTICAL);
         ListOfNames.setVisibleRowCount(1);
+        ListOfNames.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            if(list.getSelectedValue() != null) {
+                String selected = list.getSelectedValue().toString();
+                int id = dbConnector.getId(selected);
+                displayPC(id);
+            }
+        });
         add(ListOfNames);
         
         JScrollPane scroll_pc= new JScrollPane(ListOfNames);
@@ -147,37 +159,70 @@ public class window_pc extends JFrame implements ActionListener{
         lName.setBounds(20, 25, 50, 20);
         add(lName);
         
-        insert_name = new JTextField();
-        insert_name.setBounds(90, 25, 100, 20);
-        add(insert_name);
-        insert_name.addActionListener(this);
+        InsertName = new JTextField();
+        InsertName.setBounds(90, 25, 100, 20);
+        add(InsertName);
+        InsertName.addActionListener(this);
         
-        insert_race = new JList(RaceData.toArray());
-        insert_race.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_race.setLayoutOrientation(VERTICAL);
-        insert_race.setVisibleRowCount(-1);
-        add(insert_race);
+        InsertRace = new JList(RaceData.toArray());
+        InsertRace.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        InsertRace.setLayoutOrientation(VERTICAL);
+        InsertRace.setVisibleRowCount(-1);
+        add(InsertRace);
         
         lRace = new JLabel("Race:");      // add select name from races;
         lRace.setBounds(20, 50, 50, 20);
         add(lRace);
-        JScrollPane scroll_race= new JScrollPane(insert_race);
+        JScrollPane scroll_race= new JScrollPane(InsertRace);
         scroll_race.setPreferredSize(new Dimension(250, 100));
         scroll_race.setBounds(90, 50, 100, 60);
         add(scroll_race);
         
-        insert_profession = new JList(ProfessionData.toArray());
-        insert_profession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        insert_profession.setLayoutOrientation(VERTICAL);
-        insert_profession.setVisibleRowCount(-1);
-        add(insert_profession);
+        InsertProfession = new JList(ProfessionData.toArray());
+        InsertProfession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        InsertProfession.setLayoutOrientation(VERTICAL);
+        InsertProfession.setVisibleRowCount(-1);
+        add(InsertProfession);
         
         lProfession = new JLabel("Profession:"); // add select name from professions;
         lProfession.setBounds(20, 115, 100, 20);
         add(lProfession);
-        JScrollPane scroll_profession= new JScrollPane(insert_profession);
+        JScrollPane scroll_profession= new JScrollPane(InsertProfession);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
         scroll_profession.setBounds(90,115,100,60);
         add(scroll_profession);
     }
+    
+    private void displayPC(int id) {
+        try {
+            PreparedStatement statement = dbConnector.getConnection().prepareStatement(
+                    "select * from players where player_id = ?");
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            
+            String playerName = rs.getString("player_name");
+            String race = rs.getString("player_race");
+            String profession = rs.getString("player_profession");
+
+            InsertName.setText(playerName);
+
+            for(int i = 0; i < InsertRace.getModel().getSize(); ++i) {
+                String s = InsertRace.getModel().getElementAt(i).toString();
+                if(s.equals(race)) {
+                    InsertRace.setSelectedIndex(i);
+                }
+            }
+            
+            for(int i = 0; i < InsertProfession.getModel().getSize(); ++i) {
+                String s = InsertProfession.getModel().getElementAt(i).toString();
+                if(s.equals(profession)) {
+                    InsertProfession.setSelectedIndex(i);
+                }
+            }
+        } catch(SQLException ex) {
+            Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
+        }
+    }
+    
 }
