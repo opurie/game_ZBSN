@@ -36,7 +36,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
     private List<String> ClanData = new ArrayList<>();
     private List<String> PlayerData = new ArrayList<>();
 
-    private JLabel lClanMembers, lClans, lPlayers, lClanName;
+    private JLabel lClanMembers, lClans, lPlayers, lClanName, lLevel, lHQ;
     private JButton bLeaveClan, bJoinClan;
     private JList listClanMembers = new JList(), listClans = new JList(ClanData.toArray()), 
                             listPlayers = new JList(PlayerData.toArray());
@@ -92,17 +92,20 @@ public class gamemode_clan extends JFrame implements ActionListener{
         add(bLeaveClan);
     }
     public void testInit(){
-        lClanMembers = new JLabel("Members of");
-        lClanMembers.setBounds(30,205,100,20);
-        JLabel lCM = new JLabel("selected Clan:");
-        lCM.setBounds(30, 220, 100, 20);
-        add(lClanMembers); add(lCM);
+        lClanMembers = new JLabel("Members of selected Clan:");
+        lClanMembers.setBounds(30,205,200,20);
+        add(lClanMembers);
+        lHQ = new JLabel("Headquater:");
+        lHQ.setBounds(200, 240, 150, 20);
+        add(lHQ);
+        lLevel = new JLabel("Clan level:");
+        lLevel.setBounds(200, 260, 150, 20);
+        add(lLevel);
         
-        
-            listClans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            listClans.setLayoutOrientation(VERTICAL);
-            listClans.setVisibleRowCount(1);
-            listClans.addListSelectionListener((e) ->{
+        listClans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listClans.setLayoutOrientation(VERTICAL);
+        listClans.setVisibleRowCount(1);
+        listClans.addListSelectionListener((e) ->{
                 JList list = (JList) e.getSource();
                 String selected = list.getSelectedValue().toString();
                 System.out.println(selected);
@@ -111,6 +114,19 @@ public class gamemode_clan extends JFrame implements ActionListener{
                     listClanMembers.setListData(ClanMembersData.toArray());}
                 catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                         "listener listClans error",ex);}
+                try{
+                    int lvl=0; 
+                    String HQ="";
+                    Statement stmt = dbConnector.getConnection().createStatement();
+                    ResultSet rs = stmt.executeQuery("select clan_level, headquater from clans where clan_name = '"+selected+"'");
+                    while(rs.next()){
+                        lvl = rs.getInt("clan_level");
+                        HQ = rs.getString("HEADQUATER");
+                    }
+                    lHQ.setText("Headquater: " + HQ);
+                    lLevel.setText("Clan level: "+ Integer.toString(lvl));
+                }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
+                                                                        "listener cv  vbnvnvblistClans error",ex);}
              
             }
             );
