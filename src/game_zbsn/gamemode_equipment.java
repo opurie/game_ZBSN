@@ -50,6 +50,7 @@ public class gamemode_equipment extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
+        setResizable(false);
         
         getData();
         initButtons();

@@ -26,6 +26,7 @@ public class gamemode_pvp extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
+        setResizable(false);
     }
     @Override
     public void actionPerformed(ActionEvent e) {

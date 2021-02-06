@@ -61,6 +61,7 @@ public class window_item extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
+        setResizable(false);
 
         insert_init();
         delete_init();

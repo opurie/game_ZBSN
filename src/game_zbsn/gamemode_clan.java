@@ -51,6 +51,8 @@ public class gamemode_clan extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
+        setResizable(false);
+        
         
         
         testInit();

@@ -59,6 +59,7 @@ public class window_quest extends JFrame implements ActionListener{
         setTitle("Quests");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
+        setResizable(false);
         setVisible(true);
 
 

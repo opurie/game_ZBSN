@@ -60,6 +60,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
         setTitle("PUT GAMES");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
+        setResizable(false);
         
         creating_method();
         gamemode_method();

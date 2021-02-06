@@ -61,7 +61,7 @@ public class window_monster extends JFrame implements ActionListener{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
         setVisible(true);
-
+        setResizable(false);
         insert_init();
         delete_init();
         get_data();
