@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,7 @@ public class gamemode_equipment extends JFrame implements ActionListener{
     private List<String> EquipmentData = new ArrayList<>();
     private List<String> PlayerData = new ArrayList<>();
 
-    private JLabel lItems, lPlayers, lEquipment, lStats, lWeight, lCapacity;
+    private JLabel lItems, lPlayers, lEquipment, lStats, lWeight, lCapacity, lInfo;
     private JButton bPick, bDrop, bUpgradeEq;
     private JList listItems = new JList(), listEquipment = new JList(EquipmentData.toArray()), 
                             listPlayers = new JList(PlayerData.toArray());
@@ -56,6 +57,12 @@ public class gamemode_equipment extends JFrame implements ActionListener{
         initLists();
     }
     public void initButtons(){
+        lInfo = new JLabel("Info: ");
+        lInfo.setBounds(20, 400, 430, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bPick = new JButton("Pick item");
         bPick.setBounds(310, 100, 100, 30);
         bPick.addActionListener(this);
@@ -174,9 +181,11 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
                     String name = dbConnector.getItemName(listEquipment.getSelectedValue().toString());
                     result = dbConnector.dropItem(id, name);
+                    lInfo.setText(result);
                     System.out.println(result);
                 
-                }catch(SQLException ex){}
+                }catch(SQLException ex){
+                    lInfo.setText("Something gone wrong with dropping");}
             }
         }
         if(source == bPick){
@@ -189,7 +198,9 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     String name = listItems.getSelectedValue().toString();
                     result = dbConnector.pickUpItem(id, name);
                     System.out.println(result);
-                }catch(SQLException ex){}
+                    lInfo.setText(result);
+                }catch(SQLException ex){
+                    lInfo.setText("Something gone wrong with picking");}
             }
         }
         if(source == bUpgradeEq){
@@ -203,7 +214,9 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     stmt.setInt(1, id);
                     stmt.execute();
                     stmt.close();
-                }catch(SQLException ex){}
+                    lInfo.setText("Equipment successfully upgraded +10");
+                }catch(SQLException ex){
+                    lInfo.setText("Something gone wrong with upgrading");}
             }
         }
         getData();

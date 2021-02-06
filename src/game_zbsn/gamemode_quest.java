@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,7 @@ public class gamemode_quest extends JFrame implements ActionListener{
     private List<String> QuestData = new ArrayList<>();
     private List<String> PlayerQuestData = new ArrayList<>();
     
-    private JLabel lPlayers, lQuests, lPlayerQuest, lEXP, lCreator, lDone;
+    private JLabel lPlayers, lQuests, lPlayerQuest, lEXP, lCreator, lDone, lInfo;
     private JButton bTakeTheTask, bSubmitTask;
     private JList listQuests = new JList(QuestData.toArray()), listPlayers= new JList(PlayerData.toArray()), 
                                         listPlayerQuest = new JList(PlayerQuestData.toArray());
@@ -64,6 +65,12 @@ public class gamemode_quest extends JFrame implements ActionListener{
         System.out.println("getData error");}
     }
     public void initButtons(){
+        lInfo = new JLabel("Info: ");
+        lInfo.setBounds(20, 400, 430, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         lEXP = new JLabel("Experience:");
         lEXP.setBounds(300, 50, 200, 20);
         add(lEXP);
@@ -92,7 +99,7 @@ public class gamemode_quest extends JFrame implements ActionListener{
         add(listPlayerQuest);
         scrollPlayerQuest = new JScrollPane(listPlayerQuest);
         scrollPlayerQuest.setPreferredSize(new Dimension(250,100));
-        scrollPlayerQuest.setBounds(30, 225, 250, 200);
+        scrollPlayerQuest.setBounds(30, 225, 250, 170);
         add(scrollPlayerQuest);
         
         lPlayers = new JLabel("All players");
@@ -148,10 +155,6 @@ public class gamemode_quest extends JFrame implements ActionListener{
         scrollQuest.setPreferredSize(new Dimension(250,100));
         scrollQuest.setBounds(140, 55, 140, 150);
         add(scrollQuest);
-        
-       
-        
-    
     }
     
     @Override
@@ -167,7 +170,9 @@ public class gamemode_quest extends JFrame implements ActionListener{
                     int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
                     String name = listQuests.getSelectedValue().toString();
                     result = dbConnector.TakeTheTask(id, name);
-                }catch(SQLException ex){}
+                    lInfo.setText(result);
+                }catch(SQLException ex){
+                    lInfo.setText("Something gone wrong with taking task");}
             }
             System.out.println(result);
         }
@@ -181,7 +186,9 @@ public class gamemode_quest extends JFrame implements ActionListener{
                     int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
                     String name = listQuests.getSelectedValue().toString();
                     result = dbConnector.SubmitTask(id, name);
-                }catch(SQLException ex){}
+                    lInfo.setText(result);
+                }catch(SQLException ex){
+                    lInfo.setText("Something gone wrong with submiting task");}
             }
             
             System.out.println(result);
