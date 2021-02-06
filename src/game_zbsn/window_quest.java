@@ -122,7 +122,7 @@ public class window_quest extends JFrame implements ActionListener{
         add(lCreator);
         JScrollPane scroll_creator = new JScrollPane(InsertCreator);
         scroll_creator.setPreferredSize(new Dimension(250, 100));
-        scroll_creator.setBounds(90, 85, 100, 100);
+        scroll_creator.setBounds(90, 85, 130, 100);
         add(scroll_creator);
     }
     public void delete_init(){

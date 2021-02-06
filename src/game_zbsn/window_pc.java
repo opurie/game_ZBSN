@@ -187,7 +187,7 @@ public class window_pc extends JFrame implements ActionListener{
         add(lRace);
         JScrollPane scroll_race= new JScrollPane(InsertRace);
         scroll_race.setPreferredSize(new Dimension(250, 100));
-        scroll_race.setBounds(90, 50, 100, 60);
+        scroll_race.setBounds(90, 50, 130, 60);
         add(scroll_race);
         
         InsertProfession = new JList(ProfessionData.toArray());
@@ -201,7 +201,7 @@ public class window_pc extends JFrame implements ActionListener{
         add(lProfession);
         JScrollPane scroll_profession= new JScrollPane(InsertProfession);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
-        scroll_profession.setBounds(90,115,100,60);
+        scroll_profession.setBounds(90,115,130,60);
         add(scroll_profession);
     }
     
