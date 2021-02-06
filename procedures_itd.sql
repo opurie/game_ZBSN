@@ -19,7 +19,7 @@ create or replace function get_players
     player_cursor sys_refcursor;
 begin
     open player_cursor for
-        select player_id || '. '||player_name 
+        select player_id || '. '||player_name || ' - lvl '|| player_level
         from players
         order by player_id;
     return player_cursor;
@@ -220,6 +220,8 @@ begin
     return item_cursor;
 end get_equipment;
 
+
+
 create or replace function pick_up(pid in number, pname in nvarchar2)
     return nvarchar2 is
 	i items_ownership.number_of%type;
@@ -257,7 +259,7 @@ begin
                                     where o.item_name = i_name))
         into fweight
         from items_ownership o
-        where o.equipment_id = 17
+        where o.equipment_id = pid
         group by o.equipment_id;
          exception
         when no_data_found then fweight := 0;
@@ -278,11 +280,6 @@ begin
     end if;
 end pick_up;
 
-declare
-res nvarchar2(300);
-begin
-    res := pick_up(17,'Korona');
-end;
 select * from items_ownership;
 
 create or replace function drop_item(pid in number, pname in nvarchar2) 
@@ -391,13 +388,14 @@ begin
     return clan_cursor;
 end get_clans;
 
+
 create or replace function get_clan_members(pname in nvarchar2)
     return sys_refcursor
     is
     clan_cursor sys_refcursor;
 begin
     open clan_cursor for
-        select p.player_id || '. '||p.player_name || ' ' || m.founder
+        select p.player_id || '. '||p.player_name || ' - ' || m.founder || ' - lvl '|| p.player_level
         from players p inner join membership m 
         on m.member_id = p.player_id
         where m.clan_name like pname
