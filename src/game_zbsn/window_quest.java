@@ -193,6 +193,43 @@ public class window_quest extends JFrame implements ActionListener{
                 System.out.println("field empty");
             }
         }
+        if(button ==  bUpdate){
+            if(ListOfNames.getSelectedValue() != null){
+                String query = "UPDATE quests SET";
+                int i = 0;
+                if(!InsertName.getText().equals("")){
+                    query += " q_name = '" + InsertName.getText()+"'";
+                    i++;
+                }
+                if(!InsertExp.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " experience_points = " + InsertExp.getText();
+                    i++;
+                }
+                if(InsertCreator.getSelectedValue() != null){
+                    if(i>0)
+                        query += ", ";
+                    query += " creator_id = " + dbConnector.getId(InsertCreator.getSelectedValue().toString());
+                    i++;
+                }
+                if(i>0){
+                    query += " WHERE q_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    try{
+                        Statement stmt = dbConnector.getConnection().createStatement();
+                        int changes;
+                        changes = stmt.executeUpdate(query);
+                        stmt.close();
+                        lInfo.setText("Quest successfully updated");
+                    }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Update error",ex);
+                                            lInfo.setText("Something gone wrong with updating, change name");
+                                            lInfo.setForeground(Color.red);
+                    }
+                }
+                
+            }
+        }
         get_data();
     }
     

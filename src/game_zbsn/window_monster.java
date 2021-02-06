@@ -197,6 +197,43 @@ public class window_monster extends JFrame implements ActionListener{
                     lInfo.setForeground(Color.red);}
             }
         }
+        if(source ==  bUpdate){
+            if(ListOfNames.getSelectedValue() != null){
+                String query = "UPDATE monsters SET";
+                int i = 0;
+                if(!InsertName.getText().equals("")){
+                    query += " monster_name = \'" + InsertName.getText()+"\'";
+                    i++;
+                }
+                if(InsertRace.getSelectedValue() != null){
+                    if(i>0)
+                        query += ", ";
+                    query += " monster_race = \'" + InsertRace.getSelectedValue().toString() + "\'";
+                    i++;
+                }
+                if(InsertItem.getSelectedValue() != null){
+                    if(i>0)
+                        query += ", ";
+                    query += " owned_item = \'" + InsertItem.getSelectedValue().toString() + "\'";
+                    i++;
+                }
+                if(i>0){
+                    query += " WHERE monster_id = "+ dbConnector.getId(ListOfNames.getSelectedValue().toString());
+                    try {
+                        Statement stmt = dbConnector.getConnection().createStatement();
+                        int changes;
+                        changes = stmt.executeUpdate(query);
+                        stmt.close();
+                        lInfo.setText("Monster successfully updated");
+                    } catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Update error",ex);
+                                            lInfo.setText("Something gone wrong with updating, change name");
+                                            lInfo.setForeground(Color.red);
+                    }
+                }
+                
+            }
+        }
         get_data();
     }
     

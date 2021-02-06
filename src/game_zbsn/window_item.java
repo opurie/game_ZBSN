@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -215,6 +216,61 @@ public class window_item extends JFrame implements ActionListener{
                     lInfo.setText(name+" is used, insert unique name");
                     lInfo.setForeground(Color.red);}
                 //TODO separate exceptions
+            }
+        }
+        if(source == bUpdate) {
+            if(ListOfNames.getSelectedValue() != null){
+                String query = "UPDATE items SET";
+                int i = 0;
+                if(!InsertName.getText().equals("")){
+                    query += " i_name = '" + InsertName.getText()+"'";
+                    i++;
+                }
+                if(!InsertAgility.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " agility = " + InsertAgility.getText();
+                    i++;
+                }
+                if(!InsertStrength.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " strength = " + InsertStrength.getText();
+                    i++;
+                }
+                if(!InsertIntellect.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " intellect = " + InsertIntellect.getText();
+                    i++;
+                }
+                if(!InsertWeight.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " weight = " + InsertWeight.getText();
+                    i++;
+                }
+                if(InsertProfession.getSelectedValue() != null){
+                    if(i>0)
+                        query += ", ";
+                    query += " profession = \'" + InsertProfession.getSelectedValue().toString() + "\'";
+                    i++;
+                }
+                if(i>0){
+                    query += " WHERE i_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    try {
+                        Statement stmt = dbConnector.getConnection().createStatement();
+                        int changes;
+                        changes = stmt.executeUpdate(query);
+                        stmt.close();
+                        lInfo.setText("Item successfully updated");
+                    } catch(SQLException ex){
+                        Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                        "Update error",ex);
+                        lInfo.setText("Something gone wrong with updating, change name");
+                        lInfo.setForeground(Color.red);
+                    }
+                }
             }
         }
         get_data();

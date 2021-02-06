@@ -123,6 +123,44 @@ public class window_pc extends JFrame implements ActionListener{
                     lInfo.setForeground(Color.red);}
             }
         }
+        if(source ==  bUpdate){
+            if(ListOfNames.getSelectedValue() != null){
+                String query = "UPDATE players SET";
+                int i = 0;
+                if(!InsertName.getText().equals("")){
+                    query += " player_name = \'" + InsertName.getText()+"\'";
+                    i++;
+                }
+                if(InsertRace.getSelectedValue() != null){
+                    if(i>0)
+                        query += ", ";
+                    query += " player_race = \'" + InsertRace.getSelectedValue().toString() + "\'";
+                    i++;
+                }
+                if(InsertProfession.getSelectedValue() != null){
+                    if(i>0)
+                        query += ", ";
+                    query += " player_profession = \'" + InsertProfession.getSelectedValue().toString() + "\'";
+                    i++;
+                }
+                if(i>0){
+                    query += " WHERE player_id = "+ dbConnector.getId(ListOfNames.getSelectedValue().toString());
+                    try {
+                        System.out.println(query);
+                        Statement stmt = dbConnector.getConnection().createStatement();
+                        int changes;
+                        changes = stmt.executeUpdate(query);
+                        stmt.close();
+                        lInfo.setText("Player successfully updated");
+                    } catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Update error",ex);
+                                            lInfo.setText("Something gone wrong with updating, change name");
+                                            lInfo.setForeground(Color.red);
+                    }
+                }
+                
+            }
+        }
         get_data();
     }
     public void delete_init(){

@@ -189,6 +189,37 @@ public class window_clan extends JFrame implements ActionListener{
                     lInfo.setText("Something gone wrong with deleting clan");}
             }
         }
+        if(source ==  bUpdate){ //FIXME constraint violated
+            if(ListOfNames.getSelectedValue() != null){
+                String query = "UPDATE clans SET";
+                int i = 0;
+                if(!InsertName.getText().equals("")){
+                    query += " clan_name = \'" + InsertName.getText()+"\'";
+                    i++;
+                }
+                if(!InsertHQ.getText().equals("")){
+                    if(i>0)
+                        query += ", ";
+                    query += " headquater = \'" + InsertHQ.getText() + "\'";
+                    i++;
+                }
+                if(i>0){
+                    query += " WHERE clan_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    try{
+                        Statement stmt = dbConnector.getConnection().createStatement();
+                        int changes;
+                        changes = stmt.executeUpdate(query);
+                        stmt.close();
+                        lInfo.setText("Clan successfully updated");
+                    }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
+                                                                "Update error",ex);
+                                            lInfo.setText("Something gone wrong with updating, change name");
+                                            lInfo.setForeground(Color.red);
+                    }
+                }
+                
+            }
+        }
         get_data();
     }
     
