@@ -28,23 +28,23 @@ import javax.swing.ListSelectionModel;
  * @author User
  */
 public class gamemode_quest extends JFrame implements ActionListener{
-    private int window_height,window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     
-    private List<String> PlayerData = new ArrayList<>();
-    private List<String> QuestData = new ArrayList<>();
-    private List<String> PlayerQuestData = new ArrayList<>();
+    private List<String> playerData = new ArrayList<>();
+    private List<String> questData = new ArrayList<>();
+    private List<String> playerQuestData = new ArrayList<>();
     
-    private JLabel lPlayers, lQuests, lPlayerQuest, lEXP, lCreator, lDone, lInfo;
-    private JButton bTakeTheTask, bSubmitTask;
-    private JList listQuests = new JList(QuestData.toArray()), listPlayers= new JList(PlayerData.toArray()), 
-                                        listPlayerQuest = new JList(PlayerQuestData.toArray());
+    private JLabel playersLabel, questsLabel, playerQuestLabel, expLabel, creatorLabel, doneLabel, infoLabel;
+    private JButton takeTaskButton, submitTaskButton;
+    private JList questsList = new JList(questData.toArray()), playersList= new JList(playerData.toArray()), 
+                                        playerQuestList = new JList(playerQuestData.toArray());
     private JScrollPane scrollQuest, scrollPlayer, scrollPlayerQuest;
     
     public gamemode_quest(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("gamemode quests");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -57,82 +57,82 @@ public class gamemode_quest extends JFrame implements ActionListener{
     }
     public void getData(){
         try{
-            PlayerData = dbConnector.getPlayers();
-            QuestData = dbConnector.getQuests();
+            playerData = dbConnector.getPlayers();
+            questData = dbConnector.getQuests();
             
-            listQuests.setListData(QuestData.toArray());
-            listPlayers.setListData(PlayerData.toArray());
+            questsList.setListData(questData.toArray());
+            playersList.setListData(playerData.toArray());
         }catch(SQLException ex){
         System.out.println("getData error");}
     }
     public void initButtons(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(20, 400, 430, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(20, 400, 430, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        lEXP = new JLabel("Experience:");
-        lEXP.setBounds(300, 50, 200, 20);
-        add(lEXP);
-        lCreator = new JLabel("Client:");
-        lCreator.setBounds(300, 70, 200, 20);
-        add(lCreator);
+        expLabel = new JLabel("Experience:");
+        expLabel.setBounds(300, 50, 200, 20);
+        add(expLabel);
+        creatorLabel = new JLabel("Client:");
+        creatorLabel.setBounds(300, 70, 200, 20);
+        add(creatorLabel);
         
-        bTakeTheTask = new JButton("Take task");
-        bTakeTheTask.setBounds(300, 100, 100, 30);
-        bTakeTheTask.addActionListener(this);
-        add(bTakeTheTask);
+        takeTaskButton = new JButton("Take task");
+        takeTaskButton.setBounds(300, 100, 100, 30);
+        takeTaskButton.addActionListener(this);
+        add(takeTaskButton);
     
-        bSubmitTask = new JButton("Submit task");
-        bSubmitTask.setBounds(300, 240, 100, 30);
-        bSubmitTask.addActionListener(this);
-        add(bSubmitTask);
+        submitTaskButton = new JButton("Submit task");
+        submitTaskButton.setBounds(300, 240, 100, 30);
+        submitTaskButton.addActionListener(this);
+        add(submitTaskButton);
     }
     public void init(){
-        lPlayerQuest = new JLabel("Taken quests");
-        lPlayerQuest.setBounds(30, 205, 200, 20);
-        add(lPlayerQuest);
+        playerQuestLabel = new JLabel("Taken quests");
+        playerQuestLabel.setBounds(30, 205, 200, 20);
+        add(playerQuestLabel);
         
-        listPlayerQuest.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listPlayerQuest.setLayoutOrientation(VERTICAL);
-        listPlayerQuest.setVisibleRowCount(1);
-        add(listPlayerQuest);
-        scrollPlayerQuest = new JScrollPane(listPlayerQuest);
+        playerQuestList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        playerQuestList.setLayoutOrientation(VERTICAL);
+        playerQuestList.setVisibleRowCount(1);
+        add(playerQuestList);
+        scrollPlayerQuest = new JScrollPane(playerQuestList);
         scrollPlayerQuest.setPreferredSize(new Dimension(250,100));
         scrollPlayerQuest.setBounds(30, 225, 250, 170);
         add(scrollPlayerQuest);
         
-        lPlayers = new JLabel("All players");
-        lPlayers.setBounds(30, 30, 100, 20);
-        add(lPlayers);
+        playersLabel = new JLabel("All players");
+        playersLabel.setBounds(30, 30, 100, 20);
+        add(playersLabel);
         
-        listPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listPlayers.setLayoutOrientation(VERTICAL);
-        listPlayers.setVisibleRowCount(1);
-        listPlayers.addListSelectionListener((e)->{
+        playersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        playersList.setLayoutOrientation(VERTICAL);
+        playersList.setVisibleRowCount(1);
+        playersList.addListSelectionListener((e)->{
             JList list =(JList) e.getSource();
             String selected = list.getSelectedValue().toString();
             int id = dbConnector.getId(selected);
             try{
-                PlayerQuestData = dbConnector.getPlayerQuests(id);
+                playerQuestData = dbConnector.getPlayerQuests(id);
             }catch(SQLException ex){}
-            listPlayerQuest.setListData(PlayerQuestData.toArray());
+            playerQuestList.setListData(playerQuestData.toArray());
         });
-        add(listPlayers);
-        scrollPlayer = new JScrollPane(listPlayers);
+        add(playersList);
+        scrollPlayer = new JScrollPane(playersList);
         scrollPlayer.setPreferredSize(new Dimension(250,100));
         scrollPlayer.setBounds(30, 55, 100, 150);
         add(scrollPlayer);
         
-        lQuests = new JLabel("All quests");
-        lQuests.setBounds(140, 30, 100, 20);
-        add(lQuests);
+        questsLabel = new JLabel("All quests");
+        questsLabel.setBounds(140, 30, 100, 20);
+        add(questsLabel);
         
-        listQuests.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listQuests.setLayoutOrientation(VERTICAL);
-        listQuests.setVisibleRowCount(1);
-        listQuests.addListSelectionListener((e)-> {
+        questsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        questsList.setLayoutOrientation(VERTICAL);
+        questsList.setVisibleRowCount(1);
+        questsList.addListSelectionListener((e)-> {
             JList list = (JList) e.getSource();
             String selected = list.getSelectedValue().toString();
             try{
@@ -147,12 +147,12 @@ public class gamemode_quest extends JFrame implements ActionListener{
                 }
                 rs.close();
                 stmt.close();
-                lEXP.setText("Experience: "+ Float.toString(experience));
-                lCreator.setText("Client: "+ Integer.toString(client));
+                expLabel.setText("Experience: "+ Float.toString(experience));
+                creatorLabel.setText("Client: "+ Integer.toString(client));
             }catch(SQLException ex){}
         });
-        add(listQuests);
-        scrollQuest = new JScrollPane(listQuests);
+        add(questsList);
+        scrollQuest = new JScrollPane(questsList);
         scrollQuest.setPreferredSize(new Dimension(250,100));
         scrollQuest.setBounds(140, 55, 140, 150);
         add(scrollQuest);
@@ -161,37 +161,37 @@ public class gamemode_quest extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bTakeTheTask){
+        if(source == takeTaskButton){
             String result="";
-            if(listPlayers.getSelectedValue()==null || listQuests.getSelectedValue()==null){
+            if(playersList.getSelectedValue()==null || questsList.getSelectedValue()==null){
                 result = "missing data";
             }
             else{
                 try{
-                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
-                    String name = listQuests.getSelectedValue().toString();
-                    result = dbConnector.TakeTheTask(id, name);
-                    lInfo.setText(result);
+                    int id = dbConnector.getId(playersList.getSelectedValue().toString());
+                    String name = questsList.getSelectedValue().toString();
+                    result = dbConnector.takeTask(id, name);
+                    infoLabel.setText(result);
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with taking task");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with taking task");
+                    infoLabel.setForeground(Color.red);}
             }
             System.out.println(result);
         }
-        if(source == bSubmitTask){
+        if(source == submitTaskButton){
             String result="";
-            if(listPlayers.getSelectedValue()==null || listQuests.getSelectedValue()==null){
+            if(playersList.getSelectedValue()==null || questsList.getSelectedValue()==null){
                 result = "missing data";
             }
             else{
                 try{
-                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
-                    String name = listQuests.getSelectedValue().toString();
-                    result = dbConnector.SubmitTask(id, name);
-                    lInfo.setText(result);
+                    int id = dbConnector.getId(playersList.getSelectedValue().toString());
+                    String name = questsList.getSelectedValue().toString();
+                    result = dbConnector.submitTask(id, name);
+                    infoLabel.setText(result);
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with submiting task");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with submiting task");
+                    infoLabel.setForeground(Color.red);}
             }
             
             System.out.println(result);

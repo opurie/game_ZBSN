@@ -265,7 +265,7 @@ public class DBConnector {
         return data;
     }
     
-    public String TakeTheTask(int id, String name)throws SQLException{
+    public String takeTask(int id, String name)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{? = call take_the_task(?, ?)}");
         stmt.registerOutParameter(1, Types.VARCHAR);
         stmt.setInt(2, id);
@@ -276,7 +276,7 @@ public class DBConnector {
         return result;
     }
     
-    public String SubmitTask(int id, String name)throws SQLException{
+    public String submitTask(int id, String name)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{? = call submit_task(?, ?)}");
         stmt.registerOutParameter(1, Types.VARCHAR);
         stmt.setInt(2, id);

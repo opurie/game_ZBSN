@@ -32,105 +32,105 @@ public class Game_ZBSN extends JFrame implements ActionListener {
     private DBConnector dbConnector;
     private JLabel ConLabel;
     
-    private int window_height = 350, window_width = 320;
-    private int gamemode_scale = 500, create_scale = 400;
-    private JButton bGamemode, bExit, bConnect;
+    private int windowHeight = 350, windowWidth = 320;
+    private int gamemodeScale = 500, createScale = 400;
+    private JButton gamemodeButton, exitButton, connectButton;
     //-----------CREATING--------------- 
-    private JButton bCreate;
-    private JRadioButton CreatePC;
-    private JRadioButton CreateClan;
-    private JRadioButton CreateMonster;
-    private JRadioButton CreateQuest;
-    private JRadioButton CreateItem;
-    private JRadioButton CreateRace;
-    private JRadioButton CreateProfession;
-    private ButtonGroup CreateGroup;
+    private JButton createButton;
+    private JRadioButton createPlayer;
+    private JRadioButton createClan;
+    private JRadioButton createMonster;
+    private JRadioButton createQuest;
+    private JRadioButton createItem;
+    private JRadioButton createRace;
+    private JRadioButton createProfession;
+    private ButtonGroup createGroup;
     //---------------------------------- 
 
     //-----------GAMEMODE--------------- 
-    private JButton bpvp, bEquipment, bClan, bQuest;
+    private JButton PVPButton, equipmentButton, clanButton, questButton;
     //----------------------------------
     
     //-----------FRAMES-----------------
-    private JFrame SecondaryWindow = null;
+    private JFrame secondaryWindow = null;
     //----------------------------------
     window_pc pc = null;
     public Game_ZBSN(){
-        setSize(window_width, window_height);
+        setSize(windowWidth, windowHeight);
         setTitle("PUT GAMES");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setResizable(false);
         
-        creating_method();
-        gamemode_method();
+        createButtons();
+        createGamemodes();
         
-        bConnect = new JButton("Connect");
-        bConnect.setBounds(20, 20, 100, 30);
-        add(bConnect);
-        bConnect.addActionListener(this);
+        connectButton = new JButton("Connect");
+        connectButton.setBounds(20, 20, 100, 30);
+        add(connectButton);
+        connectButton.addActionListener(this);
         
         ConLabel = new JLabel("Connect with Database...");
         ConLabel.setForeground(Color.GRAY);
         ConLabel.setBounds(10, 50, 150, 30);
         add(ConLabel);
         
-        bExit = new JButton("Exit game");
-        bExit.setBounds(190, 270, 100, 20);
-        add(bExit);
-        bExit.addActionListener(this);
+        exitButton = new JButton("Exit game");
+        exitButton.setBounds(190, 270, 100, 20);
+        add(exitButton);
+        exitButton.addActionListener(this);
     }
-    public void gamemode_method(){
+    public void createGamemodes(){
         //bpvp, bpve, bClan, bQuest;
         //bpvp = new JButton("PvP");
        // bpvp.setBounds(190, 40, 100, 30);
         //add(bpvp);
         //bpvp.addActionListener(this);
         
-        bEquipment = new JButton("Equipment");
-        bEquipment.setBounds(190, 75, 100, 30);
-        add(bEquipment);
-        bEquipment.addActionListener(this);
+        equipmentButton = new JButton("Equipment");
+        equipmentButton.setBounds(190, 75, 100, 30);
+        add(equipmentButton);
+        equipmentButton.addActionListener(this);
         
-        bClan = new JButton("Clans");
-        bClan.setBounds(190, 110, 100, 30);
-        add(bClan);
-        bClan.addActionListener(this);
+        clanButton = new JButton("Clans");
+        clanButton.setBounds(190, 110, 100, 30);
+        add(clanButton);
+        clanButton.addActionListener(this);
         
-        bQuest = new JButton("Quests");
-        bQuest.setBounds(190, 145, 100, 30);
-        add(bQuest);
-        bQuest.addActionListener(this);
+        questButton = new JButton("Quests");
+        questButton.setBounds(190, 145, 100, 30);
+        add(questButton);
+        questButton.addActionListener(this);
     }
     
     //buttons for 
-    public void creating_method(){
-        bCreate = new JButton("Create/Delete");
-        bCreate.setBounds(20,265, 140, 30);
-        add(bCreate);
-        bCreate.addActionListener(this);
+    public void createButtons(){
+        createButton = new JButton("Create/Delete");
+        createButton.setBounds(20,265, 140, 30);
+        add(createButton);
+        createButton.addActionListener(this);
         
-        CreatePC = new JRadioButton("Playable Characters", true);  add(CreatePC);
-        CreatePC.setBounds(20, 240, 150, 20);
-        CreateMonster = new JRadioButton("Monsters", false);       add(CreateMonster);
-        CreateMonster.setBounds(20, 220, 100, 20);
-        CreateClan = new JRadioButton("Clans",false);              add(CreateClan);
-        CreateClan.setBounds(20, 200, 100, 20);
-        CreateQuest = new JRadioButton("Quests", false);           add(CreateQuest);
-        CreateQuest.setBounds(20, 180, 100, 20);
-        CreateItem = new JRadioButton("Items", false);             add(CreateItem);
-        CreateItem.setBounds(20, 160, 100, 20);
-        CreateRace = new JRadioButton("Races", false);             add(CreateRace);
-        CreateRace.setBounds(20, 140, 100, 20);
-        CreateProfession = new JRadioButton("Professions", false); add(CreateProfession);
-        CreateProfession.setBounds(20, 120, 100, 20);
+        createPlayer = new JRadioButton("Playable Characters", true);  add(createPlayer);
+        createPlayer.setBounds(20, 240, 150, 20);
+        createMonster = new JRadioButton("Monsters", false);       add(createMonster);
+        createMonster.setBounds(20, 220, 100, 20);
+        createClan = new JRadioButton("Clans",false);              add(createClan);
+        createClan.setBounds(20, 200, 100, 20);
+        createQuest = new JRadioButton("Quests", false);           add(createQuest);
+        createQuest.setBounds(20, 180, 100, 20);
+        createItem = new JRadioButton("Items", false);             add(createItem);
+        createItem.setBounds(20, 160, 100, 20);
+        createRace = new JRadioButton("Races", false);             add(createRace);
+        createRace.setBounds(20, 140, 100, 20);
+        createProfession = new JRadioButton("Professions", false); add(createProfession);
+        createProfession.setBounds(20, 120, 100, 20);
         
         
-        CreateGroup = new ButtonGroup();
-        CreateGroup.add(CreatePC);        
-        CreateGroup.add(CreateMonster);   CreateGroup.add(CreateItem);
-        CreateGroup.add(CreateClan);      CreateGroup.add(CreateRace);
-        CreateGroup.add(CreateQuest);     CreateGroup.add(CreateProfession);
+        createGroup = new ButtonGroup();
+        createGroup.add(createPlayer);        
+        createGroup.add(createMonster);   createGroup.add(createItem);
+        createGroup.add(createClan);      createGroup.add(createRace);
+        createGroup.add(createQuest);     createGroup.add(createProfession);
     }
     
     /**
@@ -145,7 +145,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         //bpvp, bpve, bClan, bQuest;
-        if(source == bConnect && connection == null){
+        if(source == connectButton && connection == null){
      
             try{
                 dbConnector = new DBConnector("inf141299", "inf141299");
@@ -169,53 +169,53 @@ public class Game_ZBSN extends JFrame implements ActionListener {
              //   window_cleaner(SecondaryWindow);
               //  SecondaryWindow = new gamemode_pvp(gamemode_scale, dbConnector);
             //}
-            if(source == bEquipment){
-                window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_equipment(gamemode_scale, dbConnector);
+            if(source == equipmentButton){
+                window_cleaner(secondaryWindow);
+                secondaryWindow = new gamemode_equipment(gamemodeScale, dbConnector);
             }
-            if(source == bClan){
-                window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_clan(gamemode_scale, dbConnector);
+            if(source == clanButton){
+                window_cleaner(secondaryWindow);
+                secondaryWindow = new gamemode_clan(gamemodeScale, dbConnector);
             }
-            if(source == bQuest){
-                window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_quest(gamemode_scale, dbConnector);
+            if(source == questButton){
+                window_cleaner(secondaryWindow);
+                secondaryWindow = new gamemode_quest(gamemodeScale, dbConnector);
             }
             //Create/delete button actions
-            if(source == bCreate){
-                window_cleaner(SecondaryWindow);
-                if (CreatePC.isSelected()){
+            if(source == createButton){
+                window_cleaner(secondaryWindow);
+                if (createPlayer.isSelected()){
                     System.out.println("Open PC window");
-                    SecondaryWindow = new window_pc(create_scale, dbConnector);
+                    secondaryWindow = new window_pc(createScale, dbConnector);
                 }
-                else if(CreateMonster.isSelected()){
+                else if(createMonster.isSelected()){
                     System.out.println("Open monster window");
-                    SecondaryWindow = new window_monster(create_scale, dbConnector);
+                    secondaryWindow = new window_monster(createScale, dbConnector);
                 }
-                else if(CreateClan.isSelected()){
+                else if(createClan.isSelected()){
                     System.out.println("Open clan window");
-                    SecondaryWindow = new window_clan(create_scale, dbConnector);
+                    secondaryWindow = new window_clan(createScale, dbConnector);
                 }
-                else if(CreateQuest.isSelected()){
+                else if(createQuest.isSelected()){
                     System.out.println("Open quest window");
-                    SecondaryWindow = new window_quest(create_scale, dbConnector);
+                    secondaryWindow = new window_quest(createScale, dbConnector);
                 }
-                else if(CreateItem.isSelected()){
+                else if(createItem.isSelected()){
                     System.out.println("Open item window");
-                    SecondaryWindow = new window_item(create_scale, dbConnector);
+                    secondaryWindow = new window_item(createScale, dbConnector);
                 }
-                else if(CreateRace.isSelected()){
+                else if(createRace.isSelected()){
                     System.out.println("Open race window");
-                    SecondaryWindow = new window_race(create_scale, dbConnector);
+                    secondaryWindow = new window_race(createScale, dbConnector);
                 }
-                else if(CreateProfession.isSelected()){
+                else if(createProfession.isSelected()){
                     System.out.println("Open profession window");
-                    SecondaryWindow = new window_profession(create_scale, dbConnector);
+                    secondaryWindow = new window_profession(createScale, dbConnector);
                 }
             }
         }
         
-        if(source == bExit) {
+        if(source == exitButton) {
             System.exit(0);
         }        
     }

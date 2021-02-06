@@ -28,24 +28,24 @@ import javax.swing.ListSelectionModel;
  * @author User
  */
 public class gamemode_equipment extends JFrame implements ActionListener{
-    private int window_height,window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     
-    private List<String> ItemData = new ArrayList<>();
-    private List<String> EquipmentData = new ArrayList<>();
-    private List<String> PlayerData = new ArrayList<>();
+    private List<String> itemData = new ArrayList<>();
+    private List<String> equipmentData = new ArrayList<>();
+    private List<String> playerData = new ArrayList<>();
 
-    private JLabel lItems, lPlayers, lEquipment, lStats, lWeight, lCapacity, lInfo;
-    private JButton bPick, bDrop, bUpgradeEq;
-    private JList listItems = new JList(), listEquipment = new JList(EquipmentData.toArray()), 
-                            listPlayers = new JList(PlayerData.toArray());
+    private JLabel itemsLabel, playersLabel, equipmentLabel, statsLabel, weightLabel, capacityLabel, infoLabel;
+    private JButton pickButton, dropButton, upgradeEquipmentButton;
+    private JList itemsList = new JList(), equipmentList = new JList(equipmentData.toArray()), 
+                            playersList = new JList(playerData.toArray());
     private JScrollPane scrollItems, scrollPlayers, scrollEquipments;
     
     
     public gamemode_equipment(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("gamemode equipment");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -58,68 +58,68 @@ public class gamemode_equipment extends JFrame implements ActionListener{
         initLists();
     }
     public void initButtons(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(20, 400, 430, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(20, 400, 430, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        bPick = new JButton("Pick item");
-        bPick.setBounds(310, 100, 100, 30);
-        bPick.addActionListener(this);
-        add(bPick);
+        pickButton = new JButton("Pick item");
+        pickButton.setBounds(310, 100, 100, 30);
+        pickButton.addActionListener(this);
+        add(pickButton);
         
-        bDrop = new JButton("Drop item");
-        bDrop.setBounds(310, 290, 120, 30);
-        bDrop.addActionListener(this);
-        add(bDrop);
+        dropButton = new JButton("Drop item");
+        dropButton.setBounds(310, 290, 120, 30);
+        dropButton.addActionListener(this);
+        add(dropButton);
         
-        bUpgradeEq = new JButton("Upgrade Eq");
-        bUpgradeEq.setBounds(310, 330, 120, 30);
-        bUpgradeEq.addActionListener(this);
-        add(bUpgradeEq);
+        upgradeEquipmentButton = new JButton("Upgrade Eq");
+        upgradeEquipmentButton.setBounds(310, 330, 120, 30);
+        upgradeEquipmentButton.addActionListener(this);
+        add(upgradeEquipmentButton);
     }
     public void getData(){
         try{
-            ItemData = dbConnector.getItems();
-            PlayerData = dbConnector.getPlayers();
-            listItems.setListData(ItemData.toArray());
-            listPlayers.setListData(PlayerData.toArray());
+            itemData = dbConnector.getItems();
+            playerData = dbConnector.getPlayers();
+            itemsList.setListData(itemData.toArray());
+            playersList.setListData(playerData.toArray());
         }catch(SQLException ex){}
     }
     public void updateable(){
-        lEquipment = new JLabel("Inventory: Name - weight - profession - count");
-        lEquipment.setBounds(30, 215, 300, 20);
-        add(lEquipment);
-        listEquipment.setListData(EquipmentData.toArray());
-        listEquipment.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listEquipment.setLayoutOrientation(VERTICAL);
-        listEquipment.setVisibleRowCount(-1);
-        add(listEquipment);
-        scrollEquipments = new JScrollPane(listEquipment);
+        equipmentLabel = new JLabel("Inventory: Name - weight - profession - count");
+        equipmentLabel.setBounds(30, 215, 300, 20);
+        add(equipmentLabel);
+        equipmentList.setListData(equipmentData.toArray());
+        equipmentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        equipmentList.setLayoutOrientation(VERTICAL);
+        equipmentList.setVisibleRowCount(-1);
+        add(equipmentList);
+        scrollEquipments = new JScrollPane(equipmentList);
         scrollEquipments.setPreferredSize(new Dimension(250, 100));
         scrollEquipments.setBounds(30, 240, 250, 150);
         add(scrollEquipments);
     }
     public void initLists(){
-        lWeight = new JLabel("Weight:");
-        lWeight.setBounds(270, 55, 200, 20);
-        add(lWeight);
+        weightLabel = new JLabel("Weight:");
+        weightLabel.setBounds(270, 55, 200, 20);
+        add(weightLabel);
         
-        lCapacity = new JLabel("Inventory capacity:");
-        lCapacity.setBounds(300, 230, 200, 20);
-        add(lCapacity);
-        listPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listPlayers.setLayoutOrientation(VERTICAL);
-        listPlayers.setVisibleRowCount(1);
-        listPlayers.addListSelectionListener((e)->{
+        capacityLabel = new JLabel("Inventory capacity:");
+        capacityLabel.setBounds(300, 230, 200, 20);
+        add(capacityLabel);
+        playersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        playersList.setLayoutOrientation(VERTICAL);
+        playersList.setVisibleRowCount(1);
+        playersList.addListSelectionListener((e)->{
             JList list = (JList) e.getSource();
             String selected = list.getSelectedValue().toString();
             int id = dbConnector.getId(selected);
             float weight=0;
             try{
-                EquipmentData = dbConnector.getEquipment(id);
-                listEquipment.setListData(EquipmentData.toArray());
+                equipmentData = dbConnector.getEquipment(id);
+                equipmentList.setListData(equipmentData.toArray());
             }catch(SQLException ex){};
             try{
                 Statement stmt = dbConnector.getConnection().createStatement();
@@ -128,23 +128,23 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     weight = rs.getFloat("capacity_eq");}
                 rs.close();
                 stmt.close();
-                lCapacity.setText("Inventory capacity: "+Float.toString(weight));
+                capacityLabel.setText("Inventory capacity: "+Float.toString(weight));
             }catch(SQLException ex){};
         });
         
-        add(listPlayers);
-        lPlayers = new JLabel("Players:");
-        lPlayers.setBounds(30, 30, 100, 20);
-        add(lPlayers);
-        scrollPlayers = new JScrollPane(listPlayers);
+        add(playersList);
+        playersLabel = new JLabel("Players:");
+        playersLabel.setBounds(30, 30, 100, 20);
+        add(playersLabel);
+        scrollPlayers = new JScrollPane(playersList);
         scrollPlayers.setPreferredSize(new Dimension(250, 100));
         scrollPlayers.setBounds(30, 55, 100, 150);
         add(scrollPlayers);
         
-        listItems.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listItems.setLayoutOrientation(VERTICAL);
-        listItems.setVisibleRowCount(1);
-        listItems.addListSelectionListener((e)->{
+        itemsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        itemsList.setLayoutOrientation(VERTICAL);
+        itemsList.setVisibleRowCount(1);
+        itemsList.addListSelectionListener((e)->{
             JList list = (JList) e.getSource();
             String selected = list.getSelectedValue().toString();
             float w=0;
@@ -155,17 +155,17 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                 ResultSet rs = stmt.executeQuery();
                 while(rs.next())
                     w = rs.getFloat("weight");
-                lWeight.setText("Weight: "+Float.toString(w));
+                weightLabel.setText("Weight: "+Float.toString(w));
                 rs.close();
                 stmt.close();
             }catch(SQLException ex){}
         });
         
-        add(listItems);
-        lItems = new JLabel("Items:");
-        lItems.setBounds(140, 30, 100, 20);
-        add(lItems);
-        scrollItems = new JScrollPane(listItems);
+        add(itemsList);
+        itemsLabel = new JLabel("Items:");
+        itemsLabel.setBounds(140, 30, 100, 20);
+        add(itemsLabel);
+        scrollItems = new JScrollPane(itemsList);
         scrollItems.setPreferredSize(new Dimension(250, 100));
         scrollItems.setBounds(140, 55, 100, 150);
         add(scrollItems);
@@ -173,54 +173,54 @@ public class gamemode_equipment extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bDrop){
+        if(source == dropButton){
             String result="";
-            if(listPlayers.getSelectedValue()==null || listEquipment.getSelectedValue()==null)
+            if(playersList.getSelectedValue()==null || equipmentList.getSelectedValue()==null)
                 System.out.println("drop missing data");
             else{
                 try{
-                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
-                    String name = dbConnector.getItemName(listEquipment.getSelectedValue().toString());
+                    int id = dbConnector.getId(playersList.getSelectedValue().toString());
+                    String name = dbConnector.getItemName(equipmentList.getSelectedValue().toString());
                     result = dbConnector.dropItem(id, name);
-                    lInfo.setText(result);
+                    infoLabel.setText(result);
                     System.out.println(result);
                 
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with dropping");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with dropping");
+                    infoLabel.setForeground(Color.red);}
             }
         }
-        if(source == bPick){
+        if(source == pickButton){
             String result="";
-            if(listPlayers.getSelectedValue()==null || listItems.getSelectedValue()==null){
+            if(playersList.getSelectedValue()==null || itemsList.getSelectedValue()==null){
                 System.out.println("pick missing data");}
             else{
                 try{
-                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
-                    String name = listItems.getSelectedValue().toString();
+                    int id = dbConnector.getId(playersList.getSelectedValue().toString());
+                    String name = itemsList.getSelectedValue().toString();
                     result = dbConnector.pickUpItem(id, name);
                     System.out.println(result);
-                    lInfo.setText(result);
+                    infoLabel.setText(result);
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with picking");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with picking");
+                    infoLabel.setForeground(Color.red);}
             }
         }
-        if(source == bUpgradeEq){
-            if(listPlayers.getSelectedValue()==null)
+        if(source == upgradeEquipmentButton){
+            if(playersList.getSelectedValue()==null)
                 System.out.println("upgradeeq missing data");
             else{
                 try{
-                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
+                    int id = dbConnector.getId(playersList.getSelectedValue().toString());
                     PreparedStatement stmt = dbConnector.getConnection().prepareStatement(
                                         "update equipments set capacity_eq = capacity_eq +10 where owner_id=?");
                     stmt.setInt(1, id);
                     stmt.execute();
                     stmt.close();
-                    lInfo.setText("Equipment successfully upgraded +10");
+                    infoLabel.setText("Equipment successfully upgraded +10");
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with upgrading");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with upgrading");
+                    infoLabel.setForeground(Color.red);}
             }
         }
         getData();

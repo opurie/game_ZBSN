@@ -29,24 +29,24 @@ import javax.swing.event.ListSelectionListener;
  * @author User
  */
 public class gamemode_clan extends JFrame implements ActionListener{
-    private int window_height,window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
         
-    private List<String> ClanMembersData = new ArrayList<>();
-    private List<String> ClanData = new ArrayList<>();
-    private List<String> PlayerData = new ArrayList<>();
+    private List<String> clanMembersData = new ArrayList<>();
+    private List<String> clanData = new ArrayList<>();
+    private List<String> playerData = new ArrayList<>();
 
-    private JLabel lClanMembers, lClans, lPlayers, lClanName, lLevel, lHQ, lInfo;
-    private JButton bLeaveClan, bJoinClan, bUpdate;
-    private JList listClanMembers = new JList(), listClans = new JList(ClanData.toArray()), 
-                            listPlayers = new JList(PlayerData.toArray());
+    private JLabel clanMembersLabel, clansLabel, playersLabel, clanNameLabel, levelLabel, HQLabel, infoLabel;
+    private JButton leaveClanButton, joinClanButton, updateButton;
+    private JList clanMembersList = new JList(), clansList = new JList(clanData.toArray()), 
+                            playersList = new JList(playerData.toArray());
     private JScrollPane scrollClans, scrollPlayers, scrollClanMembers;
     
     
     public gamemode_clan(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("gamemode clans");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -62,69 +62,69 @@ public class gamemode_clan extends JFrame implements ActionListener{
     }
     public void getData(){
         try{
-            ClanData = dbConnector.getClans();
-            PlayerData = dbConnector.getPlayers();
+            clanData = dbConnector.getClans();
+            playerData = dbConnector.getPlayers();
             
-            listClans.setListData(ClanData.toArray());
-            listPlayers.setListData(PlayerData.toArray());
+            clansList.setListData(clanData.toArray());
+            playersList.setListData(playerData.toArray());
         }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                 "get data error",ex);}
     }
     public void Updateable(){
-        listClanMembers.setListData(ClanMembersData.toArray());
-        listClanMembers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listClanMembers.setLayoutOrientation(VERTICAL);
-        listClanMembers.setVisibleRowCount(-1);
-        add(listClanMembers);
-        scrollClanMembers = new JScrollPane(listClanMembers);
+        clanMembersList.setListData(clanMembersData.toArray());
+        clanMembersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        clanMembersList.setLayoutOrientation(VERTICAL);
+        clanMembersList.setVisibleRowCount(-1);
+        add(clanMembersList);
+        scrollClanMembers = new JScrollPane(clanMembersList);
         scrollClanMembers.setPreferredSize(new Dimension(250, 100));
         scrollClanMembers.setBounds(30, 240, 150, 150);
         add(scrollClanMembers);
         
     }
     public void initButtons(){
-        bUpdate = new JButton("Update clan");
-        bUpdate.setBounds(210, 290, 120, 30);
-        bUpdate.addActionListener(this);
-        add(bUpdate);
+        updateButton = new JButton("Update clan");
+        updateButton.setBounds(210, 290, 120, 30);
+        updateButton.addActionListener(this);
+        add(updateButton);
         
-        bJoinClan = new JButton("Join clan");
-        bJoinClan.setBounds(310, 150, 100, 30);
-        bJoinClan.addActionListener(this);
-        add(bJoinClan);
+        joinClanButton = new JButton("Join clan");
+        joinClanButton.setBounds(310, 150, 100, 30);
+        joinClanButton.addActionListener(this);
+        add(joinClanButton);
         
-        bLeaveClan = new JButton("Leave clan");
-        bLeaveClan.setBounds(210, 330, 120, 30);
-        bLeaveClan.addActionListener(this);
-        add(bLeaveClan);
+        leaveClanButton = new JButton("Leave clan");
+        leaveClanButton.setBounds(210, 330, 120, 30);
+        leaveClanButton.addActionListener(this);
+        add(leaveClanButton);
     }
     public void testInit(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(20, 400, 430, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(20, 400, 430, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        lClanMembers = new JLabel("Members of selected Clan:");
-        lClanMembers.setBounds(30,205,200,20);
-        add(lClanMembers);
-        lHQ = new JLabel("Headquater:");
-        lHQ.setBounds(200, 240, 150, 20);
-        add(lHQ);
-        lLevel = new JLabel("Clan level:");
-        lLevel.setBounds(200, 260, 150, 20);
-        add(lLevel);
+        clanMembersLabel = new JLabel("Members of selected Clan:");
+        clanMembersLabel.setBounds(30,205,200,20);
+        add(clanMembersLabel);
+        HQLabel = new JLabel("Headquater:");
+        HQLabel.setBounds(200, 240, 150, 20);
+        add(HQLabel);
+        levelLabel = new JLabel("Clan level:");
+        levelLabel.setBounds(200, 260, 150, 20);
+        add(levelLabel);
         
-        listClans.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listClans.setLayoutOrientation(VERTICAL);
-        listClans.setVisibleRowCount(1);
-        listClans.addListSelectionListener((e) ->{
+        clansList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        clansList.setLayoutOrientation(VERTICAL);
+        clansList.setVisibleRowCount(1);
+        clansList.addListSelectionListener((e) ->{
                 JList list = (JList) e.getSource();
                 String selected = list.getSelectedValue().toString();
                 System.out.println(selected);
                 try{
-                    ClanMembersData = dbConnector.getClanMembers(listClans.getSelectedValue().toString());
-                    listClanMembers.setListData(ClanMembersData.toArray());}
+                    clanMembersData = dbConnector.getClanMembers(clansList.getSelectedValue().toString());
+                    clanMembersList.setListData(clanMembersData.toArray());}
                 catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                         "listener listClans error",ex);}
                 try{
@@ -136,33 +136,33 @@ public class gamemode_clan extends JFrame implements ActionListener{
                         lvl = rs.getInt("clan_level");
                         HQ = rs.getString("HEADQUATER");
                     }
-                    lHQ.setText("Headquater: " + HQ);
-                    lLevel.setText("Clan level: "+ Integer.toString(lvl));
+                    HQLabel.setText("Headquater: " + HQ);
+                    levelLabel.setText("Clan level: "+ Integer.toString(lvl));
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                         "listener cv  vbnvnvblistClans error",ex);}
              
             }
             );
-            add(listClans);
+            add(clansList);
         
-        lClans = new JLabel("Clans:");
-        lClans.setBounds(30, 30, 100, 20);
-        add(lClans);
-        scrollClans = new JScrollPane(listClans);
+        clansLabel = new JLabel("Clans:");
+        clansLabel.setBounds(30, 30, 100, 20);
+        add(clansLabel);
+        scrollClans = new JScrollPane(clansList);
         scrollClans.setPreferredSize(new Dimension(250, 100));
         scrollClans.setBounds(30, 55, 100, 150);
         add(scrollClans);
         
-        lClanName = new JLabel("");
-        lClanName.setForeground(Color.BLACK);
-        lClanName.setBounds(275, 55, 200, 40);
-        add(lClanName);
+        clanNameLabel = new JLabel("");
+        clanNameLabel.setForeground(Color.BLACK);
+        clanNameLabel.setBounds(275, 55, 200, 40);
+        add(clanNameLabel);
         
         
-        listPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listPlayers.setLayoutOrientation(VERTICAL);
-        listPlayers.setVisibleRowCount(1);
-        listPlayers.addListSelectionListener((e)->{
+        playersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        playersList.setLayoutOrientation(VERTICAL);
+        playersList.setVisibleRowCount(1);
+        playersList.addListSelectionListener((e)->{
             JList list = (JList) e.getSource();
             String selected = list.getSelectedValue().toString();
             int id = dbConnector.getId(selected);
@@ -180,21 +180,21 @@ public class gamemode_clan extends JFrame implements ActionListener{
                     founder = "Founder of the ";
                 else if(founder.equals("N"))
                     founder = "Member of the ";
-                lClanName.setText(founder + clanName);
+                clanNameLabel.setText(founder + clanName);
                 
                 rs.close();
                 stmt.close();
             }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE, "playerlist", ex);
-            lClanName.setText(list.getSelectedValue().toString()+"- without a clan");}
+            clanNameLabel.setText(list.getSelectedValue().toString()+"- without a clan");}
         
         
         });
-        add(listPlayers);
+        add(playersList);
         
-        lPlayers = new JLabel("All Players:");
-        lPlayers.setBounds(140, 30, 100, 20);
-        add(lPlayers);
-        scrollPlayers = new JScrollPane(listPlayers);
+        playersLabel = new JLabel("All Players:");
+        playersLabel.setBounds(140, 30, 100, 20);
+        add(playersLabel);
+        scrollPlayers = new JScrollPane(playersList);
         scrollPlayers.setPreferredSize(new Dimension(250, 100));
         scrollPlayers.setBounds(140, 55, 130, 150);
         add(scrollPlayers);
@@ -217,53 +217,53 @@ public class gamemode_clan extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bJoinClan){
+        if(source == joinClanButton){
             String result;
-            if(listPlayers.getSelectedValue()==null ||listClans.getSelectedValue()==null){
+            if(playersList.getSelectedValue()==null ||clansList.getSelectedValue()==null){
                 System.out.println("Join clan missing data");
             }
             else{
                 try{
-                    int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
-                    String name = listClans.getSelectedValue().toString();
+                    int id = dbConnector.getId(playersList.getSelectedValue().toString());
+                    String name = clansList.getSelectedValue().toString();
                     result = dbConnector.joinClan(name, id);
                     System.out.println(result);
-                    lInfo.setText(result);
+                    infoLabel.setText(result);
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                 "Join clan error",ex);
-                                        lInfo.setText("Something gone wrong with joining clan");
-                                        lInfo.setForeground(Color.red);}
+                                        infoLabel.setText("Something gone wrong with joining clan");
+                                        infoLabel.setForeground(Color.red);}
             }
         
         }
-        if(source == bLeaveClan){
+        if(source == leaveClanButton){
             String result;
-            if(listClanMembers.getSelectedValue()==null)
+            if(clanMembersList.getSelectedValue()==null)
                 System.out.println("Leave clan missing data");
             else{
                 try{
-                    result = dbConnector.leaveClan(dbConnector.getId( listClanMembers.getSelectedValue().toString()));
+                    result = dbConnector.leaveClan(dbConnector.getId( clanMembersList.getSelectedValue().toString()));
                     System.out.println(result);
-                    lInfo.setText(result);
+                    infoLabel.setText(result);
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                 "Leave clan error",ex);
-                                        lInfo.setText("Something gone wrong with leaving a clan");
-                                        lInfo.setForeground(Color.red);}
+                                        infoLabel.setText("Something gone wrong with leaving a clan");
+                                        infoLabel.setForeground(Color.red);}
             }
         }
-        if(source == bUpdate){
-            if(listClans.getSelectedValue() == null){}
+        if(source == updateButton){
+            if(clansList.getSelectedValue() == null){}
             else{
-                String name = listClans.getSelectedValue().toString();
+                String name = clansList.getSelectedValue().toString();
                 try{
                     Statement stmt = dbConnector.getConnection().createStatement();
                     ResultSet rs = stmt.executeQuery("UPDATE clans set clan_level = clan_level + 1 where clan_name like '"+name+"'");
-                    lInfo.setText("Succesfully upgraded "+name+" to next level");
+                    infoLabel.setText("Succesfully upgraded "+name+" to next level");
                     rs.close();
                     stmt.close();
                 }catch(SQLException ex){
-                    lInfo.setText(name + " was not upgraded to next level");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText(name + " was not upgraded to next level");
+                    infoLabel.setForeground(Color.red);}
             }
         }
         getData();
