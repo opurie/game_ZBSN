@@ -170,7 +170,7 @@ public class gamemode_quest extends JFrame implements ActionListener{
                 try{
                     int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
                     String name = listQuests.getSelectedValue().toString();
-                    result = dbConnector.TakeTheTask(id, name);
+                    result = dbConnector.takeTask(id, name);
                     lInfo.setText(result);
                 }catch(SQLException ex){
                     lInfo.setText("Something gone wrong with taking task");
@@ -187,7 +187,7 @@ public class gamemode_quest extends JFrame implements ActionListener{
                 try{
                     int id = dbConnector.getId(listPlayers.getSelectedValue().toString());
                     String name = listQuests.getSelectedValue().toString();
-                    result = dbConnector.SubmitTask(id, name);
+                    result = dbConnector.submitTask(id, name);
                     lInfo.setText(result);
                 }catch(SQLException ex){
                     lInfo.setText("Something gone wrong with submiting task");
