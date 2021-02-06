@@ -198,8 +198,9 @@ public class window_item extends JFrame implements ActionListener{
             if(anyFieldEmpty()){
                System.out.println("rasa brak danych");
             } else {
+                String name = InsertName.getText();
                 try {
-                    String name = InsertName.getText();
+                    
                     int strength = Integer.parseInt(InsertStrength.getText());
                     int agility = Integer.parseInt(InsertAgility.getText());
                     int intellect = Integer.parseInt(InsertIntellect.getText());
@@ -210,7 +211,7 @@ public class window_item extends JFrame implements ActionListener{
                 } catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error item class",ex);
-                    lInfo.setText("Something gone wrong with creating item");
+                    lInfo.setText(name+" is used, insert unique name");
                     lInfo.setForeground(Color.red);}
                 //TODO separate exceptions
             }

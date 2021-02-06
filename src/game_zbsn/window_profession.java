@@ -150,13 +150,14 @@ public class window_profession extends JFrame implements ActionListener{
                lInfo.setText("Missing data");
             }
             else{
+                String name = InsertName.getText();
                 try{
-                    dbConnector.createProfession(InsertName.getText());
+                    dbConnector.createProfession(name);
                     lInfo.setText("Item successfully created");
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Insert profession error",ex);
-                    lInfo.setText("Something gone wrong with creating");
+                    lInfo.setText(name+" is used, insert unique name");
                     lInfo.setForeground(Color.red);}
             }
         }

@@ -160,8 +160,9 @@ public class window_quest extends JFrame implements ActionListener{
         JButton button = (JButton) e.getSource();
         if(button == bInsert) {
             if(!anyFieldEmpty()) {
+                String name = InsertName.getText();
                 try {
-                    String name = InsertName.getText();
+                    
                     float exp = Float.parseFloat(InsertExp.getText());
                     int creator = dbConnector.getId(InsertCreator.getSelectedValue().toString());
                     dbConnector.createQuest(name, exp, creator);
@@ -169,7 +170,7 @@ public class window_quest extends JFrame implements ActionListener{
                 } catch(SQLException ex) {
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Create quest error",ex);
-                    lInfo.setText("Something gone wrong with creating");
+                    lInfo.setText(name+" is used, insert unique name");
                     lInfo.setForeground(Color.red);
                 }
             } else {

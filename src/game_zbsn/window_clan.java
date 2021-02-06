@@ -163,15 +163,16 @@ public class window_clan extends JFrame implements ActionListener{
                 System.out.println("Clan brak danych");
             }
             else{
+                String name = InsertName.getText();
                 try{
                     int id = dbConnector.getId(InsertCreator.getSelectedValue().toString());
-                   result = dbConnector.createClan(InsertName.getText(), id, InsertHQ.getText());
+                   result = dbConnector.createClan(name, id, InsertHQ.getText());
                    System.out.println(result);
                    lInfo.setText(result);
                 }catch(SQLException ex){
                 Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
                                                             "Clan insert error",ex);
-                lInfo.setText("That clan name is already used");
+                lInfo.setText(name+" is used, insert unique name");
                 lInfo.setForeground(Color.red);}
             }
         }
