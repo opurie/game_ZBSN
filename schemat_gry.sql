@@ -88,6 +88,7 @@ create table clans(
     clan_level integer not null,
     headquater varchar2(30) not null);
     
+select clan_level, headquater from clans where clan_name='Gilda';
 create table membership(
     founder varchar2(1) not null,
     member_id integer
@@ -99,3 +100,7 @@ create table membership(
     primary key(member_id, clan_name)
     );
     
+create bitmap index item_ownership_bmp_idx
+on items_ownership(item_name)
+from items i, items_ownership o
+where i.i_name = o.item_name;
