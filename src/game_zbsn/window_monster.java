@@ -67,9 +67,14 @@ public class window_monster extends JFrame implements ActionListener{
     }
     public void get_data(){
         try{
+            InsertName.setText("");
+            InsertRace.clearSelection();
+            InsertItem.clearSelection();
+            
             RaceData = dbConnector.getRaces();
             ItemData = dbConnector.getItems();
             MonsterData = dbConnector.getMonsters();
+            System.out.println("lol");
             
             ListOfNames.setListData(MonsterData.toArray());
             InsertRace.setListData(RaceData.toArray());
