@@ -153,7 +153,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
         
         lClanName = new JLabel("");
         lClanName.setForeground(Color.BLACK);
-        lClanName.setBounds(250, 55, 200, 20);
+        lClanName.setBounds(275, 55, 200, 40);
         add(lClanName);
         
         
@@ -183,7 +183,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 rs.close();
                 stmt.close();
             }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE, "playerlist", ex);
-            lClanName.setText(list.getSelectedValue().toString()+" - without a clan");}
+            lClanName.setText(list.getSelectedValue().toString()+"- without a clan");}
         
         
         });
@@ -194,7 +194,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
         add(lPlayers);
         scrollPlayers = new JScrollPane(listPlayers);
         scrollPlayers.setPreferredSize(new Dimension(250, 100));
-        scrollPlayers.setBounds(140, 55, 100, 150);
+        scrollPlayers.setBounds(140, 55, 130, 150);
         add(scrollPlayers);
     }
     public String findClan(int id){
