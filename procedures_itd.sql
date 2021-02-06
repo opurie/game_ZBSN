@@ -105,6 +105,8 @@ create or replace procedure create_quest(pname in nvarchar2, pexp in number, pid
 begin
 	insert into quests(q_name, experience_points, creator_id) values
 		(pname, pexp, pid);
+    insert into performances(done, player_id, quest_name) values
+        ('Y', pid, pname);
 end create_quest;
 
 create or replace procedure delete_quest(pname in nvarchar2) is
@@ -123,6 +125,16 @@ begin
     return quest_cursor;
 end get_quests;
 
+create or replace function get_player_quests(pid in number)
+    return sys_refcursor is
+    quest_cursor sys_refcursor;
+begin
+    open quest_cursor for
+        select quest_name ||' -> '||done
+        from performances
+        where player_id = pid;
+    return quest_cursor;
+end get_player_quests;
 
 create or replace function take_the_task(pid in number, pname in nvarchar2)
     return nvarchar2 is
@@ -195,6 +207,19 @@ begin
     return item_cursor;
 end get_items;
 
+create or replace function get_equipment(pid in number)
+    return sys_refcursor
+    is
+    item_cursor sys_refcursor;
+begin
+    open item_cursor for
+        select i.i_name ||' - '||i.weight||' - '||i.profession||' - '||o.number_of
+        from items i inner join items_ownership o 
+        on i.i_name = o.item_name
+        where o.equipment_id = pid;
+    return item_cursor;
+end get_equipment;
+
 create or replace function pick_up(pid in number, pname in nvarchar2)
     return nvarchar2 is
 	i items_ownership.number_of%type;
@@ -202,28 +227,41 @@ create or replace function pick_up(pid in number, pname in nvarchar2)
     iweight number;
     fweight number;
 begin
-	select number_of
-	into i
-	from items_ownership
-	where equipment_id = pid and item_name = pname;
-    
-	select weight
-    into iweight
-    from items
-    where i_name like pname;
-    
-    select capacity_eq
-    into eweight
-    from equipments
-    where owner_id = pid;
-    
-    select sum(o.number_of * (select weight
-                                from items
-                                where o.item_name = i_name))
-    into fweight
-    from items_ownership o
-    where o.equipment_id = pid
-    group by o.equipment_id;
+    begin
+        select nvl(number_of, 0)
+        into i
+        from items_ownership
+        where equipment_id = pid and item_name = pname;
+        exception
+        when no_data_found then i := null;
+    end;
+    begin
+        select nvl(weight,0)
+        into iweight
+        from items
+        where i_name like pname;
+        exception
+        when no_data_found then iweight := 0;
+    end;    
+    begin
+        select nvl(capacity_eq,0)
+        into eweight
+        from equipments
+        where owner_id = pid;
+        exception
+        when no_data_found then eweight := 0;
+    end;    
+    begin
+        select sum(nvl(o.number_of,0) * (select nvl(weight,0)
+                                    from items
+                                    where o.item_name = i_name))
+        into fweight
+        from items_ownership o
+        where o.equipment_id = 17
+        group by o.equipment_id;
+         exception
+        when no_data_found then fweight := 0;
+    end;
     if iweight + fweight > eweight then
         return 'Your equipment will be too heavy, you can not pick that item';
     else
@@ -238,20 +276,27 @@ begin
             return 'Item picked';
         end if;
     end if;
-    exception
-    when no_data_found then
-    return 'Some problems, check if you marked player and item';
 end pick_up;
+
+declare
+res nvarchar2(300);
+begin
+    res := pick_up(17,'Korona');
+end;
+select * from items_ownership;
 
 create or replace function drop_item(pid in number, pname in nvarchar2) 
     return nvarchar2 is
 	i items_ownership.number_of%type;
 begin
-	select number_of
-	into i
-	from items_ownership
-	where equipment_id = pid and item_name = pname;
-	
+    begin
+        select nvl(number_of,0)
+        into i
+        from items_ownership
+        where equipment_id = pid and item_name = pname;
+         exception
+        when no_data_found then i := 0;
+    end;	
 	if i>0 then
 		update items_ownership
 		set number_of = number_of - 1
@@ -352,9 +397,11 @@ create or replace function get_clan_members(pname in nvarchar2)
     clan_cursor sys_refcursor;
 begin
     open clan_cursor for
-        select p.player_id || '. '||p.player_name 
+        select p.player_id || '. '||p.player_name || ' ' || m.founder
         from players p inner join membership m 
-        on m.member_id = p.player_id;
+        on m.member_id = p.player_id
+        where m.clan_name like pname
+        order by m.founder desc;
     return clan_cursor;
 end get_clan_members;
-
+select * from membership;
