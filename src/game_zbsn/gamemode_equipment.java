@@ -57,7 +57,7 @@ public class gamemode_equipment extends JFrame implements ActionListener{
         initLists();
     }
     public void initButtons(){
-        lInfo = new JLabel("Info: ");
+        lInfo = new JLabel("");
         lInfo.setBounds(20, 400, 430, 20);
         lInfo.setOpaque(true);
         lInfo.setBackground(Color.WHITE);
@@ -185,7 +185,8 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     System.out.println(result);
                 
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with dropping");}
+                    lInfo.setText("Something gone wrong with dropping");
+                    lInfo.setForeground(Color.red);}
             }
         }
         if(source == bPick){
@@ -200,7 +201,8 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     System.out.println(result);
                     lInfo.setText(result);
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with picking");}
+                    lInfo.setText("Something gone wrong with picking");
+                    lInfo.setForeground(Color.red);}
             }
         }
         if(source == bUpgradeEq){
@@ -216,10 +218,10 @@ public class gamemode_equipment extends JFrame implements ActionListener{
                     stmt.close();
                     lInfo.setText("Equipment successfully upgraded +10");
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with upgrading");}
+                    lInfo.setText("Something gone wrong with upgrading");
+                    lInfo.setForeground(Color.red);}
             }
         }
         getData();
     }
-    
 }

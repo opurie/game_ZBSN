@@ -97,7 +97,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
         add(bLeaveClan);
     }
     public void testInit(){
-        lInfo = new JLabel("Info: ");
+        lInfo = new JLabel("");
         lInfo.setBounds(20, 400, 430, 20);
         lInfo.setOpaque(true);
         lInfo.setBackground(Color.WHITE);

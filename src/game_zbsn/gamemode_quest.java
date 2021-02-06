@@ -65,7 +65,7 @@ public class gamemode_quest extends JFrame implements ActionListener{
         System.out.println("getData error");}
     }
     public void initButtons(){
-        lInfo = new JLabel("Info: ");
+        lInfo = new JLabel("");
         lInfo.setBounds(20, 400, 430, 20);
         lInfo.setOpaque(true);
         lInfo.setBackground(Color.WHITE);
@@ -172,7 +172,8 @@ public class gamemode_quest extends JFrame implements ActionListener{
                     result = dbConnector.TakeTheTask(id, name);
                     lInfo.setText(result);
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with taking task");}
+                    lInfo.setText("Something gone wrong with taking task");
+                    lInfo.setForeground(Color.red);}
             }
             System.out.println(result);
         }
@@ -188,7 +189,8 @@ public class gamemode_quest extends JFrame implements ActionListener{
                     result = dbConnector.SubmitTask(id, name);
                     lInfo.setText(result);
                 }catch(SQLException ex){
-                    lInfo.setText("Something gone wrong with submiting task");}
+                    lInfo.setText("Something gone wrong with submiting task");
+                    lInfo.setForeground(Color.red);}
             }
             
             System.out.println(result);
