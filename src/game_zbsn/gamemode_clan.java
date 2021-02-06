@@ -36,7 +36,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
     private List<String> ClanData = new ArrayList<>();
     private List<String> PlayerData = new ArrayList<>();
 
-    private JLabel lClanMembers, lClans, lPlayers, lClanName, lLevel, lHQ;
+    private JLabel lClanMembers, lClans, lPlayers, lClanName, lLevel, lHQ, lInfo;
     private JButton bLeaveClan, bJoinClan, bUpdate;
     private JList listClanMembers = new JList(), listClans = new JList(ClanData.toArray()), 
                             listPlayers = new JList(PlayerData.toArray());
@@ -82,7 +82,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
     }
     public void initButtons(){
         bUpdate = new JButton("Update clan");
-        bUpdate.setBounds(310, 100, 100, 30);
+        bUpdate.setBounds(210, 290, 120, 30);
         bUpdate.addActionListener(this);
         add(bUpdate);
         
@@ -92,11 +92,17 @@ public class gamemode_clan extends JFrame implements ActionListener{
         add(bJoinClan);
         
         bLeaveClan = new JButton("Leave clan");
-        bLeaveClan.setBounds(210, 290, 100, 30);
+        bLeaveClan.setBounds(210, 330, 120, 30);
         bLeaveClan.addActionListener(this);
         add(bLeaveClan);
     }
     public void testInit(){
+        lInfo = new JLabel("Info: ");
+        lInfo.setBounds(20, 400, 400, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         lClanMembers = new JLabel("Members of selected Clan:");
         lClanMembers.setBounds(30,205,200,20);
         add(lClanMembers);
@@ -220,8 +226,11 @@ public class gamemode_clan extends JFrame implements ActionListener{
                     String name = listClans.getSelectedValue().toString();
                     result = dbConnector.joinClan(name, id);
                     System.out.println(result);
+                    lInfo.setText(result);
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
-                                                                "Join clan error",ex);}
+                                                                "Join clan error",ex);
+                                        lInfo.setText("Something gone wrong with joining clan");
+                                        lInfo.setForeground(Color.red);}
             }
         
         }
@@ -233,21 +242,26 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 try{
                     result = dbConnector.leaveClan(dbConnector.getId( listClanMembers.getSelectedValue().toString()));
                     System.out.println(result);
+                    lInfo.setText(result);
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
-                                                                "Leave clan error",ex);}
+                                                                "Leave clan error",ex);
+                                        lInfo.setText("Something gone wrong with leaving a clan");
+                                        lInfo.setForeground(Color.red);}
             }
         }
         if(source == bUpdate){
             if(listClans.getSelectedValue() == null){}
             else{
+                String name = listClans.getSelectedValue().toString();
                 try{
-                    String name = listClans.getSelectedValue().toString();
                     Statement stmt = dbConnector.getConnection().createStatement();
                     ResultSet rs = stmt.executeQuery("UPDATE clans set clan_level = clan_level + 1 where clan_name like '"+name+"'");
-
+                    lInfo.setText("Succesfully upgraded "+name+" to next level");
                     rs.close();
                     stmt.close();
-                }catch(SQLException ex){}
+                }catch(SQLException ex){
+                    lInfo.setText(name + " was not upgraded to next level");
+                    lInfo.setForeground(Color.red);}
             }
         }
         getData();

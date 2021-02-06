@@ -72,12 +72,12 @@ public class gamemode_quest extends JFrame implements ActionListener{
         add(lCreator);
         
         bTakeTheTask = new JButton("Take task");
-        bTakeTheTask.setBounds(310, 120, 100, 30);
+        bTakeTheTask.setBounds(300, 100, 100, 30);
         bTakeTheTask.addActionListener(this);
         add(bTakeTheTask);
     
         bSubmitTask = new JButton("Submit task");
-        bSubmitTask.setBounds(310, 170, 100, 30);
+        bSubmitTask.setBounds(300, 240, 100, 30);
         bSubmitTask.addActionListener(this);
         add(bSubmitTask);
     }
