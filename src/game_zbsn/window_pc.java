@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -39,7 +40,7 @@ public class window_pc extends JFrame implements ActionListener{
     private JButton bInsert;
     private JTextField InsertName;
     private JList InsertRace, InsertProfession;
-    private JLabel lName, lRace, lProfession;
+    private JLabel lName, lRace, lProfession, lInfo;
     private List<String> ProfessionData = new ArrayList<String>();
     private List<String> RaceData = new ArrayList<String>();
     //-------------------------------------------
@@ -93,14 +94,17 @@ public class window_pc extends JFrame implements ActionListener{
             if(InsertName.getText().equals("")||InsertProfession.getSelectedValue()==null ||
                     InsertRace.getSelectedValue()==null){
                 System.out.println("pc brak danych");
+                lInfo.setText("Missing data");
             }
             else{
                 try{
                    dbConnector.createPlayer(InsertName.getText(), InsertProfession.getSelectedValue().toString(), 
                            InsertRace.getSelectedValue().toString());
+                   lInfo.setText("Player successfully created");
                 }catch(SQLException ex){
                 Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
-                                                            "Player insert error",ex);}
+                                                            "Player insert error",ex);
+                lInfo.setText("Something gone wrong with creating");}
             }
         }
         if(source == bDelete){
@@ -110,15 +114,24 @@ public class window_pc extends JFrame implements ActionListener{
                 try{
                     dbConnector.leaveClan(id);
                     dbConnector.deletePlayer(id);
+                    lInfo.setText("Player successfully deleted");
 
                 }catch(SQLException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
-                                                                "Delete profession error",ex);}
+                                                                "Delete profession error",ex);
+                    lInfo.setText("Something gone wrong with deleting");
+                    lInfo.setForeground(Color.red);}
             }
         }
         get_data();
     }
     public void delete_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bDelete = new JButton("Delete");
         bDelete.setBounds(230, 200, 100, 30);
         add(bDelete);

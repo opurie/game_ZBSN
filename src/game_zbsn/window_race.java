@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package game_zbsn;
+import java.awt.Color;
 import java.sql.*;
 import java.awt.Dimension;
 import java.util.List;
@@ -36,7 +37,7 @@ public class window_race extends JFrame implements ActionListener{
     private JButton bInsert;
     private JTextField InsertName, InsertStrength, InsertAgility,
                        InsertIntellect;
-    private JLabel lName, lStatistics, lWeight;
+    private JLabel lName, lStatistics, lWeight,lInfo;
     //-------------------------------------------
     private JList ListOfNames;
     //--------DELETING---------------------------
@@ -62,6 +63,12 @@ public class window_race extends JFrame implements ActionListener{
         get_data();
     }
     public void insert_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bInsert = new JButton("Create");
         bInsert.setBounds(230, 85, 100, 30);
         add(bInsert);
@@ -148,29 +155,32 @@ public class window_race extends JFrame implements ActionListener{
                 String name = ListOfNames.getSelectedValue().toString();
                 try{
                     dbConnector.deleteRace(name);
-                    
+                    lInfo.setText("Race successfully deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
-                                                                "Delete race error",ex);}
+                                                                "Delete race error",ex);
+                    lInfo.setText("Something gone wrong with deleting");}
             }
         }
         if(source == bInsert){
             if(InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
                InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")){
                System.out.println("rasa brak danych");
+               lInfo.setText("Missing data");
             }
             else{
-                
+                String name = InsertName.getText();
                 try{
-                    String name = InsertName.getText();
                     int strength = Integer.parseInt(InsertStrength.getText());
                     int agility = Integer.parseInt(InsertAgility.getText());
                     int intellect = Integer.parseInt(InsertIntellect.getText());
                     dbConnector.createRace(name, strength, agility, intellect);
-                    
+                    lInfo.setText("Race successfully created");
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
-                                                            "SQL or int error race class",ex);}
+                                                            "SQL or int error race class",ex);
+                    lInfo.setText(name+" is used, insert unique name");
+                    lInfo.setForeground(Color.red);}
 
             }
         }
@@ -203,8 +213,11 @@ public class window_race extends JFrame implements ActionListener{
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
+                        lInfo.setText("Race successfully updated");
                     }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Update error",ex);
+                                            lInfo.setText("Something gone wrong with updating, change name");
+                                            lInfo.setForeground(Color.red);
                     }
                 }
                 

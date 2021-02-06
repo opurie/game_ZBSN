@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -37,7 +38,7 @@ public class window_quest extends JFrame implements ActionListener{
     private JButton bInsert;
     private JTextField InsertName, InsertExp;
     private JList InsertCreator;
-    private JLabel lName, lExp, lCreator;
+    private JLabel lName, lExp, lCreator, lInfo;
     private List<String> CreatorData = new ArrayList<>();
     //-------------------------------------------
     
@@ -81,6 +82,12 @@ public class window_quest extends JFrame implements ActionListener{
         }
     }
     public void insert_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bInsert = new JButton("Create");
         bInsert.setBounds(230, 85, 100, 30);
         add(bInsert);
@@ -158,11 +165,15 @@ public class window_quest extends JFrame implements ActionListener{
                     float exp = Float.parseFloat(InsertExp.getText());
                     int creator = dbConnector.getId(InsertCreator.getSelectedValue().toString());
                     dbConnector.createQuest(name, exp, creator);
+                    lInfo.setText("Quest successfully created");
                 } catch(SQLException ex) {
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Create quest error",ex);
+                    lInfo.setText("Something gone wrong with creating");
+                    lInfo.setForeground(Color.red);
                 }
             } else {
+                lInfo.setText("Missing data");
                 System.out.println("field empty");
             }
         } else if(button == bDelete) {
@@ -170,9 +181,11 @@ public class window_quest extends JFrame implements ActionListener{
             if(ListOfNames.getSelectedValue()!=null) {
                 try {
                     dbConnector.deleteQuest(ListOfNames.getSelectedValue().toString());
+                    lInfo.setText("Quest successfully deleted");
                 } catch(SQLException ex) {
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Delete quest error",ex);
+                    lInfo.setText("Something gone wrong with deleting");
                 }
             } else {
                 System.out.println("field empty");

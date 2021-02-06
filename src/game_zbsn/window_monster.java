@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -37,7 +38,7 @@ public class window_monster extends JFrame implements ActionListener{
     private JButton bInsert;
     private JTextField InsertName;
     private JList InsertRace, InsertItem;
-    private JLabel lName, lRace, lItem;
+    private JLabel lName, lRace, lItem, lInfo;
     private List<String> RaceData = new ArrayList<>();
     private List<String> ItemData = new ArrayList<>();
     //-------------------------------------------
@@ -85,6 +86,12 @@ public class window_monster extends JFrame implements ActionListener{
         }
     }
     public void delete_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bDelete = new JButton("Delete");
         bDelete.setBounds(230, 200, 100, 30);
         add(bDelete);
@@ -163,13 +170,17 @@ public class window_monster extends JFrame implements ActionListener{
         if(source == bInsert){
             if(InsertName.getText().equals("")||InsertRace.getSelectedValue()==null||InsertItem.getSelectedValue()==null){
                 System.out.println("pc brak danych");
+                lInfo.setText("Missing data");
             }
             else{
                 try{
                    dbConnector.createMonster(InsertName.getText(), InsertItem.getSelectedValue().toString(), InsertRace.getSelectedValue().toString());
+                   lInfo.setText("Monster successfully created");
                 }catch(SQLException ex){
                 Logger.getLogger(window_monster.class.getName()).log(Level.SEVERE,
-                                                            "Monster insert error",ex);}
+                                                            "Monster insert error",ex);
+                lInfo.setText("Something gone wrong with creating");
+                lInfo.setForeground(Color.red);}
             }
         }
         if(source == bDelete){
@@ -178,9 +189,12 @@ public class window_monster extends JFrame implements ActionListener{
                 int id = dbConnector.getId(name);
                 try{
                     dbConnector.deleteMonster(id);
+                    lInfo.setText("Monster deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_monster.class.getName()).log(Level.SEVERE,
-                                                                "Delete monster error",ex);}
+                                                                "Delete monster error",ex);
+                    lInfo.setText("Something gone wrong with deleting");
+                    lInfo.setForeground(Color.red);}
             }
         }
         get_data();

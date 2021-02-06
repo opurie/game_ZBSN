@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -37,7 +38,7 @@ public class window_clan extends JFrame implements ActionListener{
     private JButton bInsert;
     private JTextField InsertName, InsertHQ;
     private JList InsertCreator;
-    private JLabel lName, lCreator, lHq;
+    private JLabel lName, lCreator, lHq, lInfo;
     private List<String> CreatorData = new ArrayList<>();
     //-------------------------------------------
     
@@ -80,6 +81,12 @@ public class window_clan extends JFrame implements ActionListener{
         }
     }
     public void insert_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bInsert = new JButton("Create");
         bInsert.setBounds(230, 85, 100, 30);
         add(bInsert);
@@ -160,9 +167,12 @@ public class window_clan extends JFrame implements ActionListener{
                     int id = dbConnector.getId(InsertCreator.getSelectedValue().toString());
                    result = dbConnector.createClan(InsertName.getText(), id, InsertHQ.getText());
                    System.out.println(result);
+                   lInfo.setText(result);
                 }catch(SQLException ex){
                 Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
-                                                            "Clan insert error",ex);}
+                                                            "Clan insert error",ex);
+                lInfo.setText("That clan name is already used");
+                lInfo.setForeground(Color.red);}
             }
         }
         if(source == bDelete){
@@ -170,9 +180,11 @@ public class window_clan extends JFrame implements ActionListener{
                 String name = ListOfNames.getSelectedValue().toString();
                 try{
                     dbConnector.deleteClan(name);
+                    lInfo.setText(name + " deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
-                                                                "Delete clan error",ex);}
+                                                                "Delete clan error",ex);
+                    lInfo.setText("Something gone wrong with deleting clan");}
             }
         }
         get_data();

@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +39,7 @@ public class window_profession extends JFrame implements ActionListener{
     //--------INSERTING--------------------------
     private JButton bInsert;
     private JTextField InsertName;
-    private JLabel lName;
+    private JLabel lName, lInfo;
     //-------------------------------------------
     private JList ListOfNames;
     //--------DELETING---------------------------
@@ -67,6 +68,12 @@ public class window_profession extends JFrame implements ActionListener{
     
     
     public void insert_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bInsert = new JButton("Create");
         bInsert.setBounds(230, 85, 100, 30);
         add(bInsert);
@@ -130,21 +137,27 @@ public class window_profession extends JFrame implements ActionListener{
                 String name = ListOfNames.getSelectedValue().toString();
                 try{
                     dbConnector.deleteProfession(name);
+                    lInfo.setText("Item successfully deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
-                                                                "Delete profession error",ex);}
+                                                                "Delete profession error",ex);
+                    lInfo.setText("Something gone wrong with deleting");}
             }
         }
         if(source == bInsert){
             if(InsertName.getText().equals("")){
                System.out.println("Profession missing data");
+               lInfo.setText("Missing data");
             }
             else{
                 try{
                     dbConnector.createProfession(InsertName.getText());
+                    lInfo.setText("Item successfully created");
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
-                                                            "Insert profession error",ex);}
+                                                            "Insert profession error",ex);
+                    lInfo.setText("Something gone wrong with creating");
+                    lInfo.setForeground(Color.red);}
             }
         }
         get_data();

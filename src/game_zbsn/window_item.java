@@ -5,6 +5,7 @@
  */
 package game_zbsn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +40,7 @@ public class window_item extends JFrame implements ActionListener{
     private JTextField InsertName, InsertStrength, InsertAgility,
                        InsertIntellect, InsertWeight;
     private JList InsertProfession;
-    private JLabel lName, lStatistics, lWeight, lProfession;
+    private JLabel lName, lStatistics, lWeight, lProfession, lInfo;
     private List<String> ProfessionData = new ArrayList<String>();
     //-------------------------------------------
     
@@ -66,6 +67,12 @@ public class window_item extends JFrame implements ActionListener{
         get_data();
     }
     public void insert_init(){
+        lInfo = new JLabel("");
+        lInfo.setBounds(30, 310, 320, 20);
+        lInfo.setOpaque(true);
+        lInfo.setBackground(Color.WHITE);
+        add(lInfo);
+        
         bInsert = new JButton("Create");
         bInsert.setBounds(230, 85, 100, 30);
         add(bInsert);
@@ -178,9 +185,12 @@ public class window_item extends JFrame implements ActionListener{
             if(ListOfNames.getSelectedValue() != null){
             try {
                     dbConnector.deleteItem(ListOfNames.getSelectedValue().toString());
+                    lInfo.setText(ListOfNames.getSelectedValue().toString() + " deleted");
             } catch(SQLException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
-                                                                "Delete item error",ex);}
+                                                                "Delete item error",ex);
+                    lInfo.setText("Something gone wrong with deleting");
+                    lInfo.setForeground(Color.red);}
             }
             
         }
@@ -196,9 +206,12 @@ public class window_item extends JFrame implements ActionListener{
                     int weight = Integer.parseInt(InsertWeight.getText());
                     String profession = InsertProfession.getSelectedValue().toString();
                     dbConnector.createItem(name, strength, agility, intellect, weight, profession);
+                    lInfo.setText("Item successfully created");
                 } catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
-                                                            "SQL or int error item class",ex);}
+                                                            "SQL or int error item class",ex);
+                    lInfo.setText("Something gone wrong with creating item");
+                    lInfo.setForeground(Color.red);}
                 //TODO separate exceptions
             }
         }
