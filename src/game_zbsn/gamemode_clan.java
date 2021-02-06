@@ -37,7 +37,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
     private List<String> PlayerData = new ArrayList<>();
 
     private JLabel lClanMembers, lClans, lPlayers, lClanName, lLevel, lHQ;
-    private JButton bLeaveClan, bJoinClan;
+    private JButton bLeaveClan, bJoinClan, bUpdate;
     private JList listClanMembers = new JList(), listClans = new JList(ClanData.toArray()), 
                             listPlayers = new JList(PlayerData.toArray());
     private JScrollPane scrollClans, scrollPlayers, scrollClanMembers;
@@ -81,13 +81,18 @@ public class gamemode_clan extends JFrame implements ActionListener{
         
     }
     public void initButtons(){
+        bUpdate = new JButton("Update clan");
+        bUpdate.setBounds(310, 100, 100, 30);
+        bUpdate.addActionListener(this);
+        add(bUpdate);
+        
         bJoinClan = new JButton("Join clan");
-        bJoinClan.setBounds(310, 100, 100, 30);
+        bJoinClan.setBounds(310, 150, 100, 30);
         bJoinClan.addActionListener(this);
         add(bJoinClan);
         
         bLeaveClan = new JButton("Leave clan");
-        bLeaveClan.setBounds(310, 150, 100, 30);
+        bLeaveClan.setBounds(210, 290, 100, 30);
         bLeaveClan.addActionListener(this);
         add(bLeaveClan);
     }
@@ -189,7 +194,6 @@ public class gamemode_clan extends JFrame implements ActionListener{
     public String findClan(int id){
         String result = "";
         try{
-            
             Statement stmt = dbConnector.getConnection().createStatement();
             ResultSet rs = stmt.executeQuery("SELECT clan_name FROM membership WHERE member_id ="+ Integer.toString(id));
             while(rs.next()){
@@ -232,7 +236,19 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                 "Leave clan error",ex);}
             }
-        
+        }
+        if(source == bUpdate){
+            if(listClans.getSelectedValue() == null){}
+            else{
+                try{
+                    String name = listClans.getSelectedValue().toString();
+                    Statement stmt = dbConnector.getConnection().createStatement();
+                    ResultSet rs = stmt.executeQuery("UPDATE clans set clan_level = clan_level + 1 where clan_name like '"+name+"'");
+
+                    rs.close();
+                    stmt.close();
+                }catch(SQLException ex){}
+            }
         }
         getData();
     }

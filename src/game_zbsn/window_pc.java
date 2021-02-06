@@ -107,7 +107,6 @@ public class window_pc extends JFrame implements ActionListener{
             if(ListOfNames.getSelectedValue() != null){
                 String name = ListOfNames.getSelectedValue().toString();
                 int id = dbConnector.getId(name);
-                System.out.println("Usunieto pc "+id);
                 try{
                     dbConnector.leaveClan(id);
                     dbConnector.deletePlayer(id);

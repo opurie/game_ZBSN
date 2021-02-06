@@ -203,11 +203,9 @@ public class window_race extends JFrame implements ActionListener{
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
-                        
-                        System.out.println("Zmodyfikowano "+changes+" krotek.");
                     }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Update error",ex);
-                    System.out.println(query);}
+                    }
                 }
                 
             }

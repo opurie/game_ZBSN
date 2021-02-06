@@ -48,7 +48,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
     //---------------------------------- 
 
     //-----------GAMEMODE--------------- 
-    private JButton bpvp, bpve, bClan, bQuest;
+    private JButton bpvp, bEquipment, bClan, bQuest;
     //----------------------------------
     
     //-----------FRAMES-----------------
@@ -86,10 +86,10 @@ public class Game_ZBSN extends JFrame implements ActionListener {
         add(bpvp);
         bpvp.addActionListener(this);
         
-        bpve = new JButton("PvE");
-        bpve.setBounds(190, 75, 100, 30);
-        add(bpve);
-        bpve.addActionListener(this);
+        bEquipment = new JButton("Equipment");
+        bEquipment.setBounds(190, 75, 100, 30);
+        add(bEquipment);
+        bEquipment.addActionListener(this);
         
         bClan = new JButton("Clans");
         bClan.setBounds(190, 110, 100, 30);
@@ -168,9 +168,9 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                 window_cleaner(SecondaryWindow);
                 SecondaryWindow = new gamemode_pvp(gamemode_scale, dbConnector);
             }
-            if(source == bpve){
+            if(source == bEquipment){
                 window_cleaner(SecondaryWindow);
-                SecondaryWindow = new gamemode_pve(gamemode_scale, dbConnector);
+                SecondaryWindow = new gamemode_equipment(gamemode_scale, dbConnector);
             }
             if(source == bClan){
                 window_cleaner(SecondaryWindow);

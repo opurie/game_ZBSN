@@ -166,6 +166,20 @@ public class DBConnector {
         return data;
     }
     
+    public List<String> getEquipment(int id)throws SQLException{
+        List<String> data = new ArrayList<>();
+        CallableStatement stmt = connection.prepareCall("{? = call get_equipment(?)}");
+        stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
+        stmt.setInt(2, id);
+        stmt.execute();
+        ResultSet result = (ResultSet)stmt.getObject(1);
+        while(result.next()){
+            data.add(result.getString(1));
+        }
+        result.close();
+        stmt.close();
+        return data;
+    }
     public void deleteItem(String name) throws SQLException {
         CallableStatement stmt = connection.prepareCall("{call delete_item(?)}");
         stmt.setString(1, name);
@@ -340,5 +354,9 @@ public class DBConnector {
     public int getId(String name){
         String[] s = name.split(". ");
         return Integer.parseInt(s[0]);
+    }
+    public String getItemName(String name){
+        String[]s = name.split(" - ");
+        return s[0];
     }
 }
