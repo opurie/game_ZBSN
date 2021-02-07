@@ -145,7 +145,7 @@ public class window_clan extends JFrame implements ActionListener{
             JList list = (JList) e.getSource();
             if(list.getSelectedValue() != null) {
                 String selected = list.getSelectedValue().toString();
-                displayClan(selected);
+                displayClan(dbConnector.getId(selected));
             }
         });
         add(namesList);
@@ -179,9 +179,10 @@ public class window_clan extends JFrame implements ActionListener{
         }
         if(source == deleteButton){
             if(namesList.getSelectedValue() != null){
+                int id = dbConnector.getId(namesList.getSelectedValue().toString());
                 String name = namesList.getSelectedValue().toString();
                 try{
-                    dbConnector.deleteClan(name);
+                    dbConnector.deleteClan(id);
                     infoLabel.setText(name + " deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
@@ -204,7 +205,7 @@ public class window_clan extends JFrame implements ActionListener{
                     i++;
                 }
                 if(i>0){
-                    query += " WHERE clan_name LIKE '"+ namesList.getSelectedValue().toString()+"'";
+                    query += " WHERE clan_id = "+ dbConnector.getId(namesList.getSelectedValue().toString());
                     try{
                         Statement stmt = dbConnector.getConnection().createStatement();
                         int changes;
@@ -223,13 +224,13 @@ public class window_clan extends JFrame implements ActionListener{
         get_data();
     }
     
-    private void displayClan(String name) {
+    private void displayClan(int cid) {
         try {
             PreparedStatement statement = dbConnector.getConnection().prepareStatement(
                         "select c.clan_name as name, c.headquater as hq, m.member_id as id "
-                                + "from clans c join membership m on c.clan_name = m.clan_name "
-                                + "where c.clan_name = ? and m.founder = \'Y\'");
-            statement.setString(1, name);
+                                + "from clans c join membership m on c.clan_id = m.clan_id "
+                                + "where c.clan_id = ? and m.founder = \'Y\'");
+            statement.setInt(1, cid);
             ResultSet rs = statement.executeQuery();
             rs.next();
             

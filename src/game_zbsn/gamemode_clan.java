@@ -123,7 +123,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 String selected = list.getSelectedValue().toString();
                 System.out.println(selected);
                 try{
-                    clanMembersData = dbConnector.getClanMembers(clansList.getSelectedValue().toString());
+                    clanMembersData = dbConnector.getClanMembers(dbConnector.getId(clansList.getSelectedValue().toString()));
                     clanMembersList.setListData(clanMembersData.toArray());}
                 catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
                                                                         "listener listClans error",ex);}
@@ -131,7 +131,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
                     int lvl=0; 
                     String HQ="";
                     Statement stmt = dbConnector.getConnection().createStatement();
-                    ResultSet rs = stmt.executeQuery("select clan_level, headquater from clans where clan_name = '"+selected+"'");
+                    ResultSet rs = stmt.executeQuery("select clan_level, headquater from clans where clan_id = "+dbConnector.getId(selected));
                     while(rs.next()){
                         lvl = rs.getInt("clan_level");
                         HQ = rs.getString("HEADQUATER");
@@ -170,7 +170,11 @@ public class gamemode_clan extends JFrame implements ActionListener{
             
             try{
                 PreparedStatement stmt = dbConnector.getConnection().prepareStatement(
-                "select founder, clan_name from membership where member_id = ?");
+                    "select m.founder as founder, c.clan_name as clan_name"+
+                    "from membership m inner join clans c"+
+                    "on m.clan_id = c.clan_id"+
+                    "where m.member_id = ?");
+                
                 stmt.setInt(1, id);
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
@@ -199,13 +203,13 @@ public class gamemode_clan extends JFrame implements ActionListener{
         scrollPlayers.setBounds(140, 55, 130, 150);
         add(scrollPlayers);
     }
-    public String findClan(int id){
-        String result = "";
+    public int findClan(int id){
+        int result=0;
         try{
             Statement stmt = dbConnector.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT clan_name FROM membership WHERE member_id ="+ Integer.toString(id));
+            ResultSet rs = stmt.executeQuery("SELECT clan_id FROM membership WHERE member_id ="+ Integer.toString(id));
             while(rs.next()){
-                result = rs.getString("CLAN_NAME"); 
+                result = rs.getInt("CLAN_ID"); 
             }
             rs.close();
             stmt.close();
@@ -226,7 +230,8 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 try{
                     int id = dbConnector.getId(playersList.getSelectedValue().toString());
                     String name = clansList.getSelectedValue().toString();
-                    result = dbConnector.joinClan(name, id);
+                    int clanId = dbConnector.getId(name);
+                    result = dbConnector.joinClan(clanId, id);
                     System.out.println(result);
                     infoLabel.setText(result);
                 }catch(SQLException ex){Logger.getLogger(gamemode_clan.class.getName()).log(Level.SEVERE,
@@ -257,7 +262,7 @@ public class gamemode_clan extends JFrame implements ActionListener{
                 String name = clansList.getSelectedValue().toString();
                 try{
                     Statement stmt = dbConnector.getConnection().createStatement();
-                    ResultSet rs = stmt.executeQuery("UPDATE clans set clan_level = clan_level + 1 where clan_name like '"+name+"'");
+                    ResultSet rs = stmt.executeQuery("UPDATE clans set clan_level = clan_level + 1 where clan_id ="+dbConnector.getId(name));
                     infoLabel.setText("Succesfully upgraded "+name+" to next level");
                     rs.close();
                     stmt.close();

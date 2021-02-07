@@ -298,17 +298,17 @@ public class DBConnector {
         return result;
     }
     
-    public void deleteClan(String name) throws SQLException {
+    public void deleteClan(int id) throws SQLException {
         CallableStatement stmt = connection.prepareCall("{call delete_clan(?)}");
-        stmt.setString(1, name);
+        stmt.setInt(1, id);
         stmt.execute();
         stmt.close();
     }
-    public List<String> getClanMembers(String name)throws SQLException{
+    public List<String> getClanMembers(int id)throws SQLException{
         List<String> data = new ArrayList<>();
         CallableStatement stmt = connection.prepareCall("{? = call get_clan_members(?)}");
         stmt.registerOutParameter(1, OracleTypes.REF_CURSOR);
-        stmt.setString(2, name);
+        stmt.setInt(2, id);
         stmt.execute();
         ResultSet result = (ResultSet)stmt.getObject(1);
         while(result.next()){
@@ -332,10 +332,10 @@ public class DBConnector {
         return data;
     }
     
-    public String joinClan(String name, int id)throws SQLException{
+    public String joinClan(int clanId, int id)throws SQLException{
         CallableStatement stmt = connection.prepareCall("{? = call join_clan(? ,?)}");
         stmt.registerOutParameter(1, Types.VARCHAR);
-        stmt.setString(2, name);
+        stmt.setInt(2, clanId);
         stmt.setInt(3, id);
         stmt.execute();
         String result = stmt.getString(1);
