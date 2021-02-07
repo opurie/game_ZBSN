@@ -197,20 +197,10 @@ public class window_quest extends JFrame implements ActionListener{
             if(namesList.getSelectedValue() != null){
                 String query = "UPDATE quests SET";
                 int i = 0;
-                if(!nameField.getText().equals("")){
-                    query += " q_name = '" + nameField.getText()+"'";
-                    i++;
-                }
                 if(!expField.getText().equals("")){
                     if(i>0)
                         query += ", ";
                     query += " experience_points = " + expField.getText();
-                    i++;
-                }
-                if(creatorList.getSelectedValue() != null){
-                    if(i>0)
-                        query += ", ";
-                    query += " creator_id = " + dbConnector.getId(creatorList.getSelectedValue().toString());
                     i++;
                 }
                 if(i>0){

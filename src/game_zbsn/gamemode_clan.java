@@ -170,16 +170,16 @@ public class gamemode_clan extends JFrame implements ActionListener{
             
             try{
                 PreparedStatement stmt = dbConnector.getConnection().prepareStatement(
-                    "select m.founder as founder, c.clan_name as clan_name"+
-                    "from membership m inner join clans c"+
-                    "on m.clan_id = c.clan_id"+
+                    "select m.founder as found, c.clan_name as name "+
+                    "from membership m inner join clans c "+
+                    "on m.clan_id = c.clan_id "+
                     "where m.member_id = ?");
                 
                 stmt.setInt(1, id);
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
-                String founder = rs.getString("founder");
-                String clanName = rs.getString("clan_name");
+                String founder = rs.getString("found");
+                String clanName = rs.getString("name");
                 if(founder.equals("Y"))
                     founder = "Founder of the ";
                 else if(founder.equals("N"))

@@ -222,10 +222,6 @@ public class window_item extends JFrame implements ActionListener{
             if(namesList.getSelectedValue() != null){
                 String query = "UPDATE items SET";
                 int i = 0;
-                if(!nameField.getText().equals("")){
-                    query += " i_name = '" + nameField.getText()+"'";
-                    i++;
-                }
                 if(!agilityField.getText().equals("")){
                     if(i>0)
                         query += ", ";

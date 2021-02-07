@@ -189,9 +189,6 @@ public class window_race extends JFrame implements ActionListener{
             if(namesList.getSelectedValue() != null){
                 String query = "UPDATE races SET";
                 int i = 0;
-                if(!nameField.getText().equals("")){
-                    query += " r_name = '" + nameField.getText()+"'";
-                    i++;}
                 if(!agilityField.getText().equals("")){
                     if(i>0)
                         query += ", ";

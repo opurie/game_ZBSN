@@ -96,11 +96,7 @@ public class window_profession extends JFrame implements ActionListener{
         add(deleteButton);
         deleteButton.addActionListener(this);
         
-        updateButton = new JButton("Edit");
-        updateButton.setBounds(230, 240, 100, 30);
-        add(updateButton);
-        updateButton.addActionListener(this);
-        
+
         namesList = new JList(professionData.toArray());
         namesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         namesList.setLayoutOrientation(VERTICAL);
@@ -138,7 +134,7 @@ public class window_profession extends JFrame implements ActionListener{
                 String name = namesList.getSelectedValue().toString();
                 try{
                     dbConnector.deleteProfession(name);
-                    infoLabel.setText("Item successfully deleted");
+                    infoLabel.setText("Profession successfully deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                                 "Delete profession error",ex);
