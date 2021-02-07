@@ -189,6 +189,8 @@ public class gamemode_quest extends JFrame implements ActionListener{
                     String name = questsList.getSelectedValue().toString();
                     result = dbConnector.submitTask(id, name);
                     infoLabel.setText(result);
+                    playerData = dbConnector.getPlayers();
+                    playersList.setListData(playerData.toArray());
                 }catch(SQLException ex){
                     infoLabel.setText("Something gone wrong with submiting task");
                     infoLabel.setForeground(Color.red);}
