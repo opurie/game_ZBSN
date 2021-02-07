@@ -31,30 +31,30 @@ import javax.swing.ListSelectionModel;
  * @author User
  */
 public class window_clan extends JFrame implements ActionListener{
-    private int window_height, window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
-    private JButton bInsert;
-    private JTextField InsertName, InsertHQ;
-    private JList InsertCreator;
-    private JLabel lName, lCreator, lHq, lInfo;
-    private List<String> CreatorData = new ArrayList<>();
+    private JButton insertButton;
+    private JTextField nameField, HQField;
+    private JList creatorList;
+    private JLabel nameLabel, creatorLabel, HQLabel, infoLabel;
+    private List<String> creatorData = new ArrayList<>();
     //-------------------------------------------
     
-    private JList ListOfNames;
+    private JList namesList;
     //--------DELETING---------------------------
-    private JButton bDelete;
-    private List<String> ClanData = new ArrayList<>();
+    private JButton deleteButton;
+    private List<String> clanData = new ArrayList<>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
-    private JButton bUpdate;
+    private JButton updateButton;
     //-------------------------------------------
     public window_clan(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("Clans");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -67,90 +67,90 @@ public class window_clan extends JFrame implements ActionListener{
     }
     public void get_data(){
         try {
-            InsertName.setText("");
-            InsertHQ.setText("");
-            InsertCreator.clearSelection();
+            nameField.setText("");
+            HQField.setText("");
+            creatorList.clearSelection();
             
-            CreatorData = dbConnector.getPlayers();
-            ClanData = dbConnector.getClans();
+            creatorData = dbConnector.getPlayers();
+            clanData = dbConnector.getClans();
             
-            ListOfNames.setListData(ClanData.toArray());
-            InsertCreator.setListData(CreatorData.toArray());
+            namesList.setListData(clanData.toArray());
+            creatorList.setListData(creatorData.toArray());
         } catch(SQLException ex) {
             Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
                                                             "Clan get data error",ex);
         }
     }
     public void insert_init(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(30, 310, 320, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(30, 310, 320, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        bInsert = new JButton("Create");
-        bInsert.setBounds(230, 85, 100, 30);
-        add(bInsert);
-        bInsert.addActionListener(this);
+        insertButton = new JButton("Create");
+        insertButton.setBounds(230, 85, 100, 30);
+        add(insertButton);
+        insertButton.addActionListener(this);
         
-        lName = new JLabel("Name:");
-        lName.setBounds(20, 25, 50, 20);
-        add(lName);
+        nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(20, 25, 50, 20);
+        add(nameLabel);
         
-        InsertName = new JTextField();
-        InsertName.setBounds(90, 25, 100, 20);
-        add(InsertName);
-        InsertName.addActionListener(this);
+        nameField = new JTextField();
+        nameField.setBounds(90, 25, 100, 20);
+        add(nameField);
+        nameField.addActionListener(this);
         
         
-        lHq = new JLabel("Headquater:");
-        lHq.setBounds(20, 50, 100, 20);
-        add(lHq);
+        HQLabel = new JLabel("Headquater:");
+        HQLabel.setBounds(20, 50, 100, 20);
+        add(HQLabel);
         
-        InsertHQ = new JTextField();
-        InsertHQ.setBounds(90, 50, 100, 20);
-        InsertHQ.addActionListener(this);
-        add(InsertHQ);
+        HQField = new JTextField();
+        HQField.setBounds(90, 50, 100, 20);
+        HQField.addActionListener(this);
+        add(HQField);
         
-        InsertCreator = new JList(CreatorData.toArray());
-        InsertCreator.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        InsertCreator.setLayoutOrientation(VERTICAL);
-        InsertCreator.setVisibleRowCount(-1);
-        add(InsertCreator);
+        creatorList = new JList(creatorData.toArray());
+        creatorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        creatorList.setLayoutOrientation(VERTICAL);
+        creatorList.setVisibleRowCount(-1);
+        add(creatorList);
         
-        lCreator = new JLabel("Creator:");
-        lCreator.setBounds(20, 75, 100, 20);
-        add(lCreator);
-        JScrollPane scroll_creator = new JScrollPane(InsertCreator);
+        creatorLabel = new JLabel("Creator:");
+        creatorLabel.setBounds(20, 75, 100, 20);
+        add(creatorLabel);
+        JScrollPane scroll_creator = new JScrollPane(creatorList);
         scroll_creator.setPreferredSize(new Dimension(250, 100));
         scroll_creator.setBounds(90, 75, 130, 100);
         add(scroll_creator);
     }
     public void delete_init(){
-        bDelete = new JButton("Delete");
-        bDelete.setBounds(230, 200, 100, 30);
-        add(bDelete);
-        bDelete.addActionListener(this);
+        deleteButton = new JButton("Delete");
+        deleteButton.setBounds(230, 200, 100, 30);
+        add(deleteButton);
+        deleteButton.addActionListener(this);
         
-        bUpdate = new JButton("Edit");
-        bUpdate.setBounds(230, 240, 100, 30);
-        add(bUpdate);
-        bUpdate.addActionListener(this);
+        updateButton = new JButton("Edit");
+        updateButton.setBounds(230, 240, 100, 30);
+        add(updateButton);
+        updateButton.addActionListener(this);
         
-        ListOfNames = new JList(ClanData.toArray());
-        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ListOfNames.setLayoutOrientation(VERTICAL);
-        ListOfNames.setVisibleRowCount(1);
-        ListOfNames.addListSelectionListener((e) -> {
+        namesList = new JList(clanData.toArray());
+        namesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        namesList.setLayoutOrientation(VERTICAL);
+        namesList.setVisibleRowCount(1);
+        namesList.addListSelectionListener((e) -> {
             JList list = (JList) e.getSource();
             if(list.getSelectedValue() != null) {
                 String selected = list.getSelectedValue().toString();
                 displayClan(selected);
             }
         });
-        add(ListOfNames);
+        add(namesList);
         
-        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
+        JScrollPane scroll_pc= new JScrollPane(namesList);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,100);
         add(scroll_pc);
@@ -158,63 +158,63 @@ public class window_clan extends JFrame implements ActionListener{
     @Override
      public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bInsert){
+        if(source == insertButton){
             String result;
-            if(InsertName.getText().equals("")||InsertHQ.getText().equals("") ||InsertCreator.getSelectedValue()==null){
+            if(nameField.getText().equals("")||HQField.getText().equals("") ||creatorList.getSelectedValue()==null){
                 System.out.println("Clan brak danych");
             }
             else{
-                String name = InsertName.getText();
+                String name = nameField.getText();
                 try{
-                    int id = dbConnector.getId(InsertCreator.getSelectedValue().toString());
-                   result = dbConnector.createClan(name, id, InsertHQ.getText());
+                    int id = dbConnector.getId(creatorList.getSelectedValue().toString());
+                   result = dbConnector.createClan(name, id, HQField.getText());
                    System.out.println(result);
-                   lInfo.setText(result);
+                   infoLabel.setText(result);
                 }catch(SQLException ex){
                 Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
                                                             "Clan insert error",ex);
-                lInfo.setText(name+" is used, insert unique name");
-                lInfo.setForeground(Color.red);}
+                infoLabel.setText(name+" is used, insert unique name");
+                infoLabel.setForeground(Color.red);}
             }
         }
-        if(source == bDelete){
-            if(ListOfNames.getSelectedValue() != null){
-                String name = ListOfNames.getSelectedValue().toString();
+        if(source == deleteButton){
+            if(namesList.getSelectedValue() != null){
+                String name = namesList.getSelectedValue().toString();
                 try{
                     dbConnector.deleteClan(name);
-                    lInfo.setText(name + " deleted");
+                    infoLabel.setText(name + " deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_clan.class.getName()).log(Level.SEVERE,
                                                                 "Delete clan error",ex);
-                    lInfo.setText("Something gone wrong with deleting clan");}
+                    infoLabel.setText("Something gone wrong with deleting clan");}
             }
         }
-        if(source ==  bUpdate){ //FIXME constraint violated
-            if(ListOfNames.getSelectedValue() != null){
+        if(source ==  updateButton){ //FIXME constraint violated
+            if(namesList.getSelectedValue() != null){
                 String query = "UPDATE clans SET";
                 int i = 0;
-                if(!InsertName.getText().equals("")){
-                    query += " clan_name = \'" + InsertName.getText()+"\'";
+                if(!nameField.getText().equals("")){
+                    query += " clan_name = \'" + nameField.getText()+"\'";
                     i++;
                 }
-                if(!InsertHQ.getText().equals("")){
+                if(!HQField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " headquater = \'" + InsertHQ.getText() + "\'";
+                    query += " headquater = \'" + HQField.getText() + "\'";
                     i++;
                 }
                 if(i>0){
-                    query += " WHERE clan_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    query += " WHERE clan_name LIKE '"+ namesList.getSelectedValue().toString()+"'";
                     try{
                         Statement stmt = dbConnector.getConnection().createStatement();
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
-                        lInfo.setText("Clan successfully updated");
+                        infoLabel.setText("Clan successfully updated");
                     }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Update error",ex);
-                                            lInfo.setText("Something gone wrong with updating, change name");
-                                            lInfo.setForeground(Color.red);
+                                            infoLabel.setText("Something gone wrong with updating, change name");
+                                            infoLabel.setForeground(Color.red);
                     }
                 }
                 
@@ -237,13 +237,13 @@ public class window_clan extends JFrame implements ActionListener{
             String hq = rs.getString("hq");
             int id = rs.getInt("id");
             
-            InsertName.setText(clanName);
-            InsertHQ.setText(hq);
+            nameField.setText(clanName);
+            HQField.setText(hq);
             
-            for(int i = 0; i < InsertCreator.getModel().getSize(); ++i) {
-                String s = InsertCreator.getModel().getElementAt(i).toString();
+            for(int i = 0; i < creatorList.getModel().getSize(); ++i) {
+                String s = creatorList.getModel().getElementAt(i).toString();
                 if(dbConnector.getId(s) == id) {
-                    InsertCreator.setSelectedIndex(i);
+                    creatorList.setSelectedIndex(i);
                 }
             }
         } catch (SQLException ex) {

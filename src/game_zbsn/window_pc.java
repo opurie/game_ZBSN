@@ -34,31 +34,31 @@ import oracle.jdbc.OracleTypes;
  * @author User
  */
 public class window_pc extends JFrame implements ActionListener{
-    private int window_height, window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     //--------INSERTING--------------------------
-    private JButton bInsert;
-    private JTextField InsertName;
-    private JList InsertRace, InsertProfession;
-    private JLabel lName, lRace, lProfession, lInfo;
-    private List<String> ProfessionData = new ArrayList<String>();
-    private List<String> RaceData = new ArrayList<String>();
+    private JButton insertButton;
+    private JTextField nameField;
+    private JList raceList, professionList;
+    private JLabel nameLabel, raceLabel, professionLabel, infoLabel;
+    private List<String> professionData = new ArrayList<String>();
+    private List<String> raceData = new ArrayList<String>();
     //-------------------------------------------
     
     
-    private JList ListOfNames;
+    private JList namesList;
     //--------DELETING---------------------------
-    private JButton bDelete;
-    private List<String> PlayerData = new ArrayList<String>();
+    private JButton deleteButton;
+    private List<String> playerData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
-    private JButton bUpdate;
+    private JButton updateButton;
     //-------------------------------------------
     public window_pc(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("Playable characters");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -71,17 +71,17 @@ public class window_pc extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
-            InsertName.setText("");
-            InsertRace.clearSelection();
-            InsertProfession.clearSelection();
+            nameField.setText("");
+            raceList.clearSelection();
+            professionList.clearSelection();
             
-            ProfessionData = dbConnector.getProfessions();
-            RaceData = dbConnector.getRaces();
-            PlayerData = dbConnector.getPlayers();
+            professionData = dbConnector.getProfessions();
+            raceData = dbConnector.getRaces();
+            playerData = dbConnector.getPlayers();
             
-            ListOfNames.setListData(PlayerData.toArray());
-            InsertRace.setListData(RaceData.toArray());
-            InsertProfession.setListData(ProfessionData.toArray());
+            namesList.setListData(playerData.toArray());
+            raceList.setListData(raceData.toArray());
+            professionList.setListData(professionData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
                                                             "get_data() error",ex);
@@ -90,72 +90,72 @@ public class window_pc extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bInsert){
-            if(InsertName.getText().equals("")||InsertProfession.getSelectedValue()==null ||
-                    InsertRace.getSelectedValue()==null){
+        if(source == insertButton){
+            if(nameField.getText().equals("")||professionList.getSelectedValue()==null ||
+                    raceList.getSelectedValue()==null){
                 System.out.println("pc brak danych");
-                lInfo.setText("Missing data");
+                infoLabel.setText("Missing data");
             }
             else{
                 try{
-                   dbConnector.createPlayer(InsertName.getText(), InsertProfession.getSelectedValue().toString(), 
-                           InsertRace.getSelectedValue().toString());
-                   lInfo.setText("Player successfully created");
+                   dbConnector.createPlayer(nameField.getText(), professionList.getSelectedValue().toString(), 
+                           raceList.getSelectedValue().toString());
+                   infoLabel.setText("Player successfully created");
                 }catch(SQLException ex){
                 Logger.getLogger(window_pc.class.getName()).log(Level.SEVERE,
                                                             "Player insert error",ex);
-                lInfo.setText("Something gone wrong with creating");}
+                infoLabel.setText("Something gone wrong with creating");}
             }
         }
-        if(source == bDelete){
-            if(ListOfNames.getSelectedValue() != null){
-                String name = ListOfNames.getSelectedValue().toString();
+        if(source == deleteButton){
+            if(namesList.getSelectedValue() != null){
+                String name = namesList.getSelectedValue().toString();
                 int id = dbConnector.getId(name);
                 try{
                     dbConnector.leaveClan(id);
                     dbConnector.deletePlayer(id);
-                    lInfo.setText("Player successfully deleted");
+                    infoLabel.setText("Player successfully deleted");
 
                 }catch(SQLException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                                 "Delete profession error",ex);
-                    lInfo.setText("Something gone wrong with deleting");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with deleting");
+                    infoLabel.setForeground(Color.red);}
             }
         }
-        if(source ==  bUpdate){
-            if(ListOfNames.getSelectedValue() != null){
+        if(source ==  updateButton){
+            if(namesList.getSelectedValue() != null){
                 String query = "UPDATE players SET";
                 int i = 0;
-                if(!InsertName.getText().equals("")){
-                    query += " player_name = \'" + InsertName.getText()+"\'";
+                if(!nameField.getText().equals("")){
+                    query += " player_name = \'" + nameField.getText()+"\'";
                     i++;
                 }
-                if(InsertRace.getSelectedValue() != null){
+                if(raceList.getSelectedValue() != null){
                     if(i>0)
                         query += ", ";
-                    query += " player_race = \'" + InsertRace.getSelectedValue().toString() + "\'";
+                    query += " player_race = \'" + raceList.getSelectedValue().toString() + "\'";
                     i++;
                 }
-                if(InsertProfession.getSelectedValue() != null){
+                if(professionList.getSelectedValue() != null){
                     if(i>0)
                         query += ", ";
-                    query += " player_profession = \'" + InsertProfession.getSelectedValue().toString() + "\'";
+                    query += " player_profession = \'" + professionList.getSelectedValue().toString() + "\'";
                     i++;
                 }
                 if(i>0){
-                    query += " WHERE player_id = "+ dbConnector.getId(ListOfNames.getSelectedValue().toString());
+                    query += " WHERE player_id = "+ dbConnector.getId(namesList.getSelectedValue().toString());
                     try {
                         System.out.println(query);
                         Statement stmt = dbConnector.getConnection().createStatement();
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
-                        lInfo.setText("Player successfully updated");
+                        infoLabel.setText("Player successfully updated");
                     } catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Update error",ex);
-                                            lInfo.setText("Something gone wrong with updating, change name");
-                                            lInfo.setForeground(Color.red);
+                                            infoLabel.setText("Something gone wrong with updating, change name");
+                                            infoLabel.setForeground(Color.red);
                     }
                 }
                 
@@ -164,27 +164,27 @@ public class window_pc extends JFrame implements ActionListener{
         get_data();
     }
     public void delete_init(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(30, 310, 320, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(30, 310, 320, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        bDelete = new JButton("Delete");
-        bDelete.setBounds(230, 200, 100, 30);
-        add(bDelete);
-        bDelete.addActionListener(this);
+        deleteButton = new JButton("Delete");
+        deleteButton.setBounds(230, 200, 100, 30);
+        add(deleteButton);
+        deleteButton.addActionListener(this);
         
-        bUpdate = new JButton("Edit");
-        bUpdate.setBounds(230, 240, 100, 30);
-        add(bUpdate);
-        bUpdate.addActionListener(this);
+        updateButton = new JButton("Edit");
+        updateButton.setBounds(230, 240, 100, 30);
+        add(updateButton);
+        updateButton.addActionListener(this);
         
-        ListOfNames = new JList(PlayerData.toArray());
-        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ListOfNames.setLayoutOrientation(VERTICAL);
-        ListOfNames.setVisibleRowCount(1);
-        ListOfNames.addListSelectionListener((e) -> {
+        namesList = new JList(playerData.toArray());
+        namesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        namesList.setLayoutOrientation(VERTICAL);
+        namesList.setVisibleRowCount(1);
+        namesList.addListSelectionListener((e) -> {
             JList list = (JList) e.getSource();
             if(list.getSelectedValue() != null) {
                 String selected = list.getSelectedValue().toString();
@@ -192,52 +192,52 @@ public class window_pc extends JFrame implements ActionListener{
                 displayPC(id);
             }
         });
-        add(ListOfNames);
+        add(namesList);
         
-        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
+        JScrollPane scroll_pc= new JScrollPane(namesList);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
         }
     public void insert_init(){
-        bInsert = new JButton("Create");
-        bInsert.setBounds(230, 85, 100, 30);
-        add(bInsert);
-        bInsert.addActionListener(this);
+        insertButton = new JButton("Create");
+        insertButton.setBounds(230, 85, 100, 30);
+        add(insertButton);
+        insertButton.addActionListener(this);
         
-        lName = new JLabel("Name:");
-        lName.setBounds(20, 25, 50, 20);
-        add(lName);
+        nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(20, 25, 50, 20);
+        add(nameLabel);
         
-        InsertName = new JTextField();
-        InsertName.setBounds(90, 25, 100, 20);
-        add(InsertName);
-        InsertName.addActionListener(this);
+        nameField = new JTextField();
+        nameField.setBounds(90, 25, 100, 20);
+        add(nameField);
+        nameField.addActionListener(this);
         
-        InsertRace = new JList(RaceData.toArray());
-        InsertRace.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        InsertRace.setLayoutOrientation(VERTICAL);
-        InsertRace.setVisibleRowCount(-1);
-        add(InsertRace);
+        raceList = new JList(raceData.toArray());
+        raceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        raceList.setLayoutOrientation(VERTICAL);
+        raceList.setVisibleRowCount(-1);
+        add(raceList);
         
-        lRace = new JLabel("Race:");      // add select name from races;
-        lRace.setBounds(20, 50, 50, 20);
-        add(lRace);
-        JScrollPane scroll_race= new JScrollPane(InsertRace);
+        raceLabel = new JLabel("Race:");      // add select name from races;
+        raceLabel.setBounds(20, 50, 50, 20);
+        add(raceLabel);
+        JScrollPane scroll_race= new JScrollPane(raceList);
         scroll_race.setPreferredSize(new Dimension(250, 100));
         scroll_race.setBounds(90, 50, 130, 60);
         add(scroll_race);
         
-        InsertProfession = new JList(ProfessionData.toArray());
-        InsertProfession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        InsertProfession.setLayoutOrientation(VERTICAL);
-        InsertProfession.setVisibleRowCount(-1);
-        add(InsertProfession);
+        professionList = new JList(professionData.toArray());
+        professionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        professionList.setLayoutOrientation(VERTICAL);
+        professionList.setVisibleRowCount(-1);
+        add(professionList);
         
-        lProfession = new JLabel("Profession:"); // add select name from professions;
-        lProfession.setBounds(20, 115, 100, 20);
-        add(lProfession);
-        JScrollPane scroll_profession= new JScrollPane(InsertProfession);
+        professionLabel = new JLabel("Profession:"); // add select name from professions;
+        professionLabel.setBounds(20, 115, 100, 20);
+        add(professionLabel);
+        JScrollPane scroll_profession= new JScrollPane(professionList);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
         scroll_profession.setBounds(90,115,130,60);
         add(scroll_profession);
@@ -255,19 +255,19 @@ public class window_pc extends JFrame implements ActionListener{
             String race = rs.getString("player_race");
             String profession = rs.getString("player_profession");
 
-            InsertName.setText(playerName);
+            nameField.setText(playerName);
 
-            for(int i = 0; i < InsertRace.getModel().getSize(); ++i) {
-                String s = InsertRace.getModel().getElementAt(i).toString();
+            for(int i = 0; i < raceList.getModel().getSize(); ++i) {
+                String s = raceList.getModel().getElementAt(i).toString();
                 if(s.equals(race)) {
-                    InsertRace.setSelectedIndex(i);
+                    raceList.setSelectedIndex(i);
                 }
             }
             
-            for(int i = 0; i < InsertProfession.getModel().getSize(); ++i) {
-                String s = InsertProfession.getModel().getElementAt(i).toString();
+            for(int i = 0; i < professionList.getModel().getSize(); ++i) {
+                String s = professionList.getModel().getElementAt(i).toString();
                 if(s.equals(profession)) {
-                    InsertProfession.setSelectedIndex(i);
+                    professionList.setSelectedIndex(i);
                 }
             }
         } catch(SQLException ex) {

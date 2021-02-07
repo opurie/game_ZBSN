@@ -30,29 +30,29 @@ import oracle.jdbc.OracleTypes;
  * @author User
  */
 public class window_race extends JFrame implements ActionListener{
-    private int window_height, window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
-    private JButton bInsert;
-    private JTextField InsertName, InsertStrength, InsertAgility,
-                       InsertIntellect;
-    private JLabel lName, lStatistics, lWeight,lInfo;
+    private JButton insertButton;
+    private JTextField nameField, strengthField, agilityField,
+                       intellectField;
+    private JLabel nameLabel, statsLabel, weightLabel, infoLabel;
     //-------------------------------------------
-    private JList ListOfNames;
+    private JList namesList;
     //--------DELETING---------------------------
-    private JButton bDelete;
-    private List<String> RaceData = new ArrayList<String>();
+    private JButton deleteButton;
+    private List<String> raceData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
-    private JButton bUpdate;
+    private JButton updateButton;
     //-------------------------------------------
 
     public window_race(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("Races");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -64,70 +64,70 @@ public class window_race extends JFrame implements ActionListener{
         get_data();
     }
     public void insert_init(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(30, 310, 320, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(30, 310, 320, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        bInsert = new JButton("Create");
-        bInsert.setBounds(230, 85, 100, 30);
-        add(bInsert);
-        bInsert.addActionListener(this);
+        insertButton = new JButton("Create");
+        insertButton.setBounds(230, 85, 100, 30);
+        add(insertButton);
+        insertButton.addActionListener(this);
         
-        lName = new JLabel("Name:");
-        lName.setBounds(20, 25, 50, 20);
-        add(lName);
+        nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(20, 25, 50, 20);
+        add(nameLabel);
         
-        InsertName = new JTextField();
-        InsertName.setBounds(90, 25, 100, 20);
-        add(InsertName);
-        InsertName.addActionListener(this);
+        nameField = new JTextField();
+        nameField.setBounds(90, 25, 100, 20);
+        add(nameField);
+        nameField.addActionListener(this);
         
-        lStatistics = new JLabel("Statistics:");
-        lStatistics.setBounds(20, 50, 100, 20);
-        add(lStatistics);
+        statsLabel = new JLabel("Statistics:");
+        statsLabel.setBounds(20, 50, 100, 20);
+        add(statsLabel);
         
-        InsertStrength = new JTextField();
-        InsertStrength.setBounds(90, 50, 30, 20);
-        add(InsertStrength);
-        InsertStrength.addActionListener(this);
+        strengthField = new JTextField();
+        strengthField.setBounds(90, 50, 30, 20);
+        add(strengthField);
+        strengthField.addActionListener(this);
         
-        InsertAgility = new JTextField();
-        InsertAgility.setBounds(123, 50, 30, 20);
-        add(InsertAgility);
-        InsertAgility.addActionListener(this);
+        agilityField = new JTextField();
+        agilityField.setBounds(123, 50, 30, 20);
+        add(agilityField);
+        agilityField.addActionListener(this);
         
-        InsertIntellect = new JTextField();
-        InsertIntellect.setBounds(156, 50, 30, 20);
-        add(InsertIntellect);
-        InsertIntellect.addActionListener(this);
+        intellectField = new JTextField();
+        intellectField.setBounds(156, 50, 30, 20);
+        add(intellectField);
+        intellectField.addActionListener(this);
     }
     public void delete_init(){
-        bDelete = new JButton("Delete");
-        bDelete.setBounds(230, 200, 100, 30);
-        add(bDelete);
-        bDelete.addActionListener(this);
+        deleteButton = new JButton("Delete");
+        deleteButton.setBounds(230, 200, 100, 30);
+        add(deleteButton);
+        deleteButton.addActionListener(this);
         
-        bUpdate = new JButton("Edit");
-        bUpdate.setBounds(230, 240, 100, 30);
-        add(bUpdate);
-        bUpdate.addActionListener(this);
+        updateButton = new JButton("Edit");
+        updateButton.setBounds(230, 240, 100, 30);
+        add(updateButton);
+        updateButton.addActionListener(this);
         
-        ListOfNames = new JList(RaceData.toArray());
-            ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            ListOfNames.setLayoutOrientation(VERTICAL);
-            ListOfNames.setVisibleRowCount(1);
-            ListOfNames.addListSelectionListener((e) -> {
+        namesList = new JList(raceData.toArray());
+            namesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            namesList.setLayoutOrientation(VERTICAL);
+            namesList.setVisibleRowCount(1);
+            namesList.addListSelectionListener((e) -> {
                 JList list = (JList) e.getSource();
                 if(list.getSelectedValue() != null) {
                     String selected = list.getSelectedValue().toString();
                     displayRace(selected);
                 }
             });
-            add(ListOfNames);
+            add(namesList);
 
-            JScrollPane scroll_pc= new JScrollPane(ListOfNames);
+            JScrollPane scroll_pc= new JScrollPane(namesList);
             scroll_pc.setPreferredSize(new Dimension(250, 100));
             scroll_pc.setBounds(60,200,150,70);
             add(scroll_pc);
@@ -135,12 +135,12 @@ public class window_race extends JFrame implements ActionListener{
         }
     public void get_data(){
         try{
-            InsertName.setText("");
-            InsertStrength.setText("");
-            InsertAgility.setText("");
-            InsertIntellect.setText("");
-            RaceData = dbConnector.getRaces();
-            ListOfNames.setListData(RaceData.toArray());
+            nameField.setText("");
+            strengthField.setText("");
+            agilityField.setText("");
+            intellectField.setText("");
+            raceData = dbConnector.getRaces();
+            namesList.setListData(raceData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "Get_race error",ex);
@@ -150,75 +150,75 @@ public class window_race extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bDelete){
+        if(source == deleteButton){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            if(ListOfNames.getSelectedValue() != null){
-                String name = ListOfNames.getSelectedValue().toString();
+            if(namesList.getSelectedValue() != null){
+                String name = namesList.getSelectedValue().toString();
                 try{
                     dbConnector.deleteRace(name);
-                    lInfo.setText("Race successfully deleted");
+                    infoLabel.setText("Race successfully deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Delete race error",ex);
-                    lInfo.setText("Something gone wrong with deleting");}
+                    infoLabel.setText("Something gone wrong with deleting");}
             }
         }
-        if(source == bInsert){
-            if(InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
-               InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")){
+        if(source == insertButton){
+            if(nameField.getText().equals("") || strengthField.getText().equals("") || 
+               agilityField.getText().equals("") || intellectField.getText().equals("")){
                System.out.println("rasa brak danych");
-               lInfo.setText("Missing data");
+               infoLabel.setText("Missing data");
             }
             else{
-                String name = InsertName.getText();
+                String name = nameField.getText();
                 try{
-                    int strength = Integer.parseInt(InsertStrength.getText());
-                    int agility = Integer.parseInt(InsertAgility.getText());
-                    int intellect = Integer.parseInt(InsertIntellect.getText());
+                    int strength = Integer.parseInt(strengthField.getText());
+                    int agility = Integer.parseInt(agilityField.getText());
+                    int intellect = Integer.parseInt(intellectField.getText());
                     dbConnector.createRace(name, strength, agility, intellect);
-                    lInfo.setText("Race successfully created");
+                    infoLabel.setText("Race successfully created");
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error race class",ex);
-                    lInfo.setText(name+" is used, insert unique name");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText(name+" is used, insert unique name");
+                    infoLabel.setForeground(Color.red);}
 
             }
         }
-        if(source ==  bUpdate){
-            if(ListOfNames.getSelectedValue() != null){
+        if(source ==  updateButton){
+            if(namesList.getSelectedValue() != null){
                 String query = "UPDATE races SET";
                 int i = 0;
-                if(!InsertName.getText().equals("")){
-                    query += " r_name = '" + InsertName.getText()+"'";
+                if(!nameField.getText().equals("")){
+                    query += " r_name = '" + nameField.getText()+"'";
                     i++;}
-                if(!InsertAgility.getText().equals("")){
+                if(!agilityField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " agility = " + InsertAgility.getText();
+                    query += " agility = " + agilityField.getText();
                     i++;}
-                if(!InsertStrength.getText().equals("")){
+                if(!strengthField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " strength = " + InsertStrength.getText();
+                    query += " strength = " + strengthField.getText();
                     i++;}
-                if(!InsertIntellect.getText().equals("")){
+                if(!intellectField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " intellect = " + InsertIntellect.getText();
+                    query += " intellect = " + intellectField.getText();
                     i++;}
                 if(i>0){
-                    query += " WHERE r_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    query += " WHERE r_name LIKE '"+ namesList.getSelectedValue().toString()+"'";
                     try{
                         Statement stmt = dbConnector.getConnection().createStatement();
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
-                        lInfo.setText("Race successfully updated");
+                        infoLabel.setText("Race successfully updated");
                     }catch(SQLException ex){Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                                                 "Update error",ex);
-                                            lInfo.setText("Something gone wrong with updating, change name");
-                                            lInfo.setForeground(Color.red);
+                                            infoLabel.setText("Something gone wrong with updating, change name");
+                                            infoLabel.setForeground(Color.red);
                     }
                 }
                 
@@ -237,10 +237,10 @@ public class window_race extends JFrame implements ActionListener{
             int s = rs.getInt("strength");
             int a = rs.getInt("agility");
             int i = rs.getInt("intellect");
-            InsertName.setText(name);
-            InsertAgility.setText(a + "");
-            InsertStrength.setText(s + "");
-            InsertIntellect.setText(i + "");
+            nameField.setText(name);
+            agilityField.setText(a + "");
+            strengthField.setText(s + "");
+            intellectField.setText(i + "");
         } catch (SQLException ex) {
             Logger.getLogger(window_race.class.getName()).log(Level.SEVERE, "aaaaaaaa", ex);
         }

@@ -34,30 +34,30 @@ import oracle.jdbc.OracleTypes;
  * @author User
  */
 public class window_item extends JFrame implements ActionListener{
-    private int window_height, window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     //--------INSERTING--------------------------
-    private JButton bInsert;
-    private JTextField InsertName, InsertStrength, InsertAgility,
-                       InsertIntellect, InsertWeight;
-    private JList InsertProfession;
-    private JLabel lName, lStatistics, lWeight, lProfession, lInfo;
-    private List<String> ProfessionData = new ArrayList<String>();
+    private JButton insertButton;
+    private JTextField nameField, strengthField, agilityField,
+                       intellectField, weightField;
+    private JList professionList;
+    private JLabel nameLabel, statsLabel, weightLabel, professionLabel, infoLabel;
+    private List<String> professionData = new ArrayList<String>();
     //-------------------------------------------
     
-    private JList ListOfNames;
+    private JList namesList;
     //--------DELETING---------------------------
-    private JButton bDelete;
-    private List<String> ItemData = new ArrayList<String>();
+    private JButton deleteButton;
+    private List<String> itemData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
     private JButton bUpdate;
     //-------------------------------------------
     public window_item(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("Items");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -69,111 +69,111 @@ public class window_item extends JFrame implements ActionListener{
         get_data();
     }
     public void insert_init(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(30, 310, 320, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(30, 310, 320, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        bInsert = new JButton("Create");
-        bInsert.setBounds(230, 85, 100, 30);
-        add(bInsert);
-        bInsert.addActionListener(this);
+        insertButton = new JButton("Create");
+        insertButton.setBounds(230, 85, 100, 30);
+        add(insertButton);
+        insertButton.addActionListener(this);
         
-        lName = new JLabel("Name:");
-        lName.setBounds(20, 25, 50, 20);
-        add(lName);
+        nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(20, 25, 50, 20);
+        add(nameLabel);
         
-        InsertName = new JTextField();
-        InsertName.setBounds(90, 25, 100, 20);
-        add(InsertName);
-        InsertName.addActionListener(this);
+        nameField = new JTextField();
+        nameField.setBounds(90, 25, 100, 20);
+        add(nameField);
+        nameField.addActionListener(this);
         
-        lStatistics = new JLabel("Statistics:");
-        lStatistics.setBounds(20, 50, 100, 20);
-        add(lStatistics);
+        statsLabel = new JLabel("Statistics:");
+        statsLabel.setBounds(20, 50, 100, 20);
+        add(statsLabel);
         
-        InsertStrength = new JTextField();
-        InsertStrength.setBounds(90, 50, 30, 20);
-        add(InsertStrength);
-        InsertStrength.addActionListener(this);
+        strengthField = new JTextField();
+        strengthField.setBounds(90, 50, 30, 20);
+        add(strengthField);
+        strengthField.addActionListener(this);
         
-        InsertAgility = new JTextField();
-        InsertAgility.setBounds(123, 50, 30, 20);
-        add(InsertAgility);
-        InsertAgility.addActionListener(this);
+        agilityField = new JTextField();
+        agilityField.setBounds(123, 50, 30, 20);
+        add(agilityField);
+        agilityField.addActionListener(this);
         
-        InsertIntellect = new JTextField();
-        InsertIntellect.setBounds(156, 50, 30, 20);
-        add(InsertIntellect);
-        InsertIntellect.addActionListener(this);
+        intellectField = new JTextField();
+        intellectField.setBounds(156, 50, 30, 20);
+        add(intellectField);
+        intellectField.addActionListener(this);
         
-        lWeight = new JLabel("Weight:");
-        lWeight.setBounds(20, 75, 50, 20);
-        add(lWeight);
+        weightLabel = new JLabel("Weight:");
+        weightLabel.setBounds(20, 75, 50, 20);
+        add(weightLabel);
         
-        InsertWeight = new JTextField();
-        InsertWeight.setBounds(90, 75, 100, 20);
-        add(InsertWeight);
-        InsertWeight.addActionListener(this);
+        weightField = new JTextField();
+        weightField.setBounds(90, 75, 100, 20);
+        add(weightField);
+        weightField.addActionListener(this);
         
-        InsertProfession = new JList(ProfessionData.toArray());
-        InsertProfession.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        InsertProfession.setLayoutOrientation(VERTICAL);
-        InsertProfession.setVisibleRowCount(-1);
-        add(InsertProfession);
+        professionList = new JList(professionData.toArray());
+        professionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        professionList.setLayoutOrientation(VERTICAL);
+        professionList.setVisibleRowCount(-1);
+        add(professionList);
         
-        lProfession = new JLabel("Profession:");
-        lProfession.setBounds(20, 100, 100, 20);
-        add(lProfession);
-        JScrollPane scroll_profession= new JScrollPane(InsertProfession);
+        professionLabel = new JLabel("Profession:");
+        professionLabel.setBounds(20, 100, 100, 20);
+        add(professionLabel);
+        JScrollPane scroll_profession= new JScrollPane(professionList);
         scroll_profession.setPreferredSize(new Dimension(250, 100));
         scroll_profession.setBounds(90,100,130,60);
         add(scroll_profession);
         
     }
     public void delete_init(){
-        bDelete = new JButton("Delete");
-        bDelete.setBounds(230, 200, 100, 30);
-        add(bDelete);
-        bDelete.addActionListener(this);
+        deleteButton = new JButton("Delete");
+        deleteButton.setBounds(230, 200, 100, 30);
+        add(deleteButton);
+        deleteButton.addActionListener(this);
         
         bUpdate = new JButton("Edit");
         bUpdate.setBounds(230, 240, 100, 30);
         add(bUpdate);
         bUpdate.addActionListener(this);
         
-        ListOfNames = new JList(ItemData.toArray());
-        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ListOfNames.setLayoutOrientation(VERTICAL);
-        ListOfNames.setVisibleRowCount(1);
-        ListOfNames.addListSelectionListener((e) -> {
+        namesList = new JList(itemData.toArray());
+        namesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        namesList.setLayoutOrientation(VERTICAL);
+        namesList.setVisibleRowCount(1);
+        namesList.addListSelectionListener((e) -> {
             JList list = (JList) e.getSource();
             if(list.getSelectedValue() != null) {
                 String selected = list.getSelectedValue().toString();
                 displayItem(selected);
             }
             });
-        add(ListOfNames);
+        add(namesList);
         
-        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
+        JScrollPane scroll_pc= new JScrollPane(namesList);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
         }
     public void get_data(){
         try {
-            InsertName.setText("");
-            InsertAgility.setText("");
-            InsertIntellect.setText("");
-            InsertStrength.setText("");
-            InsertWeight.setText("");
+            nameField.setText("");
+            agilityField.setText("");
+            intellectField.setText("");
+            strengthField.setText("");
+            weightField.setText("");
             
-            ProfessionData = dbConnector.getProfessions();
-            ItemData = dbConnector.getItems();
+            professionData = dbConnector.getProfessions();
+            itemData = dbConnector.getItems();
             
-            ListOfNames.setListData(ItemData.toArray());
-            InsertProfession.setListData(ProfessionData.toArray());
+            namesList.setListData(itemData.toArray());
+            professionList.setListData(professionData.toArray());
         } catch(SQLException ex) {
             Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "Item get data error",ex);
@@ -182,93 +182,93 @@ public class window_item extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bDelete){
+        if(source == deleteButton){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            if(ListOfNames.getSelectedValue() != null){
+            if(namesList.getSelectedValue() != null){
             try {
-                    dbConnector.deleteItem(ListOfNames.getSelectedValue().toString());
-                    lInfo.setText(ListOfNames.getSelectedValue().toString() + " deleted");
+                    dbConnector.deleteItem(namesList.getSelectedValue().toString());
+                    infoLabel.setText(namesList.getSelectedValue().toString() + " deleted");
             } catch(SQLException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                                 "Delete item error",ex);
-                    lInfo.setText("Something gone wrong with deleting");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText("Something gone wrong with deleting");
+                    infoLabel.setForeground(Color.red);}
             }
             
         }
-        if(source == bInsert){
+        if(source == insertButton){
             if(anyFieldEmpty()){
                System.out.println("rasa brak danych");
             } else {
-                String name = InsertName.getText();
+                String name = nameField.getText();
                 try {
                     
-                    int strength = Integer.parseInt(InsertStrength.getText());
-                    int agility = Integer.parseInt(InsertAgility.getText());
-                    int intellect = Integer.parseInt(InsertIntellect.getText());
-                    int weight = Integer.parseInt(InsertWeight.getText());
-                    String profession = InsertProfession.getSelectedValue().toString();
+                    int strength = Integer.parseInt(strengthField.getText());
+                    int agility = Integer.parseInt(agilityField.getText());
+                    int intellect = Integer.parseInt(intellectField.getText());
+                    int weight = Integer.parseInt(weightField.getText());
+                    String profession = professionList.getSelectedValue().toString();
                     dbConnector.createItem(name, strength, agility, intellect, weight, profession);
-                    lInfo.setText("Item successfully created");
+                    infoLabel.setText("Item successfully created");
                 } catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_item.class.getName()).log(Level.SEVERE,
                                                             "SQL or int error item class",ex);
-                    lInfo.setText(name+" is used, insert unique name");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText(name+" is used, insert unique name");
+                    infoLabel.setForeground(Color.red);}
                 //TODO separate exceptions
             }
         }
         if(source == bUpdate) {
-            if(ListOfNames.getSelectedValue() != null){
+            if(namesList.getSelectedValue() != null){
                 String query = "UPDATE items SET";
                 int i = 0;
-                if(!InsertName.getText().equals("")){
-                    query += " i_name = '" + InsertName.getText()+"'";
+                if(!nameField.getText().equals("")){
+                    query += " i_name = '" + nameField.getText()+"'";
                     i++;
                 }
-                if(!InsertAgility.getText().equals("")){
+                if(!agilityField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " agility = " + InsertAgility.getText();
+                    query += " agility = " + agilityField.getText();
                     i++;
                 }
-                if(!InsertStrength.getText().equals("")){
+                if(!strengthField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " strength = " + InsertStrength.getText();
+                    query += " strength = " + strengthField.getText();
                     i++;
                 }
-                if(!InsertIntellect.getText().equals("")){
+                if(!intellectField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " intellect = " + InsertIntellect.getText();
+                    query += " intellect = " + intellectField.getText();
                     i++;
                 }
-                if(!InsertWeight.getText().equals("")){
+                if(!weightField.getText().equals("")){
                     if(i>0)
                         query += ", ";
-                    query += " weight = " + InsertWeight.getText();
+                    query += " weight = " + weightField.getText();
                     i++;
                 }
-                if(InsertProfession.getSelectedValue() != null){
+                if(professionList.getSelectedValue() != null){
                     if(i>0)
                         query += ", ";
-                    query += " profession = \'" + InsertProfession.getSelectedValue().toString() + "\'";
+                    query += " profession = \'" + professionList.getSelectedValue().toString() + "\'";
                     i++;
                 }
                 if(i>0){
-                    query += " WHERE i_name LIKE '"+ ListOfNames.getSelectedValue().toString()+"'";
+                    query += " WHERE i_name LIKE '"+ namesList.getSelectedValue().toString()+"'";
                     try {
                         Statement stmt = dbConnector.getConnection().createStatement();
                         int changes;
                         changes = stmt.executeUpdate(query);
                         stmt.close();
-                        lInfo.setText("Item successfully updated");
+                        infoLabel.setText("Item successfully updated");
                     } catch(SQLException ex){
                         Logger.getLogger(window_race.class.getName()).log(Level.SEVERE,
                                         "Update error",ex);
-                        lInfo.setText("Something gone wrong with updating, change name");
-                        lInfo.setForeground(Color.red);
+                        infoLabel.setText("Something gone wrong with updating, change name");
+                        infoLabel.setForeground(Color.red);
                     }
                 }
             }
@@ -277,9 +277,9 @@ public class window_item extends JFrame implements ActionListener{
     }
         
     private boolean anyFieldEmpty() {
-        return (InsertName.getText().equals("") || InsertStrength.getText().equals("") || 
-            InsertAgility.getText().equals("") || InsertIntellect.getText().equals("")||
-            InsertProfession.getSelectedValue() == null);
+        return (nameField.getText().equals("") || strengthField.getText().equals("") || 
+            agilityField.getText().equals("") || intellectField.getText().equals("")||
+            professionList.getSelectedValue() == null);
         
     }
     
@@ -295,14 +295,14 @@ public class window_item extends JFrame implements ActionListener{
             int in = rs.getInt("intellect");
             int w = rs.getInt("weight");
             String p = rs.getString("profession");
-            InsertName.setText(name);
-            InsertAgility.setText(a + "");
-            InsertStrength.setText(s + "");
-            InsertIntellect.setText(in + "");
-            InsertWeight.setText(w + "");
-            for(int i = 0; i < InsertProfession.getModel().getSize(); ++i) {
-                if(InsertProfession.getModel().getElementAt(i).equals(p)) {
-                    InsertProfession.setSelectedIndex(i);
+            nameField.setText(name);
+            agilityField.setText(a + "");
+            strengthField.setText(s + "");
+            intellectField.setText(in + "");
+            weightField.setText(w + "");
+            for(int i = 0; i < professionList.getModel().getSize(); ++i) {
+                if(professionList.getModel().getElementAt(i).equals(p)) {
+                    professionList.setSelectedIndex(i);
                 }
             }
         } catch (SQLException ex) {

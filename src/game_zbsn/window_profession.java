@@ -33,28 +33,28 @@ import oracle.jdbc.OracleTypes;
  * @author User
  */
 public class window_profession extends JFrame implements ActionListener{
-    private int window_height, window_width;
+    private int windowHeight, windowWidth;
     private DBConnector dbConnector;
     
     //--------INSERTING--------------------------
-    private JButton bInsert;
-    private JTextField InsertName;
-    private JLabel lName, lInfo;
+    private JButton insertButton;
+    private JTextField nameField;
+    private JLabel nameLabel, infoLabel;
     //-------------------------------------------
-    private JList ListOfNames;
+    private JList namesList;
     //--------DELETING---------------------------
-    private JButton bDelete;
-    private List<String> ProfessionData = new ArrayList<String>();
+    private JButton deleteButton;
+    private List<String> professionData = new ArrayList<String>();
     //-------------------------------------------
     
     //--------EDITING----------------------------
-    private JButton bUpdate;
+    private JButton updateButton;
     //-------------------------------------------
 
     public window_profession(int w, DBConnector dbConnector){
-        this.window_height = w; this.window_width = w;
+        this.windowHeight = w; this.windowWidth = w;
         this.dbConnector = dbConnector;
-        setSize(this.window_width, this.window_height);
+        setSize(this.windowWidth, this.windowHeight);
         setTitle("Professions");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(null);
@@ -69,51 +69,51 @@ public class window_profession extends JFrame implements ActionListener{
     
     
     public void insert_init(){
-        lInfo = new JLabel("");
-        lInfo.setBounds(30, 310, 320, 20);
-        lInfo.setOpaque(true);
-        lInfo.setBackground(Color.WHITE);
-        add(lInfo);
+        infoLabel = new JLabel("");
+        infoLabel.setBounds(30, 310, 320, 20);
+        infoLabel.setOpaque(true);
+        infoLabel.setBackground(Color.WHITE);
+        add(infoLabel);
         
-        bInsert = new JButton("Create");
-        bInsert.setBounds(230, 85, 100, 30);
-        add(bInsert);
-        bInsert.addActionListener(this);
+        insertButton = new JButton("Create");
+        insertButton.setBounds(230, 85, 100, 30);
+        add(insertButton);
+        insertButton.addActionListener(this);
         
-        lName = new JLabel("Name:");
-        lName.setBounds(20, 25, 50, 20);
-        add(lName);
+        nameLabel = new JLabel("Name:");
+        nameLabel.setBounds(20, 25, 50, 20);
+        add(nameLabel);
         
-        InsertName = new JTextField();
-        InsertName.setBounds(90, 25, 100, 20);
-        add(InsertName);
-        InsertName.addActionListener(this);
+        nameField = new JTextField();
+        nameField.setBounds(90, 25, 100, 20);
+        add(nameField);
+        nameField.addActionListener(this);
         
     }
     public void delete_init(){
-        bDelete = new JButton("Delete");
-        bDelete.setBounds(230, 200, 100, 30);
-        add(bDelete);
-        bDelete.addActionListener(this);
+        deleteButton = new JButton("Delete");
+        deleteButton.setBounds(230, 200, 100, 30);
+        add(deleteButton);
+        deleteButton.addActionListener(this);
         
-        bUpdate = new JButton("Edit");
-        bUpdate.setBounds(230, 240, 100, 30);
-        add(bUpdate);
-        bUpdate.addActionListener(this);
+        updateButton = new JButton("Edit");
+        updateButton.setBounds(230, 240, 100, 30);
+        add(updateButton);
+        updateButton.addActionListener(this);
         
-        ListOfNames = new JList(ProfessionData.toArray());
-        ListOfNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ListOfNames.setLayoutOrientation(VERTICAL);
-        ListOfNames.setVisibleRowCount(1);
-        ListOfNames.addListSelectionListener((e) -> {
+        namesList = new JList(professionData.toArray());
+        namesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        namesList.setLayoutOrientation(VERTICAL);
+        namesList.setVisibleRowCount(1);
+        namesList.addListSelectionListener((e) -> {
             JList list = (JList) e.getSource();
             if(list.getSelectedValue() != null) {
-                InsertName.setText(list.getSelectedValue().toString());
+                nameField.setText(list.getSelectedValue().toString());
             } 
        });
-        add(ListOfNames);
+        add(namesList);
         
-        JScrollPane scroll_pc= new JScrollPane(ListOfNames);
+        JScrollPane scroll_pc= new JScrollPane(namesList);
         scroll_pc.setPreferredSize(new Dimension(250, 100));
         scroll_pc.setBounds(60,200,150,70);
         add(scroll_pc);
@@ -121,9 +121,9 @@ public class window_profession extends JFrame implements ActionListener{
 
     public void get_data(){
         try{
-            InsertName.setText("");
-            ProfessionData = dbConnector.getProfessions();
-            ListOfNames.setListData(ProfessionData.toArray());
+            nameField.setText("");
+            professionData = dbConnector.getProfessions();
+            namesList.setListData(professionData.toArray());
         }catch(SQLException ex){
             Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Get_professions error",ex);
@@ -132,34 +132,34 @@ public class window_profession extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == bDelete){
+        if(source == deleteButton){
             //Można usprawnić np. sprawdzić poprawność ale te dane są pobierane z Bazy więc nie powinno być błędu
-            if(ListOfNames.getSelectedValue() != null){
-                String name = ListOfNames.getSelectedValue().toString();
+            if(namesList.getSelectedValue() != null){
+                String name = namesList.getSelectedValue().toString();
                 try{
                     dbConnector.deleteProfession(name);
-                    lInfo.setText("Item successfully deleted");
+                    infoLabel.setText("Item successfully deleted");
                 }catch(SQLException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                                 "Delete profession error",ex);
-                    lInfo.setText("Something gone wrong with deleting");}
+                    infoLabel.setText("Something gone wrong with deleting");}
             }
         }
-        if(source == bInsert){
-            if(InsertName.getText().equals("")){
+        if(source == insertButton){
+            if(nameField.getText().equals("")){
                System.out.println("Profession missing data");
-               lInfo.setText("Missing data");
+               infoLabel.setText("Missing data");
             }
             else{
-                String name = InsertName.getText();
+                String name = nameField.getText();
                 try{
                     dbConnector.createProfession(name);
-                    lInfo.setText("Item successfully created");
+                    infoLabel.setText("Item successfully created");
                 }catch(SQLException | NumberFormatException ex){
                     Logger.getLogger(window_profession.class.getName()).log(Level.SEVERE,
                                                             "Insert profession error",ex);
-                    lInfo.setText(name+" is used, insert unique name");
-                    lInfo.setForeground(Color.red);}
+                    infoLabel.setText(name+" is used, insert unique name");
+                    infoLabel.setForeground(Color.red);}
             }
         }
         get_data();

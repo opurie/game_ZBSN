@@ -116,19 +116,19 @@ public class gamemode_equipment extends JFrame implements ActionListener{
             JList list = (JList) e.getSource();
             String selected = list.getSelectedValue().toString();
             int id = dbConnector.getId(selected);
-            float weight=0;
+            float weight = 0;
             try{
                 equipmentData = dbConnector.getEquipment(id);
                 equipmentList.setListData(equipmentData.toArray());
             }catch(SQLException ex){};
             try{
                 Statement stmt = dbConnector.getConnection().createStatement();
-                ResultSet rs = stmt.executeQuery("select capacity_eq from equipments where owner_id ='"+id+"'");
+                ResultSet rs = stmt.executeQuery("select capacity_eq from equipments where owner_id =\'" + id + "\'");
                 while(rs.next()){
                     weight = rs.getFloat("capacity_eq");}
                 rs.close();
                 stmt.close();
-                capacityLabel.setText("Inventory capacity: "+Float.toString(weight));
+                capacityLabel.setText("Inventory capacity: " + Float.toString(weight));
             }catch(SQLException ex){};
         });
         
