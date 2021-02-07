@@ -163,7 +163,7 @@ public class Game_ZBSN extends JFrame implements ActionListener {
                 connection = null;
             }
         }
-        if(/*con != null*/ true){
+        if(connection !=null){
             //gamemode buttons actions
             //if(source == bpvp){
              //   window_cleaner(SecondaryWindow);

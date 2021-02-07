@@ -38,7 +38,7 @@ public class window_clan extends JFrame implements ActionListener{
     private JButton insertButton;
     private JTextField nameField, HQField;
     private JList creatorList;
-    private JLabel nameLabel, creatorLabel, HQLabel, infoLabel;
+    private JLabel nameLabel, creatorLabel, HQLabel, infoLabel, memberLabel;
     private List<String> creatorData = new ArrayList<>();
     //-------------------------------------------
     
@@ -88,6 +88,10 @@ public class window_clan extends JFrame implements ActionListener{
         infoLabel.setBackground(Color.WHITE);
         add(infoLabel);
         
+        memberLabel = new JLabel("");
+        memberLabel.setBounds(230, 120, 200, 20);
+        add(memberLabel);
+        
         insertButton = new JButton("Create");
         insertButton.setBounds(230, 85, 100, 30);
         add(insertButton);
@@ -116,6 +120,27 @@ public class window_clan extends JFrame implements ActionListener{
         creatorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         creatorList.setLayoutOrientation(VERTICAL);
         creatorList.setVisibleRowCount(-1);
+        creatorList.addListSelectionListener((e) -> {
+            JList list = (JList) e.getSource();
+            if(list.getSelectedValue() != null) {
+                String selected = list.getSelectedValue().toString();
+                int id = dbConnector.getId(selected);
+                String res="Can create clan";
+                try{
+                    
+                    Statement stmt = dbConnector.getConnection().createStatement();
+                    ResultSet rs = stmt.executeQuery("select founder from membership where member_id = "+Integer.toString(id));
+                    while(rs.next()){
+                        if(rs.getString("founder")!=null){
+                            res = "Cannot create clan";}
+                    }
+                    memberLabel.setText(res);
+                    rs.close();
+                    stmt.close();
+                }catch(SQLException ex){
+                    memberLabel.setText("Can create clan");}
+            }
+        });
         add(creatorList);
         
         creatorLabel = new JLabel("Creator:");
