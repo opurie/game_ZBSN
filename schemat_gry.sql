@@ -50,6 +50,9 @@ create table performances(
         quests(q_name) on delete cascade,
     primary key(player_id, quest_name));
 
+create index performance_idx
+    on performances(quest_name, player_id);
+
 create table equipments(
     capacity_eq number(6,2) not null,
     owner_id integer
@@ -74,7 +77,6 @@ increment by 1;
 create table monsters(
     monster_id integer primary key,
     monster_name varchar2(30) not null,
-    monster_type varchar2(30) not null,
     owned_item varchar2(30)
         references 
         items(i_name) on delete set null,
@@ -84,23 +86,23 @@ create table monsters(
     );
     
 create table clans(
-    clan_name varchar2(30) primary key,
+    clan_id integer primary key,
+    clan_name varchar2(30) not null unique,
     clan_level integer not null,
     headquater varchar2(30) not null);
     
-select clan_level, headquater from clans where clan_name='Gilda';
+    drop table clans;
+    create sequence clan_seq
+    start with 1
+    increment by 1;
 create table membership(
     founder varchar2(1) not null,
     member_id integer
         references
         players(player_id) on delete cascade,
-    clan_name varchar2(30)
+    clan_id integer
         references
-        clans(clan_name) on delete cascade,
-    primary key(member_id, clan_name)
+        clans(clan_id) on delete cascade,
+    primary key(member_id, clan_id)
     );
-    
-create bitmap index item_ownership_bmp_idx
-on items_ownership(item_name)
-from items i, items_ownership o
-where i.i_name = o.item_name;
+    drop index item_ownership_bmp_idx;

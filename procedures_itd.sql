@@ -315,16 +315,16 @@ begin
     return  'You cannot create clan if you are already in one';
     exception
     when no_data_found then
-        insert into clans(clan_name, clan_level, headquater) values
-            (pname, 1, pheadquater);
-        insert into membership(founder, member_id, clan_name) values
-            ('Y', founder_id, pname);
+        insert into clans(clan_id, clan_name, clan_level, headquater) values
+            (clan_seq.nextval, pname, 1, pheadquater);
+        insert into membership(founder, member_id, clan_id) values
+            ('Y', founder_id, clan_seq.currval);
         return 'Clan created'; 
 --    when others then
     
 end create_clan;
 
-create or replace function join_clan(pname in nvarchar2, player_id in number)
+create or replace function join_clan(clan_id in number, player_id in number)
     return nvarchar2 is
     cfounder membership.founder%type;
 begin
@@ -335,23 +335,23 @@ begin
     return  'You cannot join clan if you are already in one';
     exception
     when no_data_found then
-    insert into membership(founder, member_id, clan_name)values
-            ('N', player_id, pname);
+    insert into membership(founder, member_id, clan_id)values
+            ('N', player_id, clan_id);
         return 'You have joined the clan';
 end join_clan;
 
 create or replace function leave_clan(player_id in number)
     return nvarchar2 is
     cfounder membership.founder%type;
-    cname membership.clan_name%type;
+    cid membership.clan_id%type;
 begin
-    select founder, clan_name
-    into cfounder, cname
+    select founder, clan_id
+    into cfounder, cid
     from membership
     where member_id = player_id;
     if cfounder = 'Y' then
         delete from clans
-        where clan_name like cname;
+        where clan_id like cid;
         return 'Clan successfully deleted';
     else
         delete from membership
@@ -363,7 +363,7 @@ begin
     return 'Player was not a clan member';
     if cfounder = 'Y' then
         delete from clans
-        where clan_name like cname;
+        where clan_id = cid;
         return 'Clan successfully deleted';
     else
         delete from membership
@@ -372,10 +372,10 @@ begin
     end if;
 end leave_clan;
 
-create or replace procedure delete_clan(pname in nvarchar2) is
+create or replace procedure delete_clan(pid in number) is
 begin
     delete from clans
-    where clan_name like pname;
+    where clan_id=pid;
 end delete_clan;
 
 create or replace function get_clans 
@@ -384,12 +384,12 @@ create or replace function get_clans
     clan_cursor sys_refcursor;
 begin
     open clan_cursor for
-        select clan_name from clans;
+        select clan_id || '. '||clan_name from clans;
     return clan_cursor;
 end get_clans;
 
 
-create or replace function get_clan_members(pname in nvarchar2)
+create or replace function get_clan_members(pid in number)
     return sys_refcursor
     is
     clan_cursor sys_refcursor;
@@ -398,7 +398,7 @@ begin
         select p.player_id || '. '||p.player_name || ' - ' || m.founder || ' - lvl '|| p.player_level
         from players p inner join membership m 
         on m.member_id = p.player_id
-        where m.clan_name like pname
+        where m.clan_id = pid
         order by m.founder desc;
     return clan_cursor;
 end get_clan_members;
