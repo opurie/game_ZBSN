@@ -355,6 +355,10 @@ public class DBConnector {
         String[] s = name.split(". ");
         return Integer.parseInt(s[0]);
     }
+    public String getQuest(String name){
+        String[] s = name.split(" -> ");
+        return s[0];
+    }
     public String getItemName(String name){
         String[]s = name.split(" - ");
         return s[0];

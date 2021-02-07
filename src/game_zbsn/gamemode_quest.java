@@ -180,14 +180,15 @@ public class gamemode_quest extends JFrame implements ActionListener{
         }
         if(source == submitTaskButton){
             String result="";
-            if(playersList.getSelectedValue()==null || questsList.getSelectedValue()==null){
+            if(playersList.getSelectedValue()==null || playerQuestList.getSelectedValue()==null){
                 result = "missing data";
             }
             else{
                 try{
                     int id = dbConnector.getId(playersList.getSelectedValue().toString());
-                    String name = questsList.getSelectedValue().toString();
-                    result = dbConnector.submitTask(id, name);
+                    String name = playerQuestList.getSelectedValue().toString();
+                    
+                    result = dbConnector.submitTask(id, dbConnector.getQuest(name));
                     infoLabel.setText(result);
                     playerData = dbConnector.getPlayers();
                     playersList.setListData(playerData.toArray());
