@@ -18,7 +18,6 @@ create table items(
     profession varchar2(30)
         references
         professions(p_name) on delete cascade);
-drop sequence players_seq;
 create sequence players_seq
 start with 1
 increment by 1;        
